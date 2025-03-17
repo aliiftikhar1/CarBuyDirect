@@ -1,0 +1,66 @@
+{
+    "Brand": {
+      "id": 1,
+      "name": "Aston Martin",
+      "description": "British luxury sports car manufacturer",
+      "image": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/screencapture-sbxcars-listing-230-2020-aston-martin-dbs-superleggera-2025-01-15-19_28_14.jpg-vFc1kgWDJNe3cahF2Ar0emRaWAiT3G.jpeg",
+      "createdAt": "2024-01-15T12:00:00Z",
+      "updatedAt": "2024-01-15T12:00:00Z"
+    },
+    "User": {
+      "id": 1,
+      "name": "Premium Auto Dealer",
+      "email": "dealer@premium-auto.com",
+      "password": "hashed_password",
+      "type": "dealer",
+      "location": "Dallas, Texas, USA",
+      "status": "active",
+      "verified": true,
+      "phoneNo": "+1-555-0123",
+      "createdAt": "2024-01-01T00:00:00Z",
+      "updatedAt": "2024-01-15T12:00:00Z"
+    },
+    "Car": {
+      "id": 1,
+      "brandId": 1,
+      "sellerId": 1,
+      "name": "DBS Superleggera",
+      "description": "2020 DBS is proud to offer for sale this 2020 Aston Martin DBS Superleggera showing just 10,804 mi (CLICK to see) on the odometer at the time of cataloging. Finished in Cosmos Orange over an Obsidian Black and Cosmos Orange cabin, this V12 powered super GT is simply fantastic.",
+      "highlights": "Factory-optioned carbon fiber roof, Carbon 21\" wheels, 715 horsepower",
+      "specs": "5.2L twin-turbo V12 with engine builder plaque, 715hp, 8-speed automatic transmission",
+      "chasisNo": "SCFAB4GN5LGN24434",
+      "exterior": "Cosmos Orange",
+      "interior": "Black/Orange",
+      "lotNo": "230",
+      "location": "Dallas, Texas, USA",
+      "mileage": "10,804 Miles",
+      "orientation": "Left",
+      "status": "available",
+      "createdAt": "2024-01-15T12:00:00Z",
+      "updatedAt": "2024-01-15T12:00:00Z"
+    },
+    "CarImage": [
+      {
+        "id": 1,
+        "carId": 1,
+        "url": "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/screencapture-sbxcars-listing-230-2020-aston-martin-dbs-superleggera-2025-01-15-19_28_14.jpg-vFc1kgWDJNe3cahF2Ar0emRaWAiT3G.jpeg",
+        "type": "primary",
+        "createdAt": "2024-01-15T12:00:00Z",
+        "updatedAt": "2024-01-15T12:00:00Z"
+      }
+    ],
+    "Auction": {
+      "id": 1,
+      "startDate": "2024-01-15T12:00:00Z",
+      "endDate": "2024-01-16T04:31:45Z",
+      "carId": 1,
+      "sellerId": 1,
+      "views": 150,
+      "watching": 25,
+      "location": "Dallas, Texas, USA",
+      "closingPrice": "125000",
+      "status": "active",
+      "createdAt": "2024-01-15T12:00:00Z",
+      "updatedAt": "2024-01-15T12:00:00Z"
+    }
+  }

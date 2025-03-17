@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `user` MODIFY `type` VARCHAR(191) NULL,
+    MODIFY `status` VARCHAR(191) NULL,
+    MODIFY `phoneNo` VARCHAR(191) NULL;

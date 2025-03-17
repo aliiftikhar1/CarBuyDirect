@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  image       String   @db.LongText
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  CarSubmission   CarSubmission[]
+
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String   @unique
+  image       String?  @db.LongText
+  username    String?  @unique
+  bio         String?
+  address     String?
+  city        String?
+  country     String?
+  province    String?
+  zipcode     String?
+  cardName    String?
+  cardNumber  String?
+  cardExpiry  String?
+  cardCvc     String?
+  password    String?
+  type        String?
+  status      String?
+  pricePlan   String? @default("free")
+  businessType  String?
+  stripeAccountId String?  // Seller ka unique Stripe Account ID
+  stripeStatus    String?    @default("unverified")  // "unverified" | "pending" | "verified"
+  availableBalance Float?    @default(0)  // Seller ki available earnings
+  pendingBalance   Float?   @default(0)  // Pending payouts
+  stripeCustomerId String?
+  verified    Boolean @default(false)
+  verificationToken String?  // Token for email verification
+  tokenExpiresAt   DateTime? // Token expiration time
+  phoneNo     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  Auctions    Auction[]   @relation("SellerAuctions")
+  Bids        Bidding[]   @relation("UserBids")
+  Submissions CarSubmission[]
+  Sold        Sold[]
+  Watching    Watching[]
+  EmailsReceiverList  EmailsReceiverList[]
+  SentNotifications         Notification[]       @relation("SentNotifications")
+  ReceivedNotifications         Notification[]       @relation("ReceivedNotifications")
+  Comment         Comment[]       @relation("usersComment")
+  Like         Like[]       @relation("usersLike")
+  receipts   Receipt[]  @relation("userReceipt")
+  transactions Transaction[]  @relation("userTransaction")
+}
+
+model CarSubmission {
+  id               Int      @id @default(autoincrement())
+  firstname        String
+  lastname         String
+  email            String
+  phone            String
+  category         String?
+  bodyType          String?
+  transmission      String?
+  engineCapacity    String?
+  fuelType          String?
+  exteriorColor     String?
+  condition         String?
+  vehicleModel     String
+  vehicleMake      String
+  vehicleYear      String
+  sellerId         Int
+  notes            String?    @db.Text
+  description      String?    @db.LongText
+  highlights       String?    @db.LongText
+  specs            String?    @db.Text
+  review           String?
+  vin              String
+  mileage          String
+  mileageUnit      String
+  status           String
+  price            String     @default("0")
+  currency         String     @default("0")
+  country          String
+  postal           String
+  brand            Int?
+  webSlug          String     @unique @default("webSlug")
+  reserved          Boolean   @default(false)
+  reservedPrice     Int?       @default(0)
+  buy          Boolean   @default(false)
+  buyPrice     Int?       @default(0)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  Brand            Brand?     @relation(fields: [brand], references: [id], onDelete: Cascade)
+  User             User       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  SubmissionImages CarSubmissionImage[]
+  Auction          Auction[]
+  Bidding           Bidding[]
+}
+
+model EmailsReceiverList{
+  id    Int       @id @default(autoincrement())
+  userId  Int     @unique
+  getEmails   Boolean @default(true)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  User             User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model CarSubmissionImage {
+  id            Int      @id @default(autoincrement())
+  submissionId  Int
+  name          String
+  label         String?
+  type          String
+  size          Int
+  data          String   @db.LongText
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  CarSubmission CarSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
+
+model Auction {
+  id           Int      @id @default(autoincrement())
+  startDate    DateTime
+  endDate      DateTime
+  carId        Int
+  sellerId     Int
+  views        Int      @default(0)
+  watching     Int      @default(0)
+  location     String
+  closingPrice String
+  status       String
+  webSlug       String  @default("webSlug")
+  featured Boolean @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  CarSubmission          CarSubmission      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  Seller       User     @relation("SellerAuctions", fields: [sellerId], references: [id], onDelete: Cascade)
+  Bids         Bidding[]
+  Sold          Sold[]
+  Watching      Watching[]
+  Notifications          Notification[]     @relation("AuctionNotifications")
+  Comment          Comment[]    @relation("auctionComment")
+  Like           Like[]   @relation("auctionLike")
+}
+
+model Watching {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  auctionId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation( fields: [userId], references: [id], onDelete: Cascade)
+  Auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+}
+
+model Bidding {
+  id        Int      @id @default(autoincrement())
+  auctionId Int
+  userId    Int
+  carId     Int
+  currency  String
+  price     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  User      User     @relation("UserBids", fields: [userId], references: [id], onDelete: Cascade)
+  CarSubmission CarSubmission @relation(fields:[carId], references:[id], onDelete:Cascade)
+  
+}
+
+model Sold{
+  id          Int     @id @default(autoincrement())
+  auctionId    Int
+  userId        Int
+  price         Int
+  currency      String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  Auction       Auction     @relation(fields:[auctionId],references:[id],onDelete:Cascade)
+  User          User        @relation(fields:[userId],references:[id],onDelete:Cascade)
+
+}
+
+model Slide {
+  id        String   @id @default(cuid())
+  year      Int
+  model     String
+  make      String
+  image     String
+  link      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+ model CarInsurance {
+  id                 Int   @id @default(autoincrement())
+  insuranceType      String   
+  carPlateNumber     String
+  residentialPostcode String
+  isEhailing         Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  senderId   Int      
+  receiverId Int      
+  auctionId  Int     
+  type       String   
+  message    String?  
+  price      Float?   
+  replyOf    Int?
+  isRead     Boolean  @default(false) 
+  createdAt  DateTime @default(now())
+
+
+  sender     User     @relation("SentNotifications", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("ReceivedNotifications", fields: [receiverId], references: [id], onDelete: Cascade)
+  auction    Auction  @relation("AuctionNotifications", fields: [auctionId], references: [id], onDelete: Cascade)
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  auctionId  Int
+  text       String   @db.Text
+  media      String?  @db.LongText  // Image, video, etc.
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  User       User     @relation("usersComment", fields: [userId], references: [id], onDelete: Cascade)
+  Auction    Auction  @relation("auctionComment",fields: [auctionId], references: [id], onDelete: Cascade)
+  Likes      Like[]   @relation("commentLike") 
+}
+
+model Like {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  auctionId  Int
+  commentId  Int?    
+  status     Boolean  // true = like, false = dislike
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  User       User     @relation("usersLike", fields: [userId], references: [id], onDelete: Cascade)
+  Auction    Auction  @relation("auctionLike",fields: [auctionId], references: [id], onDelete: Cascade)
+  Comment    Comment? @relation("commentLike", fields: [commentId], references: [id], onDelete: Cascade)
+  // Ensures a user can only like/dislike once per auction
+  @@unique([userId, auctionId])
+  @@unique([userId, commentId])
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      Int 
+  user     User     @relation("userTransaction", fields: [userId], references: [id], onDelete: Cascade)
+  amount      Float
+  trancastion_id String?
+  order_id String?
+  currency    String
+  type        String   // "deposit" | "withdrawal"
+  status      String   // "pending" | "completed" | "failed"
+  createdAt   DateTime @default(now())
+ receipts   Receipt[] @relation("transactionReceipt")
+}
+
+model Receipt {
+    id            Int     @id @default(autoincrement())
+    transactionId String?    // Foreign key, should be optional
+    userId        Int?    // Foreign key, should be optional
+    amount        Float?
+    adminFee      Float?
+    sellerAmount  Float?
+    status        String? @default("Paid")
+    receiptUrl    String?
+    createdAt     DateTime @default(now())
+
+    transaction   Transaction? @relation("transactionReceipt", fields: [transactionId], references: [id], onDelete: Cascade)
+    user          User?        @relation("userReceipt", fields: [userId], references: [id], onDelete: Cascade)
+}
