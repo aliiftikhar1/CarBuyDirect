@@ -9,9 +9,28 @@ export async function POST(request, { params }) {
         const auction = await prisma.auction.findUnique({
             where: {
                 id: parseInt(id)
+            },
+            include:{
+                HoldPayments:true,
+                Bids:true,
             }
         })
-        if (!auction) {
+        const amount = auction.Bids.slice().reverse()[0].price
+        const holdpayment = auction.HoldPayments.find((data)=>data.userId==auction.Bids.slice().reverse()[0].userId)
+            const response = await fetch('/api/stripe/capture-payment', {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                paymentIntentId: holdpayment.paymentIntentId,
+                userId: auction.Bids.slice().reverse()[0].userId,
+                amount: amount,
+                transferDescription: `The Payment of Auction ${auction.id} is successful!!`,
+              }),
+            });
+          
+           
+        console.log(auction.id, amount, holdpayment)
+        if (!auction ) {
             return NextResponse.error({
                 status: 404,
                 message: "Auction not found"
@@ -29,18 +48,19 @@ export async function POST(request, { params }) {
                     id: parseInt(id)
                 },
                 data: {
-                    status: "Ended"
+                    status: "Sold"
+                    // status: "Ended"
                 }
             })
 
-            // const soldout = await prisma.Sold.create({
-            //     data:{
-            //         auctionId: auction.id,
-            //         userId:data.userid,
-            //         price:data.price,
-            //         currency:data.currency,
-            //     }
-            // })
+            const soldout = await prisma.Sold.create({
+                data:{
+                    auctionId: auction.id,
+                    userId:data.userid,
+                    price:data.price,
+                    currency:data.currency,
+                }
+            })
         }
         return NextResponse.json({
             success: true,

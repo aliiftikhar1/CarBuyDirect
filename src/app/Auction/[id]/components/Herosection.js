@@ -84,6 +84,9 @@ export default function HeroSection({ data, triggerfetch }) {
         setIsBidDialogOpen(true);
         setIsModalOpen(false);
       }
+      else{
+        setIsModalOpen(true)
+      }
           
       // setIsBidDialogOpen(true);
     }
@@ -186,7 +189,7 @@ export default function HeroSection({ data, triggerfetch }) {
     setHoldLoading(true);
    
     try {
-      const res = await fetch("/api/hold-amount", {
+      const res = await fetch("/api/stripe/hold-amount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: userid , auctionId: data?.id }) // Static ID for testing, use dynamic user ID
@@ -197,6 +200,7 @@ export default function HeroSection({ data, triggerfetch }) {
         toast.success("$500 Hold Successful! You can now bid.");
         setIsBidDialogOpen(true);
         setIsModalOpen(false);
+        setHandler(!handler)
       } else {
         toast.error(`Error: ${data2.message}`);
         setIsModalOpen(false);

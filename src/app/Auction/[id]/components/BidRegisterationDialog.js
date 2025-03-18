@@ -153,7 +153,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
 
         // If we have a payment method, we need to attach it to the customer
         // This would typically be done via a server action
-        const response = await fetch("/api/setup-payment-method", {
+        const response = await fetch("/api/stripe/setup-payment-method", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

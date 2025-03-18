@@ -80,23 +80,7 @@ export default function Footer() {
 
                     {/* Navigation Links Section */}
                     <div className="grid grid-cols-2 gap-8">
-                        {/* <div className="space-y-3">
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Auctions</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Brands</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Sell your vehicle</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">FAQ</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Contact us</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Auction Results</Link>
-                        </div>
                         <div className="space-y-3">
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">About us</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Team</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Careers</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Terms of use</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Privacy policy</Link>
-                            <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Cookie declaration</Link>
-                        </div> */}
-<div className="space-y-3">
                             <Link href="/Auction" className="block text-sm text-muted-foreground hover:text-gray-900">Auctions</Link>
                             {/* <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Brands</Link> */}
                             <Link href="/Sell" className="block text-sm text-muted-foreground hover:text-gray-900">Sell your vehicle</Link>
@@ -110,6 +94,8 @@ export default function Footer() {
                             <Link href="/Careers" className="block text-sm text-muted-foreground hover:text-gray-900">Careers</Link>
                             <Link href="/Terms-Of-Service" className="block text-sm text-muted-foreground hover:text-gray-900">Terms of use</Link>
                             <Link href="/Privacy-Policy" className="block text-sm text-muted-foreground hover:text-gray-900">Privacy policy</Link>
+                            <Link href="/Car-Loan" className="block text-sm text-muted-foreground hover:text-gray-900">Car Loan</Link>
+                            <Link href="/Car-Insurance" className="block text-sm text-muted-foreground hover:text-gray-900">Car Insurance</Link>
                             {/* <Link href="#" className="block text-sm text-muted-foreground hover:text-gray-900">Cookie declaration</Link> */}
                         </div>
                     </div>

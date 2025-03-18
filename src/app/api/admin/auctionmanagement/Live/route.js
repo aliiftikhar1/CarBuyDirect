@@ -18,6 +18,7 @@ export async function GET(request){
                       Brand:true,
                     },
                   },
+                  Bids:true,
                 },
                 orderBy: {
                   createdAt: "desc",
