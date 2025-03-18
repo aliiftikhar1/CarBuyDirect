@@ -14,7 +14,8 @@ export async function GET(request,{params}){
                     }
                 },
                 Bids:true,
-                Auctions:true
+                Auctions:true,
+                HoldPayments:true,
             }    
     })
         if (!user) {

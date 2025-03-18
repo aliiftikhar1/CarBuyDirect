@@ -5,21 +5,30 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(req) {
     try {
-        const { cardNumber, routingNumber, name } = await req.json();
-        console.log(cardNumber, routingNumber, name);
-        const stripe = require('stripe')('sk_test_51R0myHF5CvPkbzucqlkgCwa2mQq64ZWrQVCS6w4UPiqHIkTuywHz808BAcIPDrm7XEyGs8pgsjoVRVDdnszs2I2r00oEfcPmxk');
+        const { cardNumber,customerId, expiryMonth, expiryYear, cvc, name } = await req.json();
+        console.log(cardNumber, expiryMonth, expiryYear, cvc, name);
+        const token = await stripe.tokens.create({
+            card: {
+              number: '4242424242424242',
+              exp_month: '5',
+              exp_year: '2026',
+              cvc: '314',
+            },
+          });
+          console.log("TOken is ",token);
 
-        const paymentMethod = await stripe.paymentMethods.create({
-            type: 'us_bank_account',
-            us_bank_account: {
-                account_holder_type: 'individual',
-                account_number: cardNumber,
-                routing_number: '110000000',
-            },
-            billing_details: {
-                name: 'John Doe',
-            },
-        });
+        const paymentMethod =  await stripe.customers.createSource(
+            'cus_Rx9oCtRwOBJf7r',
+            {
+              source: 'tok_visa',
+            }
+          );
+
+        if(paymentMethod){
+            const paymentMethodId = paymentMethod.id;
+            await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
+
+        }
 
         return NextResponse.json({ success: true, paymentMethod });
     } catch (error) {

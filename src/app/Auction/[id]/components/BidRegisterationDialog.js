@@ -4,20 +4,25 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@radix-ui/react-label"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Image from "next/image"
 import { useDispatch, useSelector } from "react-redux"
 import { toast } from "sonner"
 import { updateUserDetails } from "@/app/Actions"
-import { Check, Loader, Wallet, ArrowLeft, ArrowRight, Banknote, AlertCircle } from "lucide-react"
+import { Check, Loader, Wallet, ArrowLeft, ArrowRight, Banknote, AlertCircle, CreditCard } from "lucide-react"
 import { loadStripe } from "@stripe/stripe-js"
-import { Elements, useStripe, useElements } from "@stripe/react-stripe-js"
+import {
+  Elements,
+  useStripe,
+  useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js"
 
-// At the top of your file, add this constant
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
-// Then modify your default export to wrap the component with Stripe Elements
 export default function BidRegistrationForm({ setHandler, setIsDialogOpen }) {
   return (
     <Elements stripe={stripePromise}>
@@ -26,15 +31,23 @@ export default function BidRegistrationForm({ setHandler, setIsDialogOpen }) {
   )
 }
 
-// And rename your main component
 function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
-  // All your existing component code goes here
-  // ...
   const userdetails = useSelector((data) => data.CarUser.userDetails)
   const [loader, setLoader] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState("")
   const dispatch = useDispatch()
+
+  // Stripe hooks
+  const stripe = useStripe()
+  const elements = useElements()
+  const [cardError, setCardError] = useState("")
+  const [isValidating, setIsValidating] = useState(false)
+  const [cardComplete, setCardComplete] = useState({
+    cardNumber: false,
+    cardExpiry: false,
+    cardCvc: false,
+  })
 
   const [formData, setFormData] = useState({
     id: userdetails?.id || "",
@@ -48,9 +61,6 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
     country: userdetails?.country || "Pakistan",
     province: userdetails?.province || "",
     zipcode: userdetails?.zipcode || "",
-    cardNumber: "",
-    cardExpiry: "",
-    cardCvc: "",
     paymentMethod: "",
   })
 
@@ -77,6 +87,105 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
     }))
   }
 
+  const handleCardChange = (event) => {
+    // Clear any previous errors when the user makes changes
+    setCardError(event.error ? event.error.message : "")
+
+    // Update the completion status of the card element
+    if (event.elementType) {
+      setCardComplete((prev) => ({
+        ...prev,
+        [event.elementType]: event.complete,
+      }))
+    }
+  }
+
+  const validateCardDetails = async () => {
+    if (currentStep === 5) {
+      setIsValidating(true)
+      setCardError("")
+
+      try {
+        // Check if stripe and elements are loaded
+        if (!stripe || !elements) {
+          setCardError("Stripe has not loaded yet. Please try again.")
+          setIsValidating(false)
+          return false
+        }
+
+        // Check if name on card is provided
+        if (!formData.cardName.trim()) {
+          setCardError("Name on card is required")
+          setIsValidating(false)
+          return false
+        }
+
+        // Check if all card fields are complete
+        if (!cardComplete.cardNumber || !cardComplete.cardExpiry || !cardComplete.cardCvc) {
+          setCardError("Please complete all card information fields")
+          setIsValidating(false)
+          return false
+        }
+
+        // Create a payment method with the card element
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+          type: "card",
+          card: elements.getElement(CardNumberElement),
+          billing_details: {
+            name: formData.cardName,
+            email: formData.email,
+            phone: formData.phoneNo,
+            address: {
+              line1: formData.address,
+              city: formData.city,
+              state: formData.province,
+              postal_code: formData.zipcode,
+              country: formData.country==="Pakistan"? "PK":formData.country,
+            },
+          },
+        })
+
+        if (error) {
+          setCardError(error.message)
+          setIsValidating(false)
+          return false
+        }
+
+        // If we have a payment method, we need to attach it to the customer
+        // This would typically be done via a server action
+        const response = await fetch("/api/setup-payment-method", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paymentMethodId: paymentMethod.id,
+            customerId: userdetails.stripeCustomerId || null,
+            email: formData.email,
+            name: formData.name || formData.username,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (!data.success) {
+          setCardError(data.error || "Failed to save payment method")
+          setIsValidating(false)
+          return false
+        }
+
+        // Card is valid and saved to customer
+        setIsValidating(false)
+        return true
+      } catch (error) {
+        console.error("Card validation error:", error)
+        setCardError("An error occurred while validating your card. Please try again.")
+        setIsValidating(false)
+        return false
+      }
+    }
+
+    return true
+  }
+
   const handleSubmit = async () => {
     setLoader(true)
     try {
@@ -96,90 +205,6 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
     }
   }
 
-  const stripe = require('stripe')('sk_test_51R0myHF5CvPkbzucqlkgCwa2mQq64ZWrQVCS6w4UPiqHIkTuywHz808BAcIPDrm7XEyGs8pgsjoVRVDdnszs2I2r00oEfcPmxk');
-  const elements = useElements()
-  const [cardError, setCardError] = useState("")
-  const [isValidating, setIsValidating] = useState(false)
-
-  const validateCardDetails = async () => {
-    if (currentStep === 5) {
-        setIsValidating(true);
-        setCardError("");
-
-        try {
-            // Basic validation for required fields
-            if (!formData.cardName.trim()) {
-                setCardError("Name on card is required");
-                setIsValidating(false);
-                return false;
-            }
-
-            if (!formData.cardNumber.trim()) {
-                setCardError("Card number is required");
-                setIsValidating(false);
-                return false;
-            }
-
-            if (!formData.cardExpiry.trim()) {
-                setCardError("Expiry date is required");
-                setIsValidating(false);
-                return false;
-            }
-
-            if (!formData.cardCvc.trim()) {
-                setCardError("CVC is required");
-                setIsValidating(false);
-                return false;
-            }
-
-            // Format card details
-            const cardNumber = formData.cardNumber.replace(/\s+/g, "");
-            const expiry = formData.cardExpiry.split("/");
-            const month = expiry[0]?.trim() || "";
-            const year = expiry[1]?.trim() || "";
-
-            // Validate expiry format
-            if (!month || !year || month.length !== 2 || year.length !== 2) {
-                setCardError("Invalid expiry date format (MM/YY required)");
-                setIsValidating(false);
-                return false;
-            }
-
-            // Send card details to the API
-            const res = await fetch("/api/validate-card", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    cardNumber,
-                    expiryMonth: month,
-                    expiryYear: year,
-                    cvc: formData.cardCvc.trim(),
-                    name: formData.cardName.trim(),
-                }),
-            });
-
-            const data = await res.json();
-
-            // Handle API response errors
-            if (!data.success) {
-                setCardError(data.error || "Card validation failed");
-                setIsValidating(false);
-                return false;
-            }
-
-            // Card is valid
-            setIsValidating(false);
-            return true;
-        } catch (error) {
-            setCardError("An error occurred while validating your card. Please try again.");
-            setIsValidating(false);
-            return false;
-        }
-    }
-
-    return true; 
-};
-
   const nextStep = async () => {
     if (currentStep === 5) {
       const isValid = await validateCardDetails()
@@ -194,6 +219,21 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
 
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1)
+  }
+
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: "16px",
+        color: "#424770",
+        "::placeholder": {
+          color: "#aab7c4",
+        },
+      },
+      invalid: {
+        color: "#9e2146",
+      },
+    },
   }
 
   return (
@@ -251,7 +291,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
       </CardHeader>
 
       <CardContent
-        className="space-y-4 px-4 py-2  w-full h-full overflow-y-auto"
+        className="space-y-4 px-4 py-2 w-full h-full overflow-y-auto"
         style={{ maxHeight: "calc(100vh - 220px)" }}
       >
         {/* Step 1: Greeting for new bidder */}
@@ -262,7 +302,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
               alt="SBX Cars"
               width={1200}
               height={1200}
-              className="mx-auto  w-[50%] h-12 object-cover"
+              className="mx-auto w-[50%] h-12 object-cover"
             />
             <h3 className="text-xl font-semibold">Welcome to CarBuyDirect!</h3>
             <p className="text-muted-foreground text-sm">
@@ -419,7 +459,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
           </div>
         )}
 
-        {/* Step 4: Personal greeting (previously step 3) */}
+        {/* Step 4: Personal greeting */}
         {currentStep === 4 && (
           <div className="space-y-4 text-center flex flex-col justify-center w-full h-full">
             <h3 className="text-xl font-semibold">Hello, {formData.name || formData.username || "there"}!</h3>
@@ -436,7 +476,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
           </div>
         )}
 
-        {/* Step 5: Get card details (previously step 4) */}
+        {/* Step 5: Get card details */}
         {currentStep === 5 && (
           <div className="flex flex-col justify-between w-full h-full">
             <h3 className="text-lg font-semibold">Payment Information</h3>
@@ -444,7 +484,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
               Please enter your card details below. This information is securely stored.
             </p>
 
-            <div className="space-y-1">
+            <div className="space-y-1 mb-4">
               <Label htmlFor="cardName" className="text-sm">
                 Name on Card
               </Label>
@@ -457,44 +497,54 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
               />
             </div>
 
-            <div className="space-y-1">
-              <Label htmlFor="cardNumber" className="text-sm">
-                Card Number
-              </Label>
-              <Input
-                id="cardNumber"
-                placeholder="Card Number"
-                value={formData.cardNumber}
-                onChange={handleInputChange}
-                className={`h-9 ${cardError && !formData.cardNumber ? "border-red-500" : ""}`}
-              />
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <Label htmlFor="cardNumber" className="text-sm">
+                  Card Number
+                </Label>
+                <div className="border rounded-md p-2 h-10 flex items-center">
+                  <CardNumberElement
+                    id="cardNumber"
+                    options={cardElementOptions}
+                    onChange={handleCardChange}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label htmlFor="cardExpiry" className="text-sm">
+                    Expiry Date
+                  </Label>
+                  <div className="border rounded-md p-2 h-10 flex items-center">
+                    <CardExpiryElement
+                      id="cardExpiry"
+                      options={cardElementOptions}
+                      onChange={handleCardChange}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="cardCvc" className="text-sm">
+                    CVC
+                  </Label>
+                  <div className="border rounded-md p-2 h-10 flex items-center">
+                    <CardCvcElement
+                      id="cardCvc"
+                      options={cardElementOptions}
+                      onChange={handleCardChange}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label htmlFor="cardExpiry" className="text-sm">
-                  Expiry Date
-                </Label>
-                <Input
-                  id="cardExpiry"
-                  placeholder="MM / YY"
-                  value={formData.cardExpiry}
-                  onChange={handleInputChange}
-                  className={`h-9 ${cardError && !formData.cardExpiry ? "border-red-500" : ""}`}
-                />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="cardCvc" className="text-sm">
-                  CVC
-                </Label>
-                <Input
-                  id="cardCvc"
-                  placeholder="CVC"
-                  value={formData.cardCvc}
-                  onChange={handleInputChange}
-                  className={`h-9 ${cardError && !formData.cardCvc ? "border-red-500" : ""}`}
-                />
-              </div>
+            <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+              <CreditCard className="h-3 w-3" />
+              <span>Your card information is encrypted and securely stored</span>
             </div>
 
             {cardError && (
@@ -506,7 +556,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
           </div>
         )}
 
-        {/* Step 6: Thanksgiving text (previously step 5) */}
+        {/* Step 6: Thanksgiving text */}
         {currentStep === 6 && (
           <div className="space-y-4 text-center flex flex-col justify-center w-full h-full">
             <h3 className="text-xl font-semibold">Thank You!</h3>
@@ -524,7 +574,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
           </div>
         )}
 
-        {/* Step 7: Finance/Cash option (previously step 6) */}
+        {/* Step 7: Finance/Cash option */}
         {currentStep === 7 && (
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">Select Payment Method</h3>

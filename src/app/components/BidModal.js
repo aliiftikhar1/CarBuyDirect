@@ -4,8 +4,8 @@ import { useState } from "react";
 export default function BidModal({  onClose, onConfirm, loading }) {
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm text-center">
+        <div className="flex items-center justify-center">
+            <div className="bg-white p-6  text-center">
                 <h2 className="text-xl font-semibold mb-4">Confirm Your Bid</h2>
                 <p className="text-gray-600">To place this bid, $500 will be held from your account.</p>
 

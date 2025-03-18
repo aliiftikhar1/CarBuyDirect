@@ -35,13 +35,14 @@ export default function HeroSection({ data, triggerfetch }) {
   const [bidAmount, setBidAmount] = useState(parseInt(currentBid) + 100); // Default bid value
   const [bids, setBids] = useState(data?.Bids?.length || 0); // Total bids
   const userid = useSelector((state) => state.CarUser.userDetails?.id);
-  // const user = useSelector((data) => data.CarUser.userDetails);
+  const userDetails = useSelector((data) => data.CarUser.userDetails);
   const [loading, setLoading] = useState(false);
   const [handler, setHandler] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isBidModal, setIsBidModal] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [holdLoading, setHoldLoading] = useState(false);
+ 
   useEffect(() => {
     if (userid) {
 
@@ -49,6 +50,7 @@ export default function HeroSection({ data, triggerfetch }) {
         setLoading(true)
         try {
           const response = await fetch(`/api/user/getUserDetails/${userid}`);
+          
           const result = await response.json();
           setUser(result.user);
           setLoading(false)
@@ -63,29 +65,37 @@ export default function HeroSection({ data, triggerfetch }) {
     }
   }, [userid, handler]);
 
-  const isEligible = user?.cardName && user?.cardNumber && user?.cardExpiry && user?.cardCvc;
+  const isEligible = user?.cardName ;
 
 
   const handlePlaceBid = () => {
     if (!user) {
-      alert("Please login to place a bid.");
+      toast("Please login to place a bid.");
       console.log(user)
       setIsAccountModalOpen(true);
     } else if (!isEligible) {
-      alert("registered Bid .");
+      toast("You are not currently registered.");
       console.log(user)
       setIsBidModal(true)
-    } else {
-      alert("Hold 500$.");
+    } else if(user?.HoldPayments.length > 0){
+      let holddata = user.HoldPayments.filter((hold) => (hold.auctionId === data?.id&&hold.status === "requires_capture"))
+      
+      if(holddata.length > 0){
+        setIsBidDialogOpen(true);
+        setIsModalOpen(false);
+      }
+          
+      // setIsBidDialogOpen(true);
+    }
+    else{
       console.log(user)
       setIsModalOpen(true)
-      // setIsBidDialogOpen(true);
     }
   };
 
   const confirmBid = async () => {
     if (bidAmount < currentBid + 100) {
-      alert(`Bid amount must be at least $${currentBid + 100}.`);
+      toast(`Bid amount must be at least $${currentBid + 100}.`);
       return;
     }
 
@@ -174,27 +184,29 @@ export default function HeroSection({ data, triggerfetch }) {
     : null
   const handleConfirm = async () => {
     setHoldLoading(true);
+   
     try {
       const res = await fetch("/api/hold-amount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userid }) // Static ID for testing, use dynamic user ID
+        body: JSON.stringify({ userId: userid , auctionId: data?.id }) // Static ID for testing, use dynamic user ID
       });
-      const data = await res.json();
+      const data2 = await res.json();
 
-      if (data.success) {
-        toast.success("✅ $500 Hold Successful! You can now bid.");
+      if (data2.success) {
+        toast.success("$500 Hold Successful! You can now bid.");
         setIsBidDialogOpen(true);
         setIsModalOpen(false);
       } else {
-        toast.error(`❌ Error: ${data.message}`);
+        toast.error(`Error: ${data2.message}`);
         setIsModalOpen(false);
       }
     } catch (error) {
       setIsModalOpen(false);
       console.log('ERROR FROM SERVER SIDE', error.message)
-      toast.error("❌ Failed to hold amount. Please try again.");
+      toast.error("Failed to hold amount. Please try again.");
     }
+ 
     setHoldLoading(false);
   };
   return (
@@ -503,7 +515,7 @@ export default function HeroSection({ data, triggerfetch }) {
             </DialogContent>
           </Dialog>
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent className="max-w-4xl">
+            <DialogContent >
               <BidModal onClose={() => setIsModalOpen(false)} onConfirm={handleConfirm} loading={holdLoading} />
             </DialogContent>
           </Dialog>

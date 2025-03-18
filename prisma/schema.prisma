@@ -64,6 +64,7 @@ model User {
   Like         Like[]       @relation("usersLike")
   receipts   Receipt[]  @relation("userReceipt")
   transactions Transaction[]  @relation("userTransaction")
+  HoldPayments HoldPayments[] @relation("userholdPayments")
 }
 
 model CarSubmission {
@@ -161,6 +162,7 @@ model Auction {
   Notifications          Notification[]     @relation("AuctionNotifications")
   Comment          Comment[]    @relation("auctionComment")
   Like           Like[]   @relation("auctionLike")
+  HoldPayments HoldPayments[] @relation("userAuctions")
 }
 
 model Watching {
@@ -273,6 +275,18 @@ model Like {
   // Ensures a user can only like/dislike once per auction
   @@unique([userId, auctionId])
   @@unique([userId, commentId])
+}
+
+model HoldPayments {
+  id          Int   @id @default(autoincrement())
+  userId      Int 
+  auctionId   Int
+  paymentIntentId String @unique
+  user     User     @relation("userholdPayments", fields: [userId], references: [id], onDelete: Cascade)
+  auction     Auction     @relation("userAuctions", fields: [auctionId], references: [id], onDelete: Cascade)
+  status      String   
+  createdAt   DateTime @default(now())
+
 }
 
 model Transaction {
