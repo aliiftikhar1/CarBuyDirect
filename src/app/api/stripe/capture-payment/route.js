@@ -5,6 +5,7 @@ import Stripe from "stripe"
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 export async function POST(req) {
+  let holdedpayment
   try {
     const { paymentIntentId, userId, amount, transferDescription } = await req.json()
 
@@ -16,6 +17,45 @@ export async function POST(req) {
         },
         { status: 400 },
       )
+    }
+    if (paymentIntentId) {
+      const holdpayment = await prisma.HoldPayments.findUnique({
+        include: {
+          auction: {
+            include: {
+              CarSubmission: true
+            }
+          }
+        },
+        where: {
+          paymentIntentId
+        }
+      }).catch((err) => {
+        console.log("Hold Payment updation failed!")
+      })
+      if (holdpayment) {
+        if (holdpayment.status !== "requires_capture") {
+          return NextResponse.json(
+            {
+              success: false,
+              message: "payment has been already initiated",
+            },
+            { status: 400 },
+          )
+        }
+        holdedpayment=holdpayment
+
+      }
+      else {
+        return NextResponse.json(
+          {
+            success: false,
+            message: "User hasnot hold a amount for bidding",
+          },
+          { status: 400 },
+        )
+      }
+
     }
 
     // Verify the user exists and has permission to capture this payment
@@ -102,7 +142,7 @@ export async function POST(req) {
         payment_method: paymentMethodToUse,
         confirm: true,
         off_session: true,
-        description: `New payment of ${amount} cents before releasing hold of ${amountAvailableToCapture} cents`,
+        description: `Payment of ${holdedpayment.auction.CarSubmission.vehicleYear} ${holdedpayment.auction.CarSubmission.vehicleMake} ${holdedpayment.auction.CarSubmission.vehicleModel} From ${user.name} has been succeeded!.`,
       }
 
       // Add statement descriptor suffix if provided
@@ -133,15 +173,17 @@ export async function POST(req) {
         .create({
           data: {
             userId: user.id,
-            paymentIntentId: newPaymentIntent.id,
+            trancastion_id: newPaymentIntent.id,
             amount: newPaymentIntent.amount,
             status: newPaymentIntent.status,
             type: "new_charge",
-            description: `New charge before releasing hold. Original: ${paymentIntentId}`,
+            order_id: `New charge before releasing hold. Original: ${paymentIntentId}`,
+            // description: `New charge before releasing hold. Original: ${paymentIntentId}`,
+            currency: paymentIntent.currency
           },
         })
         .catch((err) => {
-          console.error("Failed to record transaction:", err)
+          console.log("Failed to record transaction:", err)
         })
 
       // Step 2: Now that we have successfully created a new payment, cancel the original payment intent
@@ -152,20 +194,35 @@ export async function POST(req) {
       const canceledPaymentIntent = await stripe.paymentIntents.cancel(paymentIntentId, cancelOptions)
 
       // Record the cancellation in your database
-      await prisma.transaction
-        .create({
-          data: {
-            userId: user.id,
-            paymentIntentId: canceledPaymentIntent.id,
-            amount: canceledPaymentIntent.amount,
-            status: canceledPaymentIntent.status,
-            type: "hold_released",
-            description: `Hold released after creating new payment: ${newPaymentIntent.id}`,
-          },
-        })
-        .catch((err) => {
-          console.error("Failed to record cancellation:", err)
-        })
+      // await prisma.transaction
+      //   .create({
+      //     data: {
+      //       userId: user.id,
+      //       trancastion_id: canceledPaymentIntent.id,
+      //       amount: canceledPaymentIntent.amount,
+      //       status: canceledPaymentIntent.status,
+      //       type: "hold_released",
+      //       order_id: `Hold released after creating new payment: ${newPaymentIntent.id}`,
+      //       // description: `Hold released after creating new payment: ${newPaymentIntent.id}`,
+      //     },
+      //   })
+      //   .catch((err) => {
+      //     console.log("Failed to record cancellation:", err)
+      //   })
+
+
+      await prisma.HoldPayments.update({
+        data: {
+          status: "success"
+        },
+        where: {
+          paymentIntentId
+        }
+      }).catch((err) => {
+        console.log("Hold Payment updation failed!")
+      })
+
+
 
       return NextResponse.json({
         success: true,
@@ -177,7 +234,7 @@ export async function POST(req) {
         originalAmountReleased: canceledPaymentIntent.amount,
       })
     } catch (chargeError) {
-      console.error("Error creating new payment:", chargeError)
+      console.log("Error creating new payment:", chargeError)
 
       // If there was an error creating the new payment, return the error
       if (chargeError.type === "StripeCardError") {
@@ -201,7 +258,7 @@ export async function POST(req) {
       )
     }
   } catch (error) {
-    console.error("Error processing payment:", error)
+    console.log("Error processing payment:", error)
 
     // Handle specific Stripe errors
     if (error.type === "StripeInvalidRequestError") {

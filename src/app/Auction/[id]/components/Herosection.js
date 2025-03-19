@@ -291,6 +291,10 @@ export default function HeroSection({ data, triggerfetch }) {
                     <p className="text-xl  font-[200] tracking-tight">Auction Ended</p>
                     {/* <p className="text-sm sm:text-base text-left text-gray-600">Sold Out</p> */}
                   </div>
+                ) : data.status === 'Sold' ? (
+                  <div className="text-left flex gap-4">
+                    <p className="text-lg md:text-2xl text-left text-gray-600">Sold Out</p>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <span className="flex items-center gap-1">

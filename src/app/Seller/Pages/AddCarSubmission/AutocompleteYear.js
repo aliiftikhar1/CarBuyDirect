@@ -1,18 +1,23 @@
+"use client"
+
 import { useState, useEffect, useRef } from "react"
 import { Input } from "@/components/ui/input"
 
-
-export function AutocompleteInput({ options, name, label, required = false }) {
-  console.log("OPtions are : ",options)
+export function YearAutocompleteInput({ options, name, label, required = false }) {
+  console.log("Options are : ", options)
   const [inputValue, setInputValue] = useState("")
   const [filteredOptions, setFilteredOptions] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => {
-    const filtered = options.filter((option) => 
-      typeof option === 'string' && option.toLowerCase().includes(inputValue.toLowerCase())
-    )
+    const filtered = options.filter((option) => {
+      // Convert option to string for comparison regardless of type
+      const optionStr = String(option)
+
+      // Convert input value to string and compare
+      return optionStr.toLowerCase().includes(inputValue.toLowerCase())
+    })
     setFilteredOptions(filtered)
   }, [inputValue, options])
 
@@ -22,7 +27,8 @@ export function AutocompleteInput({ options, name, label, required = false }) {
   }
 
   const handleOptionClick = (option) => {
-    setInputValue(option)
+    // Always convert to string for consistent display
+    setInputValue(String(option))
     setIsOpen(false)
   }
 
@@ -59,9 +65,9 @@ export function AutocompleteInput({ options, name, label, required = false }) {
               <li
                 key={index}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize"
-                onClick={() => handleOptionClick(typeof option === 'string' ? option : String(option))}
+                onClick={() => handleOptionClick(option)}
               >
-                {typeof option === 'string' ? option : String(option)}
+                {String(option)}
               </li>
             ))}
           </ul>
@@ -70,3 +76,4 @@ export function AutocompleteInput({ options, name, label, required = false }) {
     </div>
   )
 }
+

@@ -1,18 +1,30 @@
+"use client"
+
 import { useState, useEffect, useRef } from "react"
 import { Input } from "@/components/ui/input"
 
-
-export function AutocompleteInput({ options, name, label, required = false }) {
-  console.log("OPtions are : ",options)
+export function CarApiAutocompleteInput({ options, setSelectedBrand, name, label, required = false }) {
+  console.log("Options for", name, "are", options)
   const [inputValue, setInputValue] = useState("")
   const [filteredOptions, setFilteredOptions] = useState([])
   const [isOpen, setIsOpen] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => {
-    const filtered = options.filter((option) => 
-      typeof option === 'string' && option.toLowerCase().includes(inputValue.toLowerCase())
-    )
+    // Safely filter options, handling potential undefined values
+    const filtered = options.filter((option) => {
+      // First check if option and option.name exist
+      if (!option || option.name === undefined || option.name === null) {
+        return false
+      }
+
+      // Convert option.name to string if it's not already
+      const optionName = typeof option.name === "string" ? option.name : String(option.name)
+
+      // Now safely compare with inputValue
+      return optionName.toLowerCase().includes(inputValue.toLowerCase())
+    })
+
     setFilteredOptions(filtered)
   }, [inputValue, options])
 
@@ -22,7 +34,10 @@ export function AutocompleteInput({ options, name, label, required = false }) {
   }
 
   const handleOptionClick = (option) => {
-    setInputValue(option)
+    // Convert option.name to string if needed
+    const displayName = typeof option.name === "string" ? option.name : String(option.name)
+    setSelectedBrand(option.id)
+    setInputValue(displayName)
     setIsOpen(false)
   }
 
@@ -59,9 +74,9 @@ export function AutocompleteInput({ options, name, label, required = false }) {
               <li
                 key={index}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer capitalize"
-                onClick={() => handleOptionClick(typeof option === 'string' ? option : String(option))}
+                onClick={() => handleOptionClick(option)}
               >
-                {typeof option === 'string' ? option : String(option)}
+                {typeof option.name === "string" ? option.name : String(option.name)}
               </li>
             ))}
           </ul>
@@ -70,3 +85,4 @@ export function AutocompleteInput({ options, name, label, required = false }) {
     </div>
   )
 }
+

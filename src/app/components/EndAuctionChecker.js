@@ -1,30 +1,64 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+"use client"
+
+import { useEffect, useState, useRef } from "react"
 
 export default function EndAuctionsChecker() {
-  const [auctions, setAuctions] = useState([]);
-  const checkedAuctions = useRef(new Set());
-  const intervalId = useRef(null);
+  const [auctions, setAuctions] = useState([])
+  // Track both completed auctions and auctions currently being processed
+  const processedAuctions = useRef(new Set())
+  const processingAuctions = useRef(new Set())
+  const intervalId = useRef(null)
 
-  // Fetch live auctions once on mount
-  useEffect(() => {
-    const fetchAuctions = async () => {
-      try {
-        const response = await fetch("/api/admin/auctionmanagement/Live");
-        const data = await response.json();
-        setAuctions(data.data || []);
-      } catch (error) {
-        console.error("Error fetching auctions:", error);
-      }
-    };
-    fetchAuctions();
-  }, []);
-
-  // Function to end an auction
-  const endAuction = useCallback(async (auction) => {
-    // if (!auction?.Bids?.length || checkedAuctions.current.has(auction.id)) return;
-
-    console.log("Bids are", auction?.Bids[0]);
+  const fetchAuctions = async () => {
     try {
+      const response = await fetch("/api/admin/auctionmanagement/Live")
+      const data = await response.json()
+      setAuctions(data.data || [])
+    } catch (error) {
+      console.error("Error fetching auctions:", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchAuctions()
+  }, [1])
+
+  useEffect(()=>{
+    intervalId.current = setInterval(() => {
+      const currentDate = new Date()
+
+      auctions.forEach((auction) => {
+        const endDate = new Date(auction.endDate)
+
+        // Check if auction has ended, is live, and hasn't been processed or isn't currently being processed
+        if (
+          currentDate >= endDate &&
+          auction.status === "Live" &&
+          !processedAuctions.current.has(auction.id) &&
+          !processingAuctions.current.has(auction.id)
+        ) {
+          // Mark as processing before making the API call
+          processingAuctions.current.add(auction.id)
+
+          // Only process auctions with bids
+          if (auction?.Bids?.length) {
+            endAuction(auction)
+          } else {
+            // If no bids, just mark as processed
+            processedAuctions.current.add(auction.id)
+            processingAuctions.current.delete(auction.id)
+          }
+        }
+      })
+    }, 1000)
+
+    return () => clearInterval(intervalId.current)
+  })
+
+  const endAuction = async (auction) => {
+    try {
+      console.log("Ending auction:", auction.id, "with bid:", auction?.Bids[0])
+
       const response = await fetch(`/api/user/endAuction/${auction.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,41 +67,29 @@ export default function EndAuctionsChecker() {
           price: auction.Bids[0].price,
           currency: auction.Bids[0].currency,
         }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`Failed to end auction ${auction.id}`);
+        throw new Error(`Failed to end auction ${auction.id}`)
       }
 
-      console.log(`Auction ${auction.id} ended successfully`);
-      checkedAuctions.current.add(auction.id);
+      console.log(`Auction ${auction.id} ended successfully`)
+
+      // Mark as processed and remove from processing
+      processedAuctions.current.add(auction.id)
+      processingAuctions.current.delete(auction.id)
+      // Refresh auctions list
+      fetchAuctions()
+
+      window.location.reload();
+
     } catch (error) {
-      console.error(`Error ending auction ${auction.id}:`, error);
+      console.error(`Error ending auction ${auction.id}:`, error)
+      // Remove from processing so it can be retried
+      processingAuctions.current.delete(auction.id)
     }
-  }, []);
+  }
 
-  // Check and end expired auctions
-  useEffect(() => {
-    const checkAuctions = () => {
-      const currentDate = new Date();
-      // console.log("Current Date is:", currentDate);
-
-      auctions.forEach((auction) => {
-        const endDate = new Date(auction.endDate);
-        const localEndDate = new Date(endDate.getTime() + endDate.getTimezoneOffset() * 60000); // Convert to local
-
-        // console.log(`Auction ID: ${auction.id} - Local End Date:`, localEndDate);
-
-        if (currentDate >= localEndDate && auction.status === "Live" && !checkedAuctions.current.has(auction.id)) {
-          endAuction(auction);
-        }
-      });
-    };
-
-    intervalId.current = setInterval(checkAuctions, 1000);
-
-    return () => clearInterval(intervalId.current);
-  }, [auctions, endAuction]);
-
-  return null;
+  return null
 }
+

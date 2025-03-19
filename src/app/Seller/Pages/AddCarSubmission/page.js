@@ -15,6 +15,8 @@ import { Label } from "@radix-ui/react-label"
 import { uploadfiletoserver } from "@/app/Actions"
 import { AutocompleteInput } from "./Autocomplete"
 import { useSelector } from "react-redux"
+import { CarApiAutocompleteInput } from "./AutocompleteBrands"
+import { YearAutocompleteInput } from "./AutocompleteYear"
 
 export default function ContactForm() {
   const editor = useRef(null)
@@ -30,13 +32,22 @@ export default function ContactForm() {
   const [exteriorColors, setExteriorColors] = useState(["Red", "Yellow"]);
   const [conditions, setConditions] = useState(["Used", "New"]);
   const [brands, setBrands] = useState(["Make"]);
+  const [models, setModels] = useState([]);
+  const [years, setYears] = useState([]);
   const [files, setFiles] = useState([])
+  const [selectBrand, setSelectedBrand]=useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [editorContent, setEditorContent] = useState({
     description: "",
     highlights: "",
     notes: "",
   })
+
+  useEffect(()=>{
+    console.log("Selected Make is ",selectBrand)
+    const brandmodels = models.filter((data)=>data.make_id==selectBrand)
+    setModels(brandmodels)
+  },[selectBrand])
   const handleDrop = (e) => {
     e.preventDefault()
     const droppedFiles = Array.from(e.dataTransfer.files)
@@ -46,8 +57,25 @@ export default function ContactForm() {
   const fetchBrands = async () => {
     try {
       setloading(true);
+      const endpoints2 = [
+        `/api/CarApi/getMakes`,
+        `/api/CarApi/getModels`,
+        `/api/CarApi/getYears`,
+      ];
+
+      // Fetch all data concurrently
+      const responses2 = await Promise.all(endpoints2.map((endpoint) => fetch(endpoint)));
+
+      // Parse all responses as JSON
+      const data2 = await Promise.all(responses2.map((response) => response.json()));
+      console.log("Data from car api is : ",data2)
+
+      // Update the state with the fetched data
+      setBrands(data2[0].data);
+      setModels(data2[1].data);
+      setYears(data2[2]);
+      
       const endpoints = [
-        `/api/user/FetchLists/Makes`,
         `/api/user/FetchLists/BodyTypes`,
         `/api/user/FetchLists/Categories`,
         `/api/user/FetchLists/Conditions`,
@@ -62,16 +90,13 @@ export default function ContactForm() {
 
       // Parse all responses as JSON
       const data = await Promise.all(responses.map((response) => response.json()));
-
-      // Update the state with the fetched data
-      setBrands(data[0].vehicleMakes);
-      setBodyTypes(data[1].bodyType);
-      setCategories(data[2].vehiclecategory);
-      setConditions(data[3].vehiclecondition);
-      setEngineCapacities(data[4].vehicleengineCapacity);
-      setExteriorColors(data[5].vehicleexteriorColor);
-      setFuelTypes(data[6].vehiclefuelType);
-      setTransmissions(data[7].vehicletransmission);
+      setBodyTypes(data[0].bodyType);
+      setCategories(data[1].vehiclecategory);
+      setConditions(data[2].vehiclecondition);
+      setEngineCapacities(data[3].vehicleengineCapacity);
+      setExteriorColors(data[4].vehicleexteriorColor);
+      setFuelTypes(data[5].vehiclefuelType);
+      setTransmissions(data[6].vehicletransmission);
 
       setloading(false);
     } catch (error) {
@@ -211,15 +236,16 @@ export default function ContactForm() {
         <div className="grid md:grid-cols-4 gap-6">
           <div className="space-y-2">
             <label htmlFor="vehicleMake" className="text-sm font-medium">
-              {/* Vehicle make * */}
+            Vehicle make *
             </label>
-            <AutocompleteInput options={brands} name="vehicleMake" label="Vehicle make " required />
+            <CarApiAutocompleteInput options={brands} setSelectedBrand={setSelectedBrand} name="vehicleMake" />
           </div>
           <div className="space-y-2">
             <label htmlFor="vehicleModel" className="text-sm font-medium">
               Vehicle model *
             </label>
-            <Input id="vehicleModel" name="vehicleModel" required />
+            <CarApiAutocompleteInput options={models} name="vehicleModel" />
+            {/* <Input id="vehicleModel" name="vehicleModel" required /> */}
           </div>
 
           <div className="space-y-2 col-span-2">
@@ -260,7 +286,8 @@ export default function ContactForm() {
             <label htmlFor="vehicleYear" className="text-sm font-medium">
               Vehicle year *
             </label>
-            <Input id="vehicleYear" name="vehicleYear" required />
+            <YearAutocompleteInput options={years} name="vehicleYear"  />
+            {/* <Input id="vehicleYear" name="vehicleYear" required /> */}
           </div>
           <div className="space-y-2">
             <label htmlFor="vin" className="text-sm font-medium">
