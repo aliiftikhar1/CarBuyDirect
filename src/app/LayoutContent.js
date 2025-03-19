@@ -22,7 +22,7 @@ export default function LayoutContent({ children }) {
     <Providers>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
-          <EndAuctionsChecker />
+          {/* <EndAuctionsChecker /> */}
           {isAdmin ? (
             <div>{children}</div>
           ) : (
