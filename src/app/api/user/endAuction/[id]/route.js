@@ -63,13 +63,14 @@ export async function POST(request, { params }) {
 
         console.log("Stripe Response:", await stripeResponse.json());
 
-        // Update auction status
+        
+        if (stripeResponse.ok) {
+        
         const updatedAuction = await prisma.auction.update({
             where: { id },
             data: { status: "Sold" },
         });
 
-        // Create Sold record
         await prisma.Sold.create({
             data: {
                 auctionId: updatedAuction.id,
@@ -80,7 +81,7 @@ export async function POST(request, { params }) {
         });
 
         return NextResponse.json({ success: true, data: updatedAuction }, { status: 200 });
-
+    }
     } catch (error) {
         console.error("Server Error:", error);
         return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });

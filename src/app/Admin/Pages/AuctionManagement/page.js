@@ -10,7 +10,7 @@ export default function AuctionManagementPage() {
   const [loading, setLoading] = useState(true);
    async function getAuctions() {
     try {
-      const response = await fetch(`/api/admin/auctionmanagement`, {
+      const response = await fetch(`/api/admin/auctionmanagement/All/1`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

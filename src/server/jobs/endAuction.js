@@ -42,8 +42,8 @@ const endAuction = async (auction) => {
   }
 }
 
-// **Cron Job to Run Every 10 Seconds**
-cron.schedule("*/10 * * * * *", async () => {
+// **Cron Job to Run Every 1 Seconds**
+cron.schedule("*/1 * * * * *", async () => {
   console.log("Checking auctions...")
 
   const auctions = await fetchLiveAuctions()
