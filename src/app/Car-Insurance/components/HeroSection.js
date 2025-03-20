@@ -170,7 +170,7 @@ export default function CarInsuranceForm() {
               </button>
 
               <div className="mt-6 flex items-center justify-center gap-2">
-                <div className="font-bold text-gray-800">CARSOME</div>
+                <div className="font-bold text-gray-800">CarBuyDirect</div>
                 <div className="text-gray-500">|</div>
                 <div className="font-bold flex items-center">
                   <span className="mr-1">🛡️</span> PolicyStreet

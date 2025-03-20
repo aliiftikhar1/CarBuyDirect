@@ -110,6 +110,10 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
               <div className="text-left flex gap-4">
                 <p className="text-lg md:text-xl font-[200] tracking-tight">Auction Ended</p>
               </div>
+            ) : item.status === "Sold" ? (
+              <div className="text-left flex gap-4">
+                <p className="text-lg md:text-xl font-[200] tracking-tight">Sold Out</p>
+              </div>
             ) : (
               <div className="flex flex-col-reverse w-full justify-between mt-2">
                 <div className="w-full">

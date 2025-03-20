@@ -3,17 +3,17 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 export default function LoanFAQSection() {
   const faqs = [
     {
-      question: "What is CARSOME Capital's motor insurance?",
+      question: "What is CarBuyDirect Capital's motor insurance?",
       answer:
-        "CARSOME Capital's motor insurance is a comprehensive coverage plan that protects your vehicle against various risks. We partner with leading insurance providers to offer competitive rates and excellent coverage options tailored to your needs.",
+        "CarBuyDirect Capital's motor insurance is a comprehensive coverage plan that protects your vehicle against various risks. We partner with leading insurance providers to offer competitive rates and excellent coverage options tailored to your needs.",
     },
     {
-      question: "Why should I renew motor insurance at CARSOME x PolicyStreet?",
+      question: "Why should I renew motor insurance at CarBuyDirect x PolicyStreet?",
       answer:
-        "Renewing your motor insurance with CARSOME x PolicyStreet offers several benefits including competitive rates, streamlined process, instant quotes from multiple insurers, and dedicated customer support. We also provide flexible payment options and additional coverage customization.",
+        "Renewing your motor insurance with CarBuyDirect x PolicyStreet offers several benefits including competitive rates, streamlined process, instant quotes from multiple insurers, and dedicated customer support. We also provide flexible payment options and additional coverage customization.",
     },
     {
-      question: "How do I renew my insurance and road tax with CARSOME x PolicyStreet?",
+      question: "How do I renew my insurance and road tax with CarBuyDirect x PolicyStreet?",
       answer:
         "The renewal process is simple: Enter your vehicle details on our platform, compare quotes from various insurers, select your preferred coverage, and complete the payment. Road tax renewal can be added during the insurance purchase process for a convenient one-stop solution.",
     },

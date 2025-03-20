@@ -10,23 +10,23 @@ export default function LoanSteps() {
   const preApprovedSteps = [
     {
       number: "1",
-      title: "Get a CARSOME Pre-approval Certificate",
+      title: "Get a CarBuyDirect Pre-approval Certificate",
       description:
-        "Submit your Identification Card (IC) and monthly income details to us. A CARSOME Pre-approval Certificate will be generated with your maximum loan amount, repayment period, and interest rate.",
+        "Submit your Identification Card (IC) and monthly income details to us. A CarBuyDirect Pre-approval Certificate will be generated with your maximum loan amount, repayment period, and interest rate.",
       icon: FileCheck,
     },
     {
       number: "2",
-      title: "Choose a CARSOME Certified Car",
+      title: "Choose a CarBuyDirect Certified Car",
       description:
-        "Find the car you want on our website. Book a test drive and once you make your decision, show your CARSOME Pre-approval Certificate to get your purchase finalized.",
+        "Find the car you want on our website. Book a test drive and once you make your decision, show your CarBuyDirect Pre-approval Certificate to get your purchase finalized.",
       icon: Car,
     },
     {
       number: "3",
       title: "Collect Your Car Instantly",
       description:
-        "Bring your car home! We can arrange for collection at a CARSOME Experience Center, or deliver it straight to your doorstep.",
+        "Bring your car home! We can arrange for collection at a CarBuyDirect Experience Center, or deliver it straight to your doorstep.",
       icon: CheckCircle,
     },
   ]
@@ -36,7 +36,7 @@ export default function LoanSteps() {
       number: "1",
       title: "Find Your Dream Car",
       description:
-        "Browse our wide selection of CARSOME Certified cars on our website. Book a test drive and choose the perfect car for you.",
+        "Browse our wide selection of CarBuyDirect Certified cars on our website. Book a test drive and choose the perfect car for you.",
       icon: Search,
     },
     {

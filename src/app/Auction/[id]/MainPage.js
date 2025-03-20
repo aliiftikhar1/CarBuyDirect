@@ -88,7 +88,7 @@ export default function Car() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center h-auto mt-20">
+    <div className="flex flex-col justify-center items-center h-auto mt-12">
       {auctionItem && <HeroSection data={auctionItem} triggerfetch={setHandler} />}
     </div>
   );

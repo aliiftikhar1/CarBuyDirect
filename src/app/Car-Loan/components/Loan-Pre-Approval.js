@@ -17,13 +17,13 @@ export default function LoanPreApproval() {
       icon: Tag,
       title: "Fast & Free Application",
       description:
-        "Get a CARSOME Pre-approval Certificate with just your Identification Card (IC) and monthly income details. It's completely free.",
+        "Get a CarBuyDirect Pre-approval Certificate with just your Identification Card (IC) and monthly income details. It's completely free.",
     },
     {
       icon: Car,
       title: "Collect Your Car Easily",
       description:
-        "Secure the CARSOME Certified car you want by showing your CARSOME Pre-approval Certificate and collect your car in 1 working day*.",
+        "Secure the CarBuyDirect Certified car you want by showing your CarBuyDirect Pre-approval Certificate and collect your car in 1 working day*.",
     },
   ]
 
@@ -36,8 +36,8 @@ export default function LoanPreApproval() {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">Get Your Car Loan Pre-approved</h2>
               <p className="text-gray-600">
-                Worried about loan rejection? Avoid the wait and get a CARSOME Pre-approval Certificate before you shop
-                for your dream CARSOME Certified car!
+                Worried about loan rejection? Avoid the wait and get a CarBuyDirect Pre-approval Certificate before you shop
+                for your dream CarBuyDirect Certified car!
               </p>
             </div>
 
