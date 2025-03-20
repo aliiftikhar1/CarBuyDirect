@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 // Store processed auction IDs with timestamps to allow cleanup
 const processedAuctions = new Map(); // Map<auctionId, timestamp>
@@ -14,7 +14,7 @@ const processedAuctions = new Map(); // Map<auctionId, timestamp>
 const processingAuctions = new Set();
 
 // Configuration
-const API_URL = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const AUCTION_CLEANUP_HOURS = 24; // Keep processed auctions in memory for 24 hours
 const MAX_CONCURRENT_PROCESSES = 5; // Process up to 5 auctions concurrently
 
