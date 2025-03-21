@@ -266,7 +266,7 @@ export function RegistrationDialog({ open, onClose, email }) {
       return
     }
 
-    const payload = { email, name:firstName, password }
+    const payload = { email, name:firstName+" "+lastName, password }
 
     try {
       setLoadingAction("register")
