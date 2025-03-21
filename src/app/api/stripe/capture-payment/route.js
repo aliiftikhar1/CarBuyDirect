@@ -58,6 +58,41 @@ export async function POST(req) {
 
     }
 
+    // const allholdpayments = await prisma.HoldPayments.findMany({
+    //   include: {
+    //     user: true,
+    //     auction: {
+    //       include: {
+    //         CarSubmission: true
+    //       }
+    //     }
+    //   },
+    //   where: {
+    //     auctionId: holdedpayment.auctionId
+    //   }
+    // }).catch((err) => {
+    //   console.log("Hold Payment updation failed!")
+    // })
+    // if(allholdpayments){
+    //   return NextResponse.json(
+    //     {
+    //       success: true,
+    //       message: "All hold payments",
+    //       data: allholdpayments
+    //     },
+    //     { status: 200 },
+    //   )}
+    //   else{
+    //     return NextResponse.json(
+    //       {
+    //         success: false,
+    //         message: "All hold payments not found",
+    //         data: allholdpayments
+    //       },
+    //       { status: 400 },
+    //     )
+    //   }
+
     // Verify the user exists and has permission to capture this payment
     const user = await prisma.user.findUnique({
       where: { id: Number.parseInt(userId) },
@@ -73,6 +108,7 @@ export async function POST(req) {
       )
     }
 
+   
     // Retrieve the payment intent to check its status and available amount
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
 
@@ -191,8 +227,33 @@ export async function POST(req) {
         cancellation_reason: "requested_by_customer",
       }
 
-      const canceledPaymentIntent = await stripe.paymentIntents.cancel(paymentIntentId, cancelOptions)
+      // const canceledPaymentIntent = await stripe.paymentIntents.cancel(paymentIntentId, cancelOptions)
 
+      const allholdpayments = await prisma.HoldPayments.findMany({
+        include: {
+          user: true,
+          auction: {
+            include: {
+              CarSubmission: true
+            }
+          }
+        },
+        where: {
+          auctionId: holdedpayment.auctionId
+        }
+      }).catch((err) => {
+        console.log("Hold Payment updation failed!")
+      })
+  
+      if (allholdpayments) {
+        for (let i = 0; i < allholdpayments.length; i++) {
+          if (allholdpayments[i].status === "requires_capture") {
+            const canceledPaymentIntent = await stripe.paymentIntents.cancel(allholdpayments[i].paymentIntentId, cancelOptions)
+
+          }
+        }
+      }
+  
       // Record the cancellation in your database
       // await prisma.transaction
       //   .create({
@@ -231,7 +292,7 @@ export async function POST(req) {
         paymentIntentId: newPaymentIntent.id,
         originalPaymentIntentId: paymentIntentId,
         amountCaptured: newPaymentIntent.amount,
-        originalAmountReleased: canceledPaymentIntent.amount,
+        // originalAmountReleased: canceledPaymentIntent.amount,
       })
     } catch (chargeError) {
       console.log("Error creating new payment:", chargeError)
