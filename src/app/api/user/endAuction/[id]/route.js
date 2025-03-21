@@ -104,10 +104,10 @@ export async function POST(request, { params }) {
             }
         }
 
-        console.log("Auction Found:", auction);
-        console.log("Latest Bid:", latestBid);
-        console.log("Hold Payment:", holdPayment);
-
+        const holdPayment = auction.HoldPayments.find(payment => payment.userId == latestBid.userId);
+            if (!holdPayment) {
+                return NextResponse.json({ success: false, message: "Hold payment not found" }, { status: 400 });
+            }
         // Capture payment via Stripe API
         const stripeResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stripe/capture-payment`, {
             method: "POST",
