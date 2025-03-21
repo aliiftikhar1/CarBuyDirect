@@ -141,10 +141,14 @@ export function AuthDialogs() {
         setOpen(false)
         setOpen2(false)
       }
+      else{
+        toast.error(data.message)
+      }
       setLoadingAction(null)
 
     } catch (error) {
       setLoadingAction(null)
+      toast.error("Error logging in", error.message)
       console.log("error loggin in")
     }
   }
