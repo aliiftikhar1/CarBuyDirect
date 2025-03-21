@@ -11,8 +11,20 @@ export async function POST(request, { params }) {
         const auction = await prisma.auction.findUnique({
             where: { id },
             include: {
+                CarSubmission:{
+                    select:{
+                        User:true,
+                        reserved:true,
+                        reservedPrice:true,
+                        vehicleYear:true,
+                        vehicleModel:true
+                    },
+                },
                 HoldPayments: true,
                 Bids: {
+                    include:{
+                        User:true,
+                    },
                     orderBy: { createdAt: "desc" }, // Get latest bid directly
                     take: 1,
                 },
@@ -27,18 +39,70 @@ export async function POST(request, { params }) {
         if (auction.status === "Ended" || auction.status === "Sold") {
             return NextResponse.json({ success: false, message: "Auction already ended" }, { status: 400 });
         }
-
         const latestBid = auction.Bids[0];
+        console.log("Latest Bid:", latestBid);
         if (!latestBid) {
             return NextResponse.json({ success: false, message: "No bids found for this auction" }, { status: 400 });
         }
-        
-        const holdPayment = auction.HoldPayments.find(payment => payment.userId == latestBid.userId);
+
+        function getReserveStatus(currentPrice, reservedPrice) {
+            if (currentPrice >= reservedPrice) {
+              return "Reserve met"
+            } else if (currentPrice >= reservedPrice * 0.9) {
+              return "Reserve near"
+            } else {
+              return "Reserve not met"
+            }
+          }
+          if(auction.CarSubmission.reserved==true){
+        const reserveStatus = getReserveStatus(latestBid.price, auction.CarSubmission.reservedPrice);
+        console.log("Reserve Status:", reserveStatus);
         console.log("Auction:", auction);
-        console.log("Hold Payment:", holdPayment);
+        if(reserveStatus=="Reserve not met"){
+            await prisma.Auction.update({
+                where:{id:auction.id},
+                data: {
+                    status: "Ended",
+                },
+            });
+            return NextResponse.json({ success: false, message: "Reserve not met" }, { status: 400 });
+          }else if(reserveStatus=="Reserve near"){
+            let Finalpayload = {
+                price: latestBid.price,
+                message: "Top bidder of the auction has reached near the reserve price. Do you want to sell the vehicle on mentioned price or do you want to negotiate with buyer?",
+                auctionId: auction.id,
+                receiverId: auction.CarSubmission.User.id,
+                senderId: latestBid.userId,
+                userType: "buyer",
+                regarding:"endAuction",
+                userName: auction.CarSubmission.User.name,
+                receiverEmail: auction.CarSubmission.User.email,
+                vehicleYear: auction.CarSubmission.vehicleYear,
+                vehicleModel:auction.CarSubmission.vehicleModel,
+            }
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/deal`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(Finalpayload),
+                        })
+                        const data = await response.json();
+                        console.log("Response:",data);
+            console.log("FInal Payload:",Finalpayload);
+            await prisma.Auction.update({
+                where:{id:auction.id},
+                data: {
+                    status: "Ended",
+                },
+            });
+
+            return NextResponse.json({ success: false, message: "Reserve Near" }, { status: 400 });
+          }
+
+        const holdPayment = auction.HoldPayments.find(payment => payment.userId == latestBid.userIyd);
         if (!holdPayment) {
             return NextResponse.json({ success: false, message: "Hold payment not found" }, { status: 400 });
         }
+    }
 
         console.log("Auction Found:", auction);
         console.log("Latest Bid:", latestBid);

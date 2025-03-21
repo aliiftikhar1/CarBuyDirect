@@ -763,7 +763,7 @@ export default function Notifications() {
             price: replyNotifications.length>0?replyNotifications[replyNotifications.length-1].price: selectedNotification.price,
             auctionId: selectedNotification.auctionId,
             userId: selectedNotification.senderId,
-            sellerId: userId,
+            sellerId: selectedNotification.receiverId,
             userType: userdetails.type,
             receiverEmail: selectedNotification?.sender?.email ,
             replyOf:selectedNotification.id,
@@ -802,7 +802,7 @@ export default function Notifications() {
             price: replyNotifications.length >0 ?replyNotifications[replyNotifications.length-1].price:selectedNotification.price,
             auctionId: selectedNotification.auctionId,
             userId: selectedNotification.senderId,
-            sellerId: userId,
+            sellerId: selectedNotification.receiverId,
             userType: userdetails.type,
             replyOf: selectedNotification.id,
             buyerName,
@@ -955,7 +955,7 @@ export default function Notifications() {
                                                     Regarding: {selectedNotification.auction?.CarSubmission?.vehicleYear + " " + selectedNotification.auction?.CarSubmission?.vehicleMake + " " + selectedNotification.auction?.CarSubmission?.vehicleModel || "Unknown Auction"}
                                                 </p>
                                                 <p className="text-muted-foreground text-sm">
-                                                    Buy Price: {selectedNotification.auction?.CarSubmission?.buyPrice || "Unknown Price"}
+                                                    Buy Price: {selectedNotification.regarding ==="endAuction"?selectedNotification.auction?.CarSubmission?.reservedPrice:selectedNotification.auction?.CarSubmission?.buyPrice || "Unknown Price"}
                                                 </p>
                                             </div>
                                             <Button variant="ghost" size="icon" onClick={() => setSelectedNotification(null)}>

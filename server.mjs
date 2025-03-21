@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = 3002;
 
 // Store processed auction IDs with timestamps to allow cleanup
 const processedAuctions = new Map(); // Map<auctionId, timestamp>

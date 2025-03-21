@@ -232,6 +232,7 @@ model Notification {
   receiverId Int      
   auctionId  Int     
   type       String   
+  regarding   String  @default("notification")
   message    String?  
   price      Float?   
   replyOf    Int?
