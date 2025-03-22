@@ -52,7 +52,17 @@ export async function GET() {
                 receiver: true,
                 auction: {
                     include: {
-                        CarSubmission: true,
+                        CarSubmission: {
+                            include:{
+                                User: true,
+                            }
+                        },
+                        HoldPayments: true,
+                        Bids: {
+                            include: {
+                                User: true,
+                            },
+                        },
                     },
                 },
             },

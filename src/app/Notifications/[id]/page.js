@@ -1,549 +1,3 @@
-// // // // // "use client"
-// // // // // import { useParams } from 'next/navigation'
-// // // // // import React from 'react'
-
-// // // // // function Notifications() {
-// // // // //     const { id } = useParams();
-// // // // //     console.log("ID", id)
-// // // // //     return (
-// // // // //         <div className='container'>
-// // // // //             <div className='d-flex justify-content-center align-items-center' style={{ height: "500px" }}>notifications</div>
-// // // // //             <div className='row'>
-// // // // //                 <div className='col-md-4'></div>
-
-// // // // //             </div>
-// // // // //         </div>
-// // // // //     )
-// // // // // }
-
-// // // // // export default Notifications
-
-
-// // // // "use client";
-
-// // // // import { getAllUsersServices } from "@/Services/getallusers.services";
-// // // // import { useParams, useRouter } from "next/navigation";
-// // // // import { useEffect, useState } from "react";
-
-// // // // function Notifications() {
-// // // //     const { id } = useParams();
-// // // //     const router = useRouter();
-// // // //     const [notifications, setNotifications] = useState([]);
-// // // //     const [selectedNotification, setSelectedNotification] = useState([]);
-// // // //     const [loading, setLoading] = useState(true);
-// // // // const[allUSersData,setAllUsersData]=useState([]);
-// // // //     useEffect(() => {
-// // // //         async function fetchNotifications() {
-// // // //             try {
-// // // //                 const res = await fetch("/api/user/notifications");
-// // // //                 const data = await res.json();
-// // // //                 const filteredData = data.notifications.filter((data) => data.id == id)
-// // // //                 setNotifications(filteredData);
-// // // //                 console.log("filteredData", filteredData);
-// // // //                 setLoading(false);
-// // // //             } catch (error) {
-// // // //                 console.error("Error fetching notifications:", error);
-// // // //                 setLoading(false);
-// // // //             }
-// // // //         }
-// // // //         fetchNotifications();
-// // // //         getAllUsersData()
-// // // //     }, [id]);
-// // // //     const getAllUsersData = async () => {
-// // // //         try {
-// // // //             const response = await getAllUsersServices();
-// // // //             setAllUsersData()
-// // // //             console.log(response.data)
-// // // //         } catch (error) {
-// // // //             console.log("ERROR", error.message);
-// // // //         }
-// // // //     }
-// // // //     return (
-// // // //         <div className="container-fluid d-flex" style={{ height: "100vh" }}>
-// // // //             <div className="row">
-// // // //                 <div className="col-md-12 p-3">
-// // // //                     {
-// // // //                         loading ? (
-// // // //                             <p>Loading notifications...</p>
-// // // //                         ) : notifications.length === 0 ? (
-// // // //                             <p>No notifications yet.</p>
-// // // //                         ) : notifications.map((data) => {
-// // // //                             console.log(data)
-// // // //                             return (
-// // // //                                 <>
-
-// // // //                                     <div className="card p-4 shadow-sm">
-// // // //                                         <h4>{data.price}</h4>
-// // // //                                         <p>{data.message}</p>
-// // // //                                         <small className="text-muted">From: {selectedNotification.senderName}</small>
-// // // //                                     </div>
-// // // //                                 </>
-// // // //                             )
-// // // //                         })
-// // // //                     }
-// // // //                 </div>
-// // // //             </div>
-// // // //         </div>
-// // // //     );
-// // // // }
-
-// // // // export default Notifications;
-
-
-// // // "use client";
-
-// // // import { getAllUsersServices } from "@/Services/getallusers.services";
-// // // import { useParams, useRouter } from "next/navigation";
-// // // import { useEffect, useState } from "react";
-
-// // // function Notifications() {
-// // //     const { id } = useParams();
-// // //     const router = useRouter();
-// // //     const [notifications, setNotifications] = useState([]);
-// // //     const [selectedNotification, setSelectedNotification] = useState(null);
-// // //     const [loading, setLoading] = useState(true);
-// // //     const [allUsersData, setAllUsersData] = useState([]);
-// // //     const [currentUser, setCurrentUser] = useState(null); // Assume user info comes from auth
-
-// // //     useEffect(() => {
-// // //         async function fetchNotifications() {
-// // //             try {
-// // //                 const res = await fetch("/api/user/notifications");
-// // //                 const data = await res.json();
-// // //                 setNotifications(data.notifications);
-// // //                 setLoading(false);
-// // //             } catch (error) {
-// // //                 console.error("Error fetching notifications:", error);
-// // //                 setLoading(false);
-// // //             }
-// // //         }
-// // //         fetchNotifications();
-// // //         getAllUsersData();
-// // //     }, []);
-
-// // //     const getAllUsersData = async () => {
-// // //         try {
-// // //             const response = await getAllUsersServices();
-// // //             setAllUsersData(response.data);
-// // //         } catch (error) {
-// // //             console.log("ERROR", error.message);
-// // //         }
-// // //     };
-
-// // //     const handleNotificationClick = (notification) => {
-// // //         setSelectedNotification(notification);
-// // //     };
-
-// // //     return (
-// // //         <div className="container-fluid" style={{ height: "100vh" }}>
-// // //             <div className="row w-100 border d-flex ">
-// // //                 {/* Left Sidebar: List of Notifications */}
-// // //                 <div className="col-md-4 border border-dark p-3 border-end" style={{ overflowY: "auto", maxHeight: "100vh" }}>
-// // //                     <h5 className="mb-3">Notifications</h5>
-// // //                     {loading ? (
-// // //                         <p>Loading notifications...</p>
-// // //                     ) : notifications.length === 0 ? (
-// // //                         <p>No notifications yet.</p>
-// // //                     ) : (
-// // //                         notifications.map((notification) => {
-// // //                             const sender = allUsersData.find(user => user.id === notification.senderId);
-// // //                             const receiver = allUsersData.find(user => user.id === notification.receiverId);
-// // //                             return (
-// // //                                 <div
-// // //                                     key={notification.id}
-// // //                                     className={`card p-3 mb-2 shadow-sm ${selectedNotification?.id === notification.id ? "bg-light" : ""}`}
-// // //                                     style={{ cursor: "pointer" }}
-// // //                                     onClick={() => handleNotificationClick(notification)}
-// // //                                 >
-// // //                                     <h6>{notification.type.toUpperCase()} Notification</h6>
-// // //                                     <p className="mb-1">{notification.message}</p>
-// // //                                     <small className="text-muted">From: {sender ? sender.name : "Unknown"}</small>
-// // //                                 </div>
-// // //                             );
-// // //                         })
-// // //                     )}
-// // //                 </div>
-
-// // //                 {/* Right Side: Notification Details */}
-// // //                 <div className="col-md-8 p-4">
-// // //                     {selectedNotification ? (
-// // //                         <div>
-// // //                             <h4>{selectedNotification.type.toUpperCase()} Notification</h4>
-// // //                             <p>{selectedNotification.message}</p>
-// // //                             <p><strong>Price Offered:</strong> ${selectedNotification.price}</p>
-// // //                             <p><strong>From:</strong> {allUsersData.find(user => user.id === selectedNotification.senderId)?.name || "Unknown"}</p>
-// // //                             <p><strong>To:</strong> {allUsersData.find(user => user.id === selectedNotification.receiverId)?.name || "Unknown"}</p>
-// // //                         </div>
-// // //                     ) : (
-// // //                         <p>Select a notification to view details.</p>
-// // //                     )}
-// // //                 </div>
-// // //             </div>
-// // //         </div>
-// // //     );
-// // // }
-
-// // // export default Notifications;
-
-
-// // "use client";
-
-// // import { useParams, useRouter } from "next/navigation";
-// // import { useEffect, useState } from "react";
-// // import { getAllUsersServices } from "@/Services/getallusers.services";
-// // import Skeleton from "@mui/material/Skeleton";
-// // import Avatar from "@mui/material/Avatar";
-// // import Card from "@mui/material/Card";
-// // import CardContent from "@mui/material/CardContent";
-// // import Typography from "@mui/material/Typography";
-// // import Box from "@mui/material/Box";
-// // import List from "@mui/material/List";
-// // import ListItem from "@mui/material/ListItem";
-// // import ListItemAvatar from "@mui/material/ListItemAvatar";
-// // import ListItemText from "@mui/material/ListItemText";
-// // import Divider from "@mui/material/Divider";
-// // import { useSelector } from "react-redux";
-// // import { Button } from "@mui/material";
-
-// // function Notifications() {
-// //     const { id } = useParams();
-// //     const router = useRouter();
-// //     const [notifications, setNotifications] = useState([]);
-// //     const [selectedNotification, setSelectedNotification] = useState(null);
-// //     const [loading, setLoading] = useState(true);
-// //     const [allUsersData, setAllUsersData] = useState([]);
-// //     const [loggedInUserId, setLoggedInUserId] = useState(null); // Assume user ID is stored in session/local storage
-// //     const userId = useSelector((data) => data.CarUser.userDetails?.id)
-
-// //     useEffect(() => {
-// //         async function fetchNotifications() {
-// //             try {
-// //                 const res = await fetch("/api/user/notifications");
-// //                 const data = await res.json();
-
-// //                 // Filter notifications related to the logged-in user
-// //                 const userNotifications = data.notifications.filter(
-// //                     (notif) => notif.senderId === loggedInUserId || notif.receiverId === loggedInUserId
-// //                 );
-// //                 setNotifications(userNotifications);
-// //                 setLoading(false);
-// //             } catch (error) {
-// //                 console.error("Error fetching notifications:", error);
-// //                 setLoading(false);
-// //             }
-// //         }
-// //         setLoggedInUserId(userId)
-// //         fetchNotifications();
-// //         getAllUsersData();
-// //     }, [id, loggedInUserId]);
-
-// //     const getAllUsersData = async () => {
-// //         try {
-// //             const response = await getAllUsersServices();
-// //             setAllUsersData(response.data);
-// //         } catch (error) {
-// //             console.log("ERROR", error.message);
-// //         }
-// //     };
-
-// //     return (
-// //         <div className="container-fluid my-5 d-flex" style={{ height: "100vh", position: "relative", top: "100px" }}>
-// //             {/* <div className="row w-100">
-// //                 <div className="col-md-4 border-end p-3" style={{ background: "#f8f9fa" }}>
-// //                     <h5 className="mb-3">Notifications</h5>
-// //                     {loading ? (
-// //                         <Skeleton variant="rectangular" width={"100%"} height={50} />
-// //                     ) : notifications.length === 0 ? (
-// //                         <p>No notifications found.</p>
-// //                     ) : (
-// //                         <List>
-// //                             {notifications.map((notif) => {
-// //                                 const sender = allUsersData.find((user) => user.id === notif.senderId);
-// //                                 return (
-// //                                     <>
-// //                                         <ListItem
-// //                                             key={notif.id}
-// //                                             button
-// //                                             onClick={() => setSelectedNotification(notif)}
-// //                                             className="mb-2 p-2 shadow-sm"
-// //                                             style={{ borderRadius: "8px", background: "#fff" }}
-// //                                         >
-// //                                             <ListItemAvatar>
-// //                                                 <Avatar>{sender?.name.charAt(0)}</Avatar>
-// //                                             </ListItemAvatar>
-// //                                             <ListItemText
-// //                                                 primary={notif.message}
-// //                                                 secondary={`From: ${sender?.name || "Unknown"}`}
-// //                                             />
-// //                                         </ListItem>
-// //                                         <Divider />
-// //                                     </>
-// //                                 );
-// //                             })}
-// //                         </List>
-// //                     )}
-// //                 </div>
-
-// //                 <div className="col-md-8 p-4">
-// //                     {selectedNotification ? (
-// //                         <Card className="shadow-lg">
-// //                             <CardContent>
-// //                                 <Typography variant="h5" gutterBottom>
-// //                                     {selectedNotification.message}
-// //                                 </Typography>
-// //                                 <Typography variant="body1" color="textSecondary">
-// //                                     Price: ${selectedNotification.price || "N/A"}
-// //                                 </Typography>
-// //                                 <Typography variant="body2" color="textSecondary">
-// //                                     Sent by: {allUsersData.find((user) => user.id === selectedNotification.senderId)?.name || "Unknown"}
-// //                                 </Typography>
-// //                             </CardContent>
-// //                         </Card>
-// //                     ) : (
-// //                         <Typography variant="body1" className="text-center text-muted">
-// //                             Select a notification to view details.
-// //                         </Typography>
-// //                     )}
-// //                 </div>
-// //             </div> */}
-// //             <div className="row w-100">
-// //                 <div className="col-md-4 border-end p-3" style={{ background: "#f8f9fa" }}>
-// //                     <h5 className="mb-3">Notifications</h5>
-// //                     {loading ? (
-// //                         <Skeleton variant="rectangular" width={"100%"} height={50} />
-// //                     ) : notifications.length === 0 ? (
-// //                         <p>No notifications found.</p>
-// //                     ) : (
-// //                         <List>
-// //                             {notifications.map((notif) => {
-// //                                 const sender = allUsersData.find((user) => user.id === notif.senderId);
-// //                                 return (
-// //                                     <>
-// //                                         <ListItem
-// //                                             key={notif.id}
-// //                                             button
-// //                                             onClick={() => setSelectedNotification(notif)}
-// //                                             className="mb-2 p-2 shadow-sm"
-// //                                             style={{ borderRadius: "8px", background: "#fff" }}
-// //                                         >
-// //                                             <ListItemAvatar>
-// //                                                 <Avatar>{sender?.name?.charAt(0)}</Avatar>
-// //                                             </ListItemAvatar>
-// //                                             <ListItemText
-// //                                                 primary={notif.message}
-// //                                                 secondary={`From: ${sender?.name || "Unknown"}`}
-// //                                             />
-// //                                         </ListItem>
-// //                                         <Divider />
-// //                                     </>
-// //                                 );
-// //                             })}
-// //                         </List>
-// //                     )}
-// //                 </div>
-
-// //                 <div className="col-md-8 p-4">
-// //                     {selectedNotification ? (
-// //                         <Card className="shadow-lg p-3">
-// //                             <CardContent>
-// //                                 <Typography variant="h5" gutterBottom>
-// //                                     {selectedNotification.message}
-// //                                 </Typography>
-// //                                 <Typography variant="body1" color="textSecondary">
-// //                                     Price: ${selectedNotification.price || "N/A"}
-// //                                 </Typography>
-// //                                 <Typography variant="body2" color="textSecondary" className="mb-3">
-// //                                     Sent by: {allUsersData.find((user) => user.id === selectedNotification.senderId)?.name || "Unknown"}
-// //                                 </Typography>
-// //                                 <Box display="flex" justifyContent="space-between">
-// //                                     <Button variant="contained" color="primary">Reply</Button>
-// //                                     <Button variant="contained" color="success">Done</Button>
-// //                                     <Button variant="contained" color="error">Decline</Button>
-// //                                 </Box>
-// //                             </CardContent>
-// //                         </Card>
-// //                     ) : (
-// //                         <Typography variant="body1" className="text-center text-muted">
-// //                             Select a notification to view details.
-// //                         </Typography>
-// //                     )}
-// //                 </div>
-// //             </div>
-// //         </div>
-// //     );
-// // }
-
-// // export default Notifications;
-
-// "use client";
-
-// import { useParams, useRouter } from "next/navigation";
-// import { useEffect, useState } from "react";
-// import { getAllUsersServices } from "@/Services/getallusers.services";
-// import Skeleton from "@mui/material/Skeleton";
-// import Avatar from "@mui/material/Avatar";
-// import Card from "@mui/material/Card";
-// import CardContent from "@mui/material/CardContent";
-// import Typography from "@mui/material/Typography";
-// import Box from "@mui/material/Box";
-// import List from "@mui/material/List";
-// import ListItem from "@mui/material/ListItem";
-// import ListItemAvatar from "@mui/material/ListItemAvatar";
-// import ListItemText from "@mui/material/ListItemText";
-// import Divider from "@mui/material/Divider";
-// import Button from "@mui/material/Button";
-// import Modal from "@mui/material/Modal";
-// import TextField from "@mui/material/TextField";
-// import { useSelector } from "react-redux";
-
-// function Notifications() {
-//     const { id } = useParams();
-//     const router = useRouter();
-//     const [notifications, setNotifications] = useState([]);
-//     const [selectedNotification, setSelectedNotification] = useState(null);
-//     const [loading, setLoading] = useState(true);
-//     const [allUsersData, setAllUsersData] = useState([]);
-//     const [loggedInUserId, setLoggedInUserId] = useState(null);
-//     const [replyModalOpen, setReplyModalOpen] = useState(false);
-//     const [replyMessage, setReplyMessage] = useState("");
-//     const [replyPrice, setReplyPrice] = useState("");
-//     const userId = useSelector((data) => data.CarUser.userDetails?.id)
-
-//     useEffect(() => {
-//         async function fetchNotifications() {
-//             try {
-//                 const res = await fetch("/api/user/notifications");
-//                 const data = await res.json();
-
-//                 const userNotifications = data.notifications.filter(
-//                     (notif) => notif.senderId === loggedInUserId || notif.receiverId === loggedInUserId
-//                 );
-//                 setNotifications(userNotifications);
-//                 setLoading(false);
-//             } catch (error) {
-//                 console.error("Error fetching notifications:", error);
-//                 setLoading(false);
-//             }
-//         }
-//         setLoggedInUserId(userId)
-//         fetchNotifications();
-//         getAllUsersData();
-//     }, [id, loggedInUserId]);
-
-//     const getAllUsersData = async () => {
-//         try {
-//             const response = await getAllUsersServices();
-//             setAllUsersData(response.data);
-//         } catch (error) {
-//             console.log("ERROR", error.message);
-//         }
-//     };
-
-//     const handleReply = () => {
-//         console.log("Replying with:", replyMessage, "Price:", replyPrice);
-//         setReplyModalOpen(false);
-//     };
-
-//     return (
-//         <div className="container-fluid d-flex" style={{ height: "100vh" }}>
-//             <div className="row w-100">
-//                 <div className="col-md-4 border-end p-3" style={{ background: "#f8f9fa" }}>
-//                     <h5 className="mb-3">Notifications</h5>
-//                     {loading ? (
-//                         <Skeleton variant="rectangular" width={"100%"} height={50} />
-//                     ) : notifications.length === 0 ? (
-//                         <p>No notifications found.</p>
-//                     ) : (
-//                         <List>
-//                             {notifications.map((notif) => {
-//                                 const sender = allUsersData.find((user) => user.id === notif.senderId);
-//                                 return (
-//                                     <>
-//                                         <ListItem
-//                                             key={notif.id}
-//                                             button
-//                                             onClick={() => setSelectedNotification(notif)}
-//                                             className="mb-2 p-2 shadow-sm"
-//                                             style={{ borderRadius: "8px", background: notif.isRead ? "#fff" : "#e3f2fd" }}
-//                                         >
-//                                             <ListItemAvatar>
-//                                                 <Avatar>{sender?.name?.charAt(0)}</Avatar>
-//                                             </ListItemAvatar>
-//                                             <ListItemText
-//                                                 primary={notif.message}
-//                                                 secondary={`From: ${sender?.name || "Unknown"}`}
-//                                             />
-//                                         </ListItem>
-//                                         <Divider />
-//                                     </>
-//                                 );
-//                             })}
-//                         </List>
-//                     )}
-//                 </div>
-
-//                 <div className="col-md-8 p-4">
-//                     {selectedNotification ? (
-//                         <Card className="shadow-lg p-3">
-//                             <CardContent>
-//                                 <Typography variant="h5" gutterBottom>
-//                                     {selectedNotification.message}
-//                                 </Typography>
-//                                 <Typography variant="body1" color="textSecondary">
-//                                     Price: ${selectedNotification.price || "N/A"}
-//                                 </Typography>
-//                                 <Typography variant="body2" color="textSecondary" className="mb-3">
-//                                     Sent by: {allUsersData.find((user) => user.id === selectedNotification.senderId)?.name || "Unknown"}
-//                                 </Typography>
-//                                 <Box display="flex" justifyContent="space-between">
-//                                     <Button variant="contained" color="primary" onClick={() => setReplyModalOpen(true)}>Reply</Button>
-//                                     <Button variant="contained" color="success">Done</Button>
-//                                     <Button variant="contained" color="error">Decline</Button>
-//                                 </Box>
-//                             </CardContent>
-//                         </Card>
-//                     ) : (
-//                         <Typography variant="body1" className="text-center text-muted">
-//                             Select a notification to view details.
-//                         </Typography>
-//                     )}
-//                 </div>
-//             </div>
-
-//             <Modal open={replyModalOpen} onClose={() => setReplyModalOpen(false)}>
-//                 <Box className="modal-box" style={{ padding: "20px", background: "#fff", borderRadius: "8px", width: "400px", margin: "auto", marginTop: "20vh" }}>
-//                     <Typography variant="h6" gutterBottom>Reply to Notification</Typography>
-//                     <TextField
-//                         fullWidth
-//                         label="Message"
-//                         variant="outlined"
-//                         multiline
-//                         rows={3}
-//                         value={replyMessage}
-//                         onChange={(e) => setReplyMessage(e.target.value)}
-//                         className="mb-3"
-//                     />
-//                     <TextField
-//                         fullWidth
-//                         label="Price"
-//                         variant="outlined"
-//                         type="number"
-//                         value={replyPrice}
-//                         onChange={(e) => setReplyPrice(e.target.value)}
-//                         className="mb-3"
-//                     />
-//                     <Box display="flex" justifyContent="space-between">
-//                         <Button variant="contained" color="primary" onClick={handleReply}>Send Reply</Button>
-//                         <Button variant="contained" color="secondary" onClick={() => setReplyModalOpen(false)}>Cancel</Button>
-//                     </Box>
-//                 </Box>
-//             </Modal>
-//         </div>
-//     );
-// }
-
-
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -562,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { Bell, CheckCircle, Clock, MessageSquare, X, Reply } from "lucide-react"
 import { getAllUsersServices } from "@/Services/getallusers.services"
 import { getAllAuctionDataService } from "@/Services/getallaucntion.services"
+import Payment from "../components/Payment"
 
 export default function Notifications() {
     const { id } = useParams()
@@ -609,24 +64,24 @@ export default function Notifications() {
                 (notif) => notif.id == id,
             )
             if (filterSelectedNotifications.replyOf !== null) {
-                
+
                 const ReplyOfFilteredSelectedNotifications = data.notifications.find(
                     (notif) => notif.id === filterSelectedNotifications.replyOf,
                 )
                 setSelectedNotification(ReplyOfFilteredSelectedNotifications)
                 markAsRead(filterSelectedNotifications.id, filterSelectedNotifications)
-                filterReplyNotifications(ReplyOfFilteredSelectedNotifications.id,userNotifications)
+                filterReplyNotifications(ReplyOfFilteredSelectedNotifications.id, userNotifications)
                 console.log("ReplyOfFilteredNotifications", ReplyOfFilteredSelectedNotifications)
                 //do filteration properly
             }
-            else{
+            else {
                 filterReplyNotifications(filterSelectedNotifications.id, userNotifications)
                 setSelectedNotification(filterSelectedNotifications)
                 markAsRead(filterSelectedNotifications.id, filterSelectedNotifications)
             }
             console.log("Filter notification is : ", filterSelectedNotifications)
 
-           
+
             setAllNotifications(userNotifications)
 
 
@@ -634,8 +89,8 @@ export default function Notifications() {
             const mainNotifs = userNotifications.filter((notif) => notif.replyOf === null)
             setMainNotifications(mainNotifs)
 
-            
-            
+
+
         } catch (error) {
             console.error("Error fetching notifications:", error)
             toast.error("Failed to load notifications")
@@ -644,7 +99,7 @@ export default function Notifications() {
         }
     }
 
-    useEffect(() => {   
+    useEffect(() => {
         console.log("Selected Notification", selectedNotification)
         console.log("Filtered Reply Notifications", replyNotifications)
     }, [selectedNotification, replyNotifications])
@@ -713,7 +168,7 @@ export default function Notifications() {
             receiverEmail: selectedNotification?.sender?.email,
             replyOf: selectedNotification.id,
             vehicleYear: selectedNotification?.auction?.vehicleYear,
-            vehicleModel:selectedNotification?.auction?.vehicleModel,
+            vehicleModel: selectedNotification?.auction?.vehicleModel,
         } : Finalpayload = {
             price: replyPrice || selectedNotification.price,
             message: replyMessage,
@@ -725,7 +180,7 @@ export default function Notifications() {
             receiverEmail: selectedNotification?.sender?.email,
             replyOf: selectedNotification.id,
             vehicleYear: selectedNotification?.auction?.vehicleYear,
-            vehicleModel:selectedNotification?.auction?.vehicleModel,
+            vehicleModel: selectedNotification?.auction?.vehicleModel,
         }
 
 
@@ -760,22 +215,34 @@ export default function Notifications() {
         // const buyerName = selectedNotification?.sender?.name || "Unknown"
 
         const payload = {
-            price: replyNotifications.length>0?replyNotifications[replyNotifications.length-1].price: selectedNotification.price,
+            price: replyNotifications.length > 0 ? replyNotifications[replyNotifications.length - 1].price : selectedNotification.price,
             auctionId: selectedNotification.auctionId,
             userId: selectedNotification.senderId,
             sellerId: selectedNotification.receiverId,
             userType: userdetails.type,
-            receiverEmail: selectedNotification?.sender?.email ,
-            replyOf:selectedNotification.id,
+            receiverEmail: selectedNotification?.sender?.email,
+            replyOf: selectedNotification.id,
             userName: selectedNotification?.sender?.name,
         }
 
         try {
-            const response = await fetch("/api/user/dealdone", {
+            const latestBid = selectedNotification.auction?.Bids[selectedNotification.auction?.Bids.length - 1]
+            const response = await fetch("/api/user/endAuction/postUpdation", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            })
+                body: JSON.stringify({
+                  auction: selectedNotification.auction,
+                   latestBid: latestBid,
+                    notificationId: selectedNotification.id
+                }),
+              })
+        
+              const data = await response.json()
+            // const response = await fetch("/api/user/dealdone", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify(payload),
+            // })
 
             if (response.ok) {
                 toast.success("Deal completed successfully!")
@@ -799,7 +266,7 @@ export default function Notifications() {
         const buyerName = allUsersData.find((user) => user.id === senderId)?.name || "Unknown"
 
         const payload = {
-            price: replyNotifications.length >0 ?replyNotifications[replyNotifications.length-1].price:selectedNotification.price,
+            price: replyNotifications.length > 0 ? replyNotifications[replyNotifications.length - 1].price : selectedNotification.price,
             auctionId: selectedNotification.auctionId,
             userId: selectedNotification.senderId,
             sellerId: selectedNotification.receiverId,
@@ -955,7 +422,7 @@ export default function Notifications() {
                                                     Regarding: {selectedNotification.auction?.CarSubmission?.vehicleYear + " " + selectedNotification.auction?.CarSubmission?.vehicleMake + " " + selectedNotification.auction?.CarSubmission?.vehicleModel || "Unknown Auction"}
                                                 </p>
                                                 <p className="text-muted-foreground text-sm">
-                                                    Buy Price: {selectedNotification.regarding ==="endAuction"?selectedNotification.auction?.CarSubmission?.reservedPrice:selectedNotification.auction?.CarSubmission?.buyPrice || "Unknown Price"}
+                                                    Buy Price: {selectedNotification.regarding !== "buynow" ? selectedNotification.auction?.CarSubmission?.reservedPrice : selectedNotification.auction?.CarSubmission?.buyPrice || "Unknown Price"}
                                                 </p>
                                             </div>
                                             <Button variant="ghost" size="icon" onClick={() => setSelectedNotification(null)}>
@@ -990,8 +457,11 @@ export default function Notifications() {
                                                     </div>
                                                 ) : (
                                                     <>
+                                                        {(replyNotifications.length < 1 && (selectedNotification.regarding === "reserve-met"||selectedNotification.regarding === "without-reserve")) && <>
+                                                            <Payment auction={selectedNotification.auction} notificationId={selectedNotification.id}/>
+                                                        </>}
 
-                                                        {replyNotifications.length > 0 ? <></> :
+                                                        {(replyNotifications.length < 1 && (selectedNotification.regarding !== "reserve-not-met" && selectedNotification.regarding !== "without-reserve" && selectedNotification.regarding !== "reserve-met")) &&
                                                             <div className="flex flex-col sm:flex-row gap-3 mt-8">
 
                                                                 <Button onClick={() => setReplyDialogOpen(true)} className="flex-1">
@@ -1035,7 +505,7 @@ export default function Notifications() {
                                         </div>
 
                                         <div className="space-y-4">
-                                            {replyNotifications.filter((item)=>(item.message!=='decline'&&item.message!=='done')).map((reply) => (
+                                            {replyNotifications.filter((item) => (item.message !== 'decline' && item.message !== 'done')).map((reply) => (
                                                 <Card key={reply.id} className={`${reply.type === 'seller' ? 'border-l-primary' : 'border-l-blue-500'} border-l-4 `}>
                                                     <CardContent className="p-4">
                                                         <div className="flex justify-between items-start mb-2">
@@ -1060,13 +530,13 @@ export default function Notifications() {
                                                 </Card>
                                             ))}
 
-                                            {replyNotifications.length > 0  ?
+                                            {replyNotifications.length > 0 ?
                                                 <>
-                                                {replyNotifications[replyNotifications.length - 1].message!=='decline' && <>
-                                                    <div className="flex items-center gap-2 mb-6">
-                                                        <p className="text-lg font-medium">Offered Price:</p>
-                                                        <p className="text-xl font-bold text-green-600">${replyNotifications[replyNotifications.length - 1].price}</p>
-                                                    </div>
+                                                    {replyNotifications[replyNotifications.length - 1].message !== 'decline' && <>
+                                                        <div className="flex items-center gap-2 mb-6">
+                                                            <p className="text-lg font-medium">Offered Price:</p>
+                                                            <p className="text-xl font-bold text-green-600">${replyNotifications[replyNotifications.length - 1].price}</p>
+                                                        </div>
                                                     </>}
                                                     {replyNotifications[replyNotifications.length - 1]?.type === "done" ? (
                                                         <div className="flex items-center gap-2 text-green-600">
@@ -1075,50 +545,50 @@ export default function Notifications() {
                                                         </div>
                                                     ) : (
                                                         <>
-                                                        {replyNotifications[replyNotifications.length-1].message==='decline' ? <><p className="py-2 text-center text-xl rounded px-4 bg-red-500 text-white">Your Offer has been declined!!</p></> :<> 
-                                                            {replyNotifications[replyNotifications.length-1].message==='done' ? <><p className="py-2 text-center text-xl rounded px-4 bg-green-500 text-white">Deal is done!!</p></> :<> 
-                                                            {(replyNotifications[replyNotifications.length - 1]?.type === "seller" && userdetails.type === "seller") || (replyNotifications[replyNotifications.length - 1]?.type === "customer" && userdetails.type === "customer") ? (
-                                                                <div className="flex gap-2 text-amber-500">
-                                                                    <Clock className="h-5 w-5" />
-                                                                    <p>Waiting for {replyNotifications[replyNotifications.length - 1]?.type === 'customer' ? "Seller" : "Buyer"}'s reply</p>
-                                                                </div>
-                                                            ) : (
-                                                                <>
+                                                            {replyNotifications[replyNotifications.length - 1].message === 'decline' ? <><p className="py-2 text-center text-xl rounded px-4 bg-red-500 text-white">Your Offer has been declined!!</p></> : <>
+                                                                {replyNotifications[replyNotifications.length - 1].message === 'done' ? <><p className="py-2 text-center text-xl rounded px-4 bg-green-500 text-white">Deal is done!!</p></> : <>
+                                                                    {(replyNotifications[replyNotifications.length - 1]?.type === "seller" && userdetails.type === "seller") || (replyNotifications[replyNotifications.length - 1]?.type === "customer" && userdetails.type === "customer") ? (
+                                                                        <div className="flex gap-2 text-amber-500">
+                                                                            <Clock className="h-5 w-5" />
+                                                                            <p>Waiting for {replyNotifications[replyNotifications.length - 1]?.type === 'customer' ? "Seller" : "Buyer"}'s reply</p>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <>
 
-                                                                    <div className="flex flex-col sm:flex-row gap-3 mt-8">
-                                                                        {replyNotifications.length > 2 ?
-                                                                            <></>
-                                                                            : <Button onClick={() => setReplyDialogOpen(true)} className="flex-1">
-                                                                                <Reply className="mr-2 h-4 w-4" />
-                                                                                Reply
-                                                                            </Button>}
+                                                                            <div className="flex flex-col sm:flex-row gap-3 mt-8">
+                                                                                {replyNotifications.length > 2 ?
+                                                                                    <></>
+                                                                                    : <Button onClick={() => setReplyDialogOpen(true)} className="flex-1">
+                                                                                        <Reply className="mr-2 h-4 w-4" />
+                                                                                        Reply
+                                                                                    </Button>}
 
 
-                                                                        <Button
-                                                                            variant="outline"
-                                                                            onClick={() => handleDealDone(replyNotifications[replyNotifications.length - 1]?.senderId)}
-                                                                            className="flex-1"
-                                                                        >
-                                                                            <CheckCircle className="mr-2 h-4 w-4" />
-                                                                            Complete Deal
-                                                                        </Button>
+                                                                                <Button
+                                                                                    variant="outline"
+                                                                                    onClick={() => handleDealDone(replyNotifications[replyNotifications.length - 1]?.senderId)}
+                                                                                    className="flex-1"
+                                                                                >
+                                                                                    <CheckCircle className="mr-2 h-4 w-4" />
+                                                                                    Complete Deal
+                                                                                </Button>
 
-                                                                        <Button
-                                                                            variant="destructive"
-                                                                            // onClick={() => setSelectedNotification(null)}
-                                                                            className="flex-1"
-                                                                            onClick={() => handleDealDecline(replyNotifications[replyNotifications.length - 1]?.senderId)}
-                                                                            
-                                                                        >
-                                                                            <X className="mr-2 h-4 w-4" />
-                                                                            Decline
-                                                                        </Button>
-                                                                    </div>
+                                                                                <Button
+                                                                                    variant="destructive"
+                                                                                    // onClick={() => setSelectedNotification(null)}
+                                                                                    className="flex-1"
+                                                                                    onClick={() => handleDealDecline(replyNotifications[replyNotifications.length - 1]?.senderId)}
 
+                                                                                >
+                                                                                    <X className="mr-2 h-4 w-4" />
+                                                                                    Decline
+                                                                                </Button>
+                                                                            </div>
+
+                                                                        </>
+                                                                    )}
                                                                 </>
-                                                            )}
-                                                            </>
-}
+                                                                }
                                                             </>}
                                                         </>
                                                     )}

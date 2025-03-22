@@ -58,41 +58,6 @@ export async function POST(req) {
 
     }
 
-    // const allholdpayments = await prisma.HoldPayments.findMany({
-    //   include: {
-    //     user: true,
-    //     auction: {
-    //       include: {
-    //         CarSubmission: true
-    //       }
-    //     }
-    //   },
-    //   where: {
-    //     auctionId: holdedpayment.auctionId
-    //   }
-    // }).catch((err) => {
-    //   console.log("Hold Payment updation failed!")
-    // })
-    // if(allholdpayments){
-    //   return NextResponse.json(
-    //     {
-    //       success: true,
-    //       message: "All hold payments",
-    //       data: allholdpayments
-    //     },
-    //     { status: 200 },
-    //   )}
-    //   else{
-    //     return NextResponse.json(
-    //       {
-    //         success: false,
-    //         message: "All hold payments not found",
-    //         data: allholdpayments
-    //       },
-    //       { status: 400 },
-    //     )
-    //   }
-
     // Verify the user exists and has permission to capture this payment
     const user = await prisma.user.findUnique({
       where: { id: Number.parseInt(userId) },
@@ -204,7 +169,6 @@ export async function POST(req) {
         )
       }
 
-      // Record the new transaction in your database
       await prisma.transaction
         .create({
           data: {
@@ -250,40 +214,21 @@ export async function POST(req) {
           if (allholdpayments[i].status === "requires_capture") {
             const canceledPaymentIntent = await stripe.paymentIntents.cancel(allholdpayments[i].paymentIntentId, cancelOptions)
 
+            await prisma.HoldPayments.update({
+              data: {
+                status: "success"
+              },
+              where: {
+                paymentIntentId: allholdpayments[i].paymentIntentId
+              }
+            }).catch((err) => {
+              console.log("Hold Payment updation failed!")
+            })
+      
+
           }
         }
       }
-  
-      // Record the cancellation in your database
-      // await prisma.transaction
-      //   .create({
-      //     data: {
-      //       userId: user.id,
-      //       trancastion_id: canceledPaymentIntent.id,
-      //       amount: canceledPaymentIntent.amount,
-      //       status: canceledPaymentIntent.status,
-      //       type: "hold_released",
-      //       order_id: `Hold released after creating new payment: ${newPaymentIntent.id}`,
-      //       // description: `Hold released after creating new payment: ${newPaymentIntent.id}`,
-      //     },
-      //   })
-      //   .catch((err) => {
-      //     console.log("Failed to record cancellation:", err)
-      //   })
-
-
-      await prisma.HoldPayments.update({
-        data: {
-          status: "success"
-        },
-        where: {
-          paymentIntentId
-        }
-      }).catch((err) => {
-        console.log("Hold Payment updation failed!")
-      })
-
-
 
       return NextResponse.json({
         success: true,

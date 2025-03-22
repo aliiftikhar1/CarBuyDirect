@@ -8,56 +8,50 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 export async function POST(request) {
   try {
     const { paymentMethodId, customerId, email, name } = await request.json()
+    console.log("Setting up payment method:", paymentMethodId, customerId, email, name)
+
+    if (!paymentMethodId) {
+      return NextResponse.json({ success: false, error: "Payment method ID is required" }, { status: 400 })
+    }
+
+    let customer = customerId
 
     // If no customer ID is provided, create a new customer
-    let customerIdToUse = customerId
-
-    if (!customerIdToUse) {
-      const customer = await stripe.customers.create({
+    if (!customer && email) {
+      const newCustomer = await stripe.customers.create({
         email,
         name,
+        payment_method: paymentMethodId,
       })
-      customerIdToUse = customer.id
+      customer = newCustomer.id
+    }
+
+    if (!customer) {
+      return NextResponse.json({ success: false, error: "Customer ID or email is required" }, { status: 400 })
     }
 
     // Attach the payment method to the customer
     await stripe.paymentMethods.attach(paymentMethodId, {
-      customer: customerIdToUse,
+      customer,
     })
 
     // Set as the default payment method
-    await stripe.customers.update(customerIdToUse, {
+    await stripe.customers.update(customer, {
       invoice_settings: {
         default_payment_method: paymentMethodId,
       },
     })
 
-    // Create a SetupIntent to verify the payment method
-    const setupIntent = await stripe.setupIntents.create({
-      customer: customerIdToUse,
-      payment_method: paymentMethodId,
-      confirm: true,
-    //   return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/payment-complete`,
-      automatic_payment_methods: {
-        enabled: true,
-        allow_redirects: "never",
-      },
-    })
-
     return NextResponse.json({
       success: true,
-      customerId: customerIdToUse,
-      setupIntent: setupIntent.id,
-      clientSecret: setupIntent.client_secret,
+      customerId: customer,
+      paymentMethodId,
     })
   } catch (error) {
     console.error("Error setting up payment method:", error)
     return NextResponse.json(
-      {
-        success: false,
-        error: error.message || "Failed to set up payment method",
-      },
-      { status: 400 },
+      { success: false, error: error.message || "Failed to set up payment method" },
+      { status: 500 },
     )
   }
 }
