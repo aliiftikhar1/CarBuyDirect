@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import Stripe from "stripe"
+import { sendReserveMetEmail } from "@/lib/ReserveMetEmail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -58,12 +59,13 @@ export default async function ReserveMet({latestBid, auction}) {
         receiverId: auction.CarSubmission.User.id,
         senderId: latestBid.userId,
         userType: "buyer",
+        regarding:"reserve-met",
         userName: auction.CarSubmission.User.name,
         receiverEmail: auction.CarSubmission.User.email,
         vehicleYear: auction.CarSubmission.vehicleYear,
         vehicleModel: auction.CarSubmission.vehicleModel,
     }
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/deal`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/notify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Finalpayload),
@@ -84,12 +86,13 @@ export default async function ReserveMet({latestBid, auction}) {
         vehicleYear: auction.CarSubmission.vehicleYear,
         vehicleModel: auction.CarSubmission.vehicleModel,
     }
-    const response2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/deal`, {
+    const response2 = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/notify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Finalpayload2),
     })
     const data2 = await response2.json();
+    await sendReserveMetEmail(latestBid.User.email, auction.CarSubmission);
     
     await prisma.Auction.update({
         where: { id: auction.id },

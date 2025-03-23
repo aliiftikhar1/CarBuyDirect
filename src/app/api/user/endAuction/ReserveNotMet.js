@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import Stripe from "stripe"
+import { sendReserveNotMetEmail } from "@/lib/ReserverNotMetEmail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -9,7 +10,7 @@ export default async function ReserveNotMet({latestBid, auction}) {
     const allauctionholdpayments = auction.HoldPayments;
     console.log("All Auction Hold Payments are :", allauctionholdpayments);
         const cancelOptions = {
-            cancellation_reason: "reserve_not_met",
+            cancellation_reason: "requested_by_customer",
           }
           if (allauctionholdpayments) {
             for (let i = 0; i < allauctionholdpayments.length; i++) {
@@ -41,12 +42,14 @@ export default async function ReserveNotMet({latestBid, auction}) {
         vehicleYear: auction.CarSubmission.vehicleYear,
         vehicleModel: auction.CarSubmission.vehicleModel,
     }
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/deal`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/notify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Finalpayload),
     })
     const data = await response.json();
+    await sendReserveNotMetEmail(latestBid.User.email, auction.CarSubmission);
+    
     console.log("Response:", data);
     console.log("FInal Payload:", Finalpayload);
     await prisma.Auction.update({

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import Stripe from "stripe"
+import { sendReserveNearEmail } from "@/lib/ReserveNearEmail";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
@@ -11,7 +12,6 @@ export default async function ReserveNear({latestBid, auction}) {
     const holdPayment = auction.HoldPayments.find(payment => payment.userId == latestBid.userId);
     console.log("Hold Payment is :", holdPayment);
     console.log("All Auction Hold Payments are :", allauctionholdpayments);
-    // return NextResponse.json({ success: true, data: "Hold payment checking" }, { status: 200 });
         if (!holdPayment) {
             return NextResponse.json({ success: false, message: "Hold payment not found" }, { status: 400 });
         }else{
@@ -62,12 +62,13 @@ export default async function ReserveNear({latestBid, auction}) {
         vehicleYear: auction.CarSubmission.vehicleYear,
         vehicleModel: auction.CarSubmission.vehicleModel,
     }
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/deal`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/notify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Finalpayload),
     })
     const data = await response.json();
+    await sendReserveNearEmail(latestBid,auction.CarSubmission.User.email, auction.CarSubmission);
     console.log("Response:", data);
     console.log("FInal Payload:", Finalpayload);
     await prisma.Auction.update({

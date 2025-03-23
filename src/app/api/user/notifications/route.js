@@ -66,9 +66,6 @@ export async function GET() {
                     },
                 },
             },
-            // orderBy: {
-            //     createdAt: 'desc', // Ordering by createdAt in descending order
-            // },
         });
 
         return NextResponse.json({

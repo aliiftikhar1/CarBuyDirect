@@ -1,101 +1,3 @@
-// "use client"
-
-// import { useEffect, useState } from "react"
-// import { Input } from "@/components/ui/input"
-// import { Menu, Search, User } from 'lucide-react'
-// import { MainNav } from "./Main-nav"
-// import Header2 from "./Header2"
-// import { AuthDialogs } from "./LoginDialog"
-
-// import { useSelector } from "react-redux"
-// import Link from "next/link"
-
-// export default function Header() {
-//     const [isOpen, setIsOpen] = useState(false)
-//     const user = useSelector((data) => data.CarUser.userDetails)
-
-//     useEffect(() => {
-//         console.log("User ", user)
-//     }, [user])
-
-//     return (
-//         <>
-//             <div className="w-full h-16 md:h-20 flex justify-center items-center z-20 sticky top-0 border-b text-black bg-white px-2 md:px-20">
-//                 <div className="flex justify-between border-b items-center w-full bg-white z-20">
-//                     <div className="flex justify-center items-center">
-//                         <MainNav isOpen={isOpen} onOpenChange={setIsOpen}>
-//                             <Menu className="size-7 md:size-10 cursor-pointer" />
-//                         </MainNav>
-//                     </div>
-//                     <a href='/' className="flex flex-col justify-center items-center">
-//                         <img src="/logo/1.png" className="h-16 md:h-20 w-[70vw] md:w-[25vw] object-cover"></img>
-//                         {/* <h1 className="font-xspace text-base md:text-3xl -tracking-[4px] md:tracking-tight">CAR BUY DIRECT</h1> */}
-//                         {/* <p className="uppercase font-[300] text-xs md:text-base">Supercar Blondie</p> */}
-//                     </a>
-//                     <div className="flex gap-4 text-lg font-[400] tracking-wider justify-center items-center">
-
-//                         {/* {user?.type==='seller'&&<Link href='/Seller' className="px-4 py-1 rounded-full border-2 border-gray-600">Seller Panel</Link>}
-//                         <Search className="size-6" /> */}
-//                         <div ref={searchRef} className="relative flex items-center">
-//                             <div className="relative flex justify-center items-center">
-//                                 {searchOpen && (
-//                                     <Input
-//                                         ref={inputRef}
-//                                         type="text"
-//                                         value={searchTerm}
-//                                         onChange={handleSearch}
-//                                         placeholder="Search for auctions..."
-//                                         className="absolute top-10 right-0 md:top-0 md:right-0 md:relative transition-all duration-300 ease-in-out transform border p-3 rounded-2xl w-64 shadow-md bg-white z-30"
-//                                     />
-//                                 )}
-//                                 <Search
-//                                     className="size-6 cursor-pointer ml-2 relative z-20"
-//                                     onClick={() => {
-//                                         setSearchOpen(!searchOpen)
-//                                         if (!searchOpen) {
-//                                             setSearchTerm("")
-//                                             setFilteredAuctions([])
-//                                         }
-//                                     }}
-//                                 />
-
-//                                 {searchOpen && searchTerm && filteredAuctions.length > 0 && (
-//                                     <div className="absolute right-0 md:right-8 top-20 md:top-10 w-64 bg-white shadow-lg rounded-md border z-30 max-h-60 overflow-y-auto">
-//                                         {filteredAuctions.map((auction) => (
-//                                             <a
-//                                                 href={`/Auction/${auction.CarSubmission.webSlug}`}
-//                                                 key={auction.id}
-//                                                 className="block p-3 hover:bg-gray-100 transition-all rounded-md"
-//                                             >
-//                                                 <div className="text-sm">
-//                                                     {auction.CarSubmission.vehicleMake} {auction.CarSubmission.vehicleModel}
-//                                                 </div>
-//                                                 <div className="text-xs text-gray-500">
-//                                                     {auction.CarSubmission.vehicleYear} • {auction.CarSubmission.condition}
-//                                                 </div>
-//                                             </a>
-//                                         ))}
-//                                     </div>
-//                                 )}
-
-//                                 {searchOpen && searchTerm && filteredAuctions.length === 0 && (
-//                                     <div className="absolute right-0 md:right-8 top-20 md:top-10 w-64 bg-white shadow-lg rounded-md border z-30 p-3">
-//                                         <p className="text-gray-500 text-sm">No matching results found</p>
-//                                     </div>
-//                                 )}
-//                             </div>
-//                         </div>
-//                         <AuthDialogs />
-//                     </div>
-//                 </div>
-//                 <Header2 />
-//             </div>
-
-//         </>
-//     )
-// }
-
-
 "use client"
 
 import { useEffect, useState, useRef } from "react"
@@ -128,7 +30,7 @@ export default function Header() {
     console.log("user", user)
   }, [user])
   useEffect(() => {
-    fetch("http://localhost:3000/api/user/searchCar/1")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/searchCar/1`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
