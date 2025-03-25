@@ -17,7 +17,6 @@ import {
   Check,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-
 export default function ServicesSection() {
   // State for animations
   const [isVisible, setIsVisible] = useState(false)

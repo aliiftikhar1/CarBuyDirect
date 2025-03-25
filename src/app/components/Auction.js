@@ -1,6 +1,6 @@
 import { Star } from "lucide-react";
 import { useSelector } from "react-redux";
-import TimerComponent from "../Car/[id]/components/CountDownTimer";
+import TimerComponent from "./CountDownTimer";
 
 export default function Auction({ items, watchdata }) {
     const userid = useSelector((state) => state.CarUser.userDetails?.id);

@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import BidRegistrationForm from "./BidRegisterationDialog"
 import { useSelector } from "react-redux"
 import { Loader } from "lucide-react"
-import TimerComponent from "@/app/Car/[id]/components/CountDownTimer"
+import TimerComponent from "@/app/components/CountDownTimer"
 import { formatDistance } from "date-fns"
 import { AuthDialogs } from "@/app/components/LoginDialog"
 import BidLogin from "@/app/components/BidLogin"

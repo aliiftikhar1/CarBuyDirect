@@ -2,7 +2,7 @@
 
 import { Star } from "lucide-react";
 import { useSelector } from "react-redux";
-import TimerComponent from "../Car/[id]/components/CountDownTimer";
+import TimerComponent from "../components/CountDownTimer";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import BuynowButton from "../components/BuynowButton";

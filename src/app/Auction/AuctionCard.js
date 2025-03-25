@@ -1,6 +1,6 @@
 import { Check, CircleMinus, CirclePlus, MapPin, PackageOpen, Star } from "lucide-react"
 import Image from "next/image"
-import TimerComponent from "../Car/[id]/components/CountDownTimer"
+import TimerComponent from "../components/CountDownTimer"
 import { useSelector } from "react-redux"
 import { toast } from "sonner"
 
