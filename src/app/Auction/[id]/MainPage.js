@@ -4,8 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import HeroSection from "./components/Herosection";
 import { useSelector } from "react-redux";
-import SkeletonLoader from "@/app/Car/[id]/components/SkeletonLoader";
-
+import SkeletonLoader from "@/app/components/SkeletonLoader";
 export default function Car() {
   const { id } = useParams();
   const [auctionItem, setAuctionItem] = useState(null);
