@@ -9,9 +9,9 @@ export default async function ReserveMet({latestBid, auction}) {
 
     //Payment Capture / Release Logic implemented
     const allauctionholdpayments = auction.HoldPayments.filter(payment => payment.userId !== latestBid.userId);
-        const holdPayment = auction.HoldPayments.find(payment => payment.userId == latestBid.userId);
+        const holdPayment = auction.HoldPayments.filter(payment => payment.userId == latestBid.userId)[0];
         console.log("Hold Payment is :", holdPayment);
-        console.log("All Auction Hold Payments are :", allauctionholdpayments);
+        console.log("All Auction Hold Payments are :",auction.HoldPayments," Real are ", allauctionholdpayments);
         // return NextResponse.json({ success: true, data: "Hold payment checking" }, { status: 200 });
             if (!holdPayment) {
                 return NextResponse.json({ success: false, message: "Hold payment not found" }, { status: 400 });

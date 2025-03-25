@@ -8,7 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 export default async function WithoutReserve({ latestBid, auction }) {
 
   //Payment Capture / Release Logic implemented
-  const allauctionholdpayments = auction.HoldPayments.filter(payment => payment.auctionId !== auction.id);
+  const allauctionholdpayments = auction.HoldPayments.filter(payment => payment.userId !== latestBid.userId);
   const holdPayment = auction.HoldPayments.filter(payment => payment.userId == latestBid.userId)[auction.HoldPayments.filter(payment => payment.userId == latestBid.userId).length-1];
   console.log("Hold Payment is :", holdPayment);
   console.log("All Auction Hold Payments are :", allauctionholdpayments);
