@@ -17,6 +17,7 @@ export default async function ReserveMet({ latestBid, auction }) {
     return NextResponse.json({ success: false, message: "Hold payment not found" }, { status: 400 });
   } else {
     //Capture Top bidder payment
+    if(holdPayment.paymentIntentId && holdPayment.status==="require-capture"){
     const capturePaymentIntent = await stripe.paymentIntents.capture(holdPayment.paymentIntentId)
     await prisma.HoldPayments.update({
       data: {
@@ -28,6 +29,7 @@ export default async function ReserveMet({ latestBid, auction }) {
     }).catch((err) => {
       console.log("Hold Payment updation failed!")
     })
+  }
     // release holded payment to other bidders
     const cancelOptions = {
       cancellation_reason: "requested_by_customer",
