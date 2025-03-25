@@ -67,6 +67,9 @@ export function MainNav({ children, isOpen, onOpenChange }) {
                     <NavLink href="/Car-Insurance" onOpenChange={onOpenChange}>
                       Car Insurance
                     </NavLink>
+                    <NavLink href="/Car-Service" onOpenChange={onOpenChange}>
+                      Other Services
+                    </NavLink>
                   </div>
                 )}
               </div>
