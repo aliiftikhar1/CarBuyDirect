@@ -1,6 +1,5 @@
 import { Skeleton, Box, Grid, Button } from "@mui/material";
- import OverviewSkeleton from "./OverviewSkeleton";
- 
+ import OverviewSkeleton from "./OverViewSkeleton";
  const SkeletonLoader = () => {
      return (
          <div className="w-full px-4 md:px-8 lg:px-36 flex flex-col gap-8 md:py-8">
