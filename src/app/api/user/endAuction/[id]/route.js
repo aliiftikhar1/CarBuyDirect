@@ -21,6 +21,7 @@ export async function POST(request, { params }) {
                         reserved: true,
                         reservedPrice: true,
                         vehicleYear: true,
+                        vehicleMake: true,
                         vehicleModel: true
                     },
                 },

@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
 
-export async function sendReserveMetEmail(latestBid,receiverEmail, carDetails) {
+export async function sendReserveMetEmail(latestBid,receiverEmail, auction) {
     try {
-        console.log("car details are , ",carDetails)
+        console.log("car details are , ",auction)
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -23,8 +23,9 @@ export async function sendReserveMetEmail(latestBid,receiverEmail, carDetails) {
           <p>Auction has been ended and you are the top bidder on this auction, whose details are:</p>
           
           <div style="background-color: #f8f8f8; padding: 15px; border-radius: 8px;">
-            <p><strong>Car Model:</strong> ${carDetails.vehicleModel}</p>
-            <p><strong>Year:</strong> ${carDetails.vehicleYear}</p>
+            <p><strong>Car Model:</strong> ${auction.CarSubmission.vehicleModel}</p>
+            <p><strong>Car Make:</strong> ${auction.CarSubmission.vehicleMake}</p>
+            <p><strong>Year:</strong> ${auction.CarSubmission.vehicleYear}</p>
           </div>
 
           <h3 style="margin-top: 20px;">📩 Message from Buyer:</h3>

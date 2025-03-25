@@ -94,7 +94,7 @@ export default async function ReserveMet({ latestBid, auction }) {
     body: JSON.stringify(Finalpayload2),
   })
   const data2 = await response2.json();
-  await sendReserveMetEmail(latestBid.User.email, auction.CarSubmission);
+  await sendReserveMetEmail(latestBid.User.email, auction);
 
   await prisma.Auction.update({
     where: { id: auction.id },
