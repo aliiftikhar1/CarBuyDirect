@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export async function sendReserveMetEmail(latestBid,receiverEmail, auction) {
+export async function sendReserveMetEmail(receiverEmail, auction) {
     try {
         console.log("car details are , ",auction)
         const transporter = nodemailer.createTransport({
