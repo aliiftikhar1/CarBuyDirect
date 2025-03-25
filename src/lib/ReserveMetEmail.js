@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 
 export async function sendReserveMetEmail(latestBid,receiverEmail, carDetails) {
     try {
-        console.log(carDetails.vehicleYear)
+        console.log("car details are , ",carDetails)
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
