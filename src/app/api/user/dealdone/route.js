@@ -9,7 +9,7 @@ export async function POST(request) {
         const data = await request.json();
         const { price, auctionId, sellerId, replyOf,userId, userType,receiverEmail, userName, vehicleYear, vehicleModel,holdPayments } = data;
         console.log("Hold Payments are:", holdPayments);
-        const userHoldPayment = holdPayments.find(payment => payment.userId == userId);
+        const userHoldPayment = holdPayments.filter(payment => payment.userId == userId)[holdPayments.filter(payment => payment.userId == userId).length-1];
         console.log("User Hold Payment is :", userHoldPayment);
         if (!userHoldPayment) {
             return NextResponse.json({ success: false, message: "Hold payment not found" }, { status: 400 });
@@ -38,7 +38,7 @@ export async function POST(request) {
                 receiverId: sellerId, // Seller ka ID
                 auctionId,
                 type: userType, // Change if needed
-                message: "done",
+                message: "Payment Successfull",
                 regarding:"payment-pending",
                 replyOf,
                 price: parseFloat(price) || null, // Ensure price is Float

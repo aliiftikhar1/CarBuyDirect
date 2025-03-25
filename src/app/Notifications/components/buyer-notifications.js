@@ -146,7 +146,8 @@ export default function SellerNotifications({ id }) {
       auctionId: selectedNotification.auctionId,
       receiverId: selectedNotification.receiverId,
       senderId: selectedNotification.senderId,
-      userType: userdetails.type,
+      userType: userdetails.type==='seller'?"seller":"buyer",
+      regarding: selectedNotification.regarding,
       userName: selectedNotification?.sender?.name,
       receiverEmail: selectedNotification?.sender?.email,
       replyOf: selectedNotification.id,
@@ -432,7 +433,7 @@ export default function SellerNotifications({ id }) {
                         {replyNotifications.length < 1 && selectedNotification.type === "buyer" ? (
                           <div className="flex gap-2 text-amber-500">
                             <Clock className="h-5 w-5" />
-                            <p>Waiting for Buyer's reply</p>
+                            <p>Waiting for Seller's reply</p>
                           </div>
                         ) : (
                           <>
@@ -450,7 +451,7 @@ export default function SellerNotifications({ id }) {
                                 notificationId={selectedNotification.id}
                               />
                             )} */}
-                            {selectedNotification.regarding === "reserve-near" && (
+                            {replyNotifications.length < 1 && selectedNotification.regarding === "reserve-near" && (
                               <div className="flex flex-col sm:flex-row gap-3 mt-8">
                                 <Button onClick={() => setReplyDialogOpen(true)} className="flex-1">
                                   <Reply className="mr-2 h-4 w-4" />
@@ -596,12 +597,15 @@ export default function SellerNotifications({ id }) {
                                     </p>
                                   ) : (
                                     <>
-                                      {replyNotifications[replyNotifications.length - 1]?.type === "seller" ? (
+                                      {replyNotifications[replyNotifications.length - 1]?.type === "buyer" ? (
                                         <div className="flex gap-2 text-amber-500">
                                           <Clock className="h-5 w-5" />
-                                          <p>Waiting for Buyer's reply</p>
+                                          <p>Waiting for Seller's reply</p>
                                         </div>
                                       ) : (
+                                        <>
+                                  {replyNotifications[replyNotifications.length - 1].regarding !=="payment-pending" &&
+                                    
                                         <div className="flex flex-col sm:flex-row gap-3 mt-8">
                                           {replyNotifications.length > 1 ? (
                                             <></>
@@ -638,6 +642,9 @@ export default function SellerNotifications({ id }) {
                                             Decline
                                           </Button>
                                         </div>
+                                        
+                                        }
+                                        </>
                                       )}
                                     </>
                                   )}

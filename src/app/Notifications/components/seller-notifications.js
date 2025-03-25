@@ -145,6 +145,7 @@ export default function SellerNotifications({ id }) {
       receiverId: selectedNotification.receiverId,
       senderId: selectedNotification.senderId,
       userType: userdetails.type,
+      regarding:selectedNotification.regarding,
       userName: selectedNotification?.sender?.name,
       receiverEmail: selectedNotification?.sender?.email,
       replyOf: selectedNotification.id,
@@ -419,7 +420,7 @@ export default function SellerNotifications({ id }) {
 
                     {selectedNotification.price && (
                       <div className="flex items-center gap-2 ">
-                        <p className="text-lg font-medium">Offered Price:</p>
+                        <p className="text-lg font-medium">Offered Price: </p>
                         <p className="text-xl font-bold text-green-600">${selectedNotification.price}</p>
                       </div>
                     )}
@@ -432,7 +433,7 @@ export default function SellerNotifications({ id }) {
                     ) : (
                       <>
                         {/* Seller-specific actions */}
-                        {replyNotifications.length < 1 && selectedNotification.type === "buyer"  ? (
+                        {replyNotifications.length < 1 && selectedNotification.type === "seller"  ? (
                           <>
                           {(selectedNotification.regarding!=="reserve-met"|| selectedNotification.regarding!=="reserve-not-met") ? <> </> : <>
                             <div className="flex gap-2 text-amber-500">
