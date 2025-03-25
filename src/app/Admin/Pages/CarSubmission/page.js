@@ -68,7 +68,7 @@ export default function AdminCarSubmissions() {
   const [loading, setloading] = useState(true)
   async function fetchSubmissions() {
 
-    fetch(`/api/admin/carsubmissions`)
+    fetch(`/api/admin/carsubmissions/all/1`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {

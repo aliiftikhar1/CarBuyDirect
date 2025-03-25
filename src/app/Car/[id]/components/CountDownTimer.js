@@ -224,7 +224,7 @@ import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BuynowButton from "@/app/components/BuynowButton";
 
-export default function TimerComponent({ className = "", endDate, buy, data }) {
+export default function TimerComponent({ className = "", endDate }) {
   const getOrCreateEndDate = () => {
     return endDate ? new Date(endDate) : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
   };
@@ -286,11 +286,6 @@ export default function TimerComponent({ className = "", endDate, buy, data }) {
             </>
           )}
         </div>
-      )}
-      {
-      // timeLeft?.days <= 7 &&
-       buy?.buy && (
-        <BuynowButton data={data} />
       )}
     </div>
   );

@@ -32,7 +32,7 @@ export default function AuctionManagementPage() {
   
    async function getCarSubmissions() {
     try {
-      const response = await fetch(`/api/admin/approvedcarsubmissions`, {
+      const response = await fetch(`/api/admin/approvedcarsubmissions/all/1`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

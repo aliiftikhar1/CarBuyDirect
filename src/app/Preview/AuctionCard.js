@@ -5,9 +5,11 @@ import { useSelector } from "react-redux";
 import TimerComponent from "../Car/[id]/components/CountDownTimer";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
+import BuynowButton from "../components/BuynowButton";
+import { justify } from "jodit/esm/plugins/justify/justify";
 
 export default function Auction({ items, watchdata }) {
-    
+
     const userid = useSelector((state) => state.CarUser.userDetails?.id);
     function handleWatch() {
         if (!userid) {
@@ -42,7 +44,7 @@ export default function Auction({ items, watchdata }) {
                 {/* <p className="text-sm md:text-base">Country: ALL</p> */}
             </div>
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {items?.filter((item) => (item.status !== 'Live' && item.status !== 'Ended')).map((item) => (
+                {items?.filter((item) => (item.status === 'Scheduled')).map((item) => (
                     <div key={item.id} className="md:border relative py-2  md:p-4 ">
                         {watchdata.find((watch) => (watch.auctionId === item.id && watch.userId === userid)) ? (
                             <div onClick={handleWatch} className="z-10 cursor-pointer absolute top-6 left-6 right-auto md:left-auto md:right-6 group bg-black text-white gap-1 text-sm md:text-lg rounded-full flex px-2 py-1">
@@ -62,16 +64,13 @@ export default function Auction({ items, watchdata }) {
                         <a href={`/Auction/${item.CarSubmission?.webSlug}`} className="cursor-pointer">
                             <div className="bg-white h-[90%] group relative shadow-lg overflow-hidden ">
                                 <img
-                                    // src={
-                                    //     item?.CarSubmission?.SubmissionImages?.find(
-                                    //         (image) => image.label === "null"
-                                    //     )?.data || "/placeholder.jpg"
-                                    // }
                                     src={
-                                        item?.CarSubmission?.SubmissionImages[0]?.data
+                                        item?.CarSubmission?.SubmissionImages?.find(
+                                            (image) => image.label === "portrait"
+                                        )?.data || "/placeholder.jpg"
                                     }
                                     alt={item.name}
-                                    style={{height:"600px"}}
+                                    style={{ height: "600px" }}
                                     className="w-full h-full object-cover group-hover:scale-[1.07] transform transition-all duration-500"
                                 />
 
@@ -97,21 +96,24 @@ export default function Auction({ items, watchdata }) {
                                 </div>
                             </div>
                         </a>
-                        <div className="flex-grow h-16 flex justify-center items-center mt-2">
+                        <div className="flex-grow h-16 flex w-full justify-center items-center mt-2">
                             {item.status === "Coming-Soon" ? (
                                 <h2 className="text-xl font-[200] tracking-tight">Comming Soon</h2>
-                            ) : item.status === "Scheduled" ? (
-                                <div className="text-left flex gap-4 items-center">
+                            ) : item.status === "Scheduled" ? (<div className={`flex w-full ${item.CarSubmission?.buy&&"justify-between"} justify-center`}>
+                                <div className="text-left  flex gap-4 items-center">
                                     <p className="text-xl font-[200] tracking-tight items-center">
                                         Auction Begins In
                                     </p>
                                     <TimerComponent
                                         className="gap-1 text-lg"
                                         endDate={item.startDate}
-                                        buy={item.CarSubmission}
-                                        data={item}
+                                      
                                     />
                                 </div>
+                                {item.CarSubmission?.buy && (
+                                    <BuynowButton data={item} />
+                                )}
+                            </div>
                             ) : item.status === "Ended" ? (
                                 <div className="text-left flex gap-4">
                                     <p className="text-lg md:text-xl font-[200] tracking-tight">Auction Ended</p>

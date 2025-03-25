@@ -40,7 +40,7 @@ export default function Auction({ items, watchdata }) {
             </div>
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 ">
                 {items.filter((item) => (item.status === 'Ended' || item.status === "Sold")).map((item) => (
-                    <div key={item.id} className="md:border relative py-2  md:p-4 ">
+                    <div key={item.id} className="md:border relative py-2 md:p-4 ">
                         {watchdata.find((watch) => (watch.auctionId === item.id && watch.userId === userid)) ? (
                             <div onClick={handleWatch} className="z-10 cursor-pointer absolute top-6 left-6 right-auto md:left-auto md:right-6 group bg-black text-white gap-1 text-sm md:text-lg rounded-full flex px-2 py-1">
                                 {/* <div className="size-5 group-hover:animate-ping bg-white rounded-full absolute"></div> */}

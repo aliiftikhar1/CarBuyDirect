@@ -17,6 +17,7 @@ import { Bell, CheckCircle, Clock, MessageSquare, X, Reply } from 'lucide-react'
 import { getAllUsersServices } from "@/Services/getallusers.services"
 import { getAllAuctionDataService } from "@/Services/getallaucntion.services"
 import Payment from "./Payment"
+import DealDonePayment from "./DealDonePayment"
 
 export default function SellerNotifications({ id }) {
   const router = useRouter()
@@ -443,12 +444,12 @@ export default function SellerNotifications({ id }) {
                                 notificationId={selectedNotification.id}
                               />
                             )}
-                            {selectedNotification.regarding === "reserve-met" && (
+                            {/* {selectedNotification.regarding === "reserve-met" && (
                               <Payment
                                 auction={selectedNotification.auction}
                                 notificationId={selectedNotification.id}
                               />
-                            )}
+                            )} */}
                             {selectedNotification.regarding === "reserve-near" && (
                               <div className="flex flex-col sm:flex-row gap-3 mt-8">
                                 <Button onClick={() => setReplyDialogOpen(true)} className="flex-1">
