@@ -100,12 +100,12 @@ export default function Auction({ items, watchdata }) {
                             {item.status === "Coming-Soon" ? (
                                 <h2 className="text-xl font-[200] tracking-tight">Comming Soon</h2>
                             ) : item.status === "Scheduled" ? (<div className={`flex w-full ${item.CarSubmission?.buy&&"justify-between"} justify-center`}>
-                                <div className="text-left  flex gap-4 items-center">
+                                <div className="text-left  flex gap-2 md:gap-4 items-center">
                                     <p className="text-xl font-[200] tracking-tight items-center">
                                         Auction Begins In
                                     </p>
                                     <TimerComponent
-                                        className="gap-1 text-lg"
+                                        className="gap-0 md:gap-1 text-sm md:text-lg"
                                         endDate={item.startDate}
                                       
                                     />

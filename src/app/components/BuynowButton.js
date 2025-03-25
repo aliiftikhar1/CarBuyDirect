@@ -166,20 +166,40 @@ function BuynowButton({ data }) {
 
     return (
         <div>
-            <Button
-                variant="contained"
-                sx={{
-                    bgcolor: "black",
-                    color: "white",
-                    "&:hover": { bgcolor: "#333" },
-                    borderRadius: "20px",
-                    padding: "10px 20px",
-                    fontWeight: "bold",
-                }}
+            <div className="flex flex-col gap-1">
+            
+            <button
+             className="px-2 py-1 border bg-black text-white rounded-full"
+                // variant="contained"
+                // sx={{
+                //     bgcolor: "black",
+                //     color: "white",
+                //     "&:hover": { bgcolor: "#333" },
+                //     borderRadius: "20px",
+                //     padding: "10px 20px",
+                //     fontWeight: "bold",
+                // }}
                 onClick={handleBuyBtn}
             >
                 Buy Now
-            </Button>
+            </button>
+            <button
+             className="px-2 py-1 border bg-purple-500 text-white rounded-full"
+                // variant="contained"
+                // sx={{
+                //     bgcolor: "black",
+                //     color: "white",
+                //     "&:hover": { bgcolor: "#333" },
+                //     borderRadius: "20px",
+                //     padding: "10px 20px",
+                //     fontWeight: "bold",
+                // }}
+                onClick={handleDealOpen}
+            >
+                Make Deal
+            </button>
+            
+            </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                     <BidRegistrationForm setHandler={setHandler} setIsDialogOpen={setIsDialogOpen} />

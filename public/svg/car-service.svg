@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <path d="M48 32H40V40H48V32Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 16H8V24H16V16Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48 16H40V24H48V16Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 16H24V24H32V16Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 32H8V40H16V32Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 32H24V40H32V32Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 48H8V56H16V48Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 48H24V56H32V48Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48 48H40V56H48V48Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="8" y="8" width="48" height="48" stroke="#30b957" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
