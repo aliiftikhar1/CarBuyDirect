@@ -2,455 +2,209 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import {
-  Car,
-  Smartphone,
-  Wrench,
-  BarChart,
-  RotateCw,
-  FileText,
-  Sparkles,
-  Truck,
-  Users,
-  ArrowRight,
-  Star,
-  Check,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-export default function ServicesSection() {
-  // State for animations
-  const [isVisible, setIsVisible] = useState(false)
-  const [hoveredCard, setHoveredCard] = useState(null)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
+import { Car, Smartphone, Wrench, BarChart, RotateCw, FileText, Sparkles, Truck, Users } from "lucide-react"
 
-  // Animation on mount
+export default function ServicePage() {
+  // Countdown timer state
+  const [timeLeft, setTimeLeft] = useState({
+    days: 5,
+    hours: 2,
+    minutes: 28,
+    seconds: 3,
+  })
+
+  // Countdown timer effect
   useEffect(() => {
-    setIsVisible(true)
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 }
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 }
+        } else if (prev.hours > 0) {
+          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 }
+        } else if (prev.days > 0) {
+          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 }
+        } else {
+          clearInterval(timer)
+          return prev
+        }
+      })
+    }, 1000)
 
-    // Auto-rotate featured service with transition handling
-    const interval = setInterval(() => {
-      if (!isTransitioning) {
-        setIsTransitioning(true)
-        setTimeout(() => {
-          setActiveIndex((prev) => (prev + 1) % featuredServices.length)
-          setTimeout(() => {
-            setIsTransitioning(false)
-          }, 50)
-        }, 500)
-      }
-    }, 5000) // Increased interval for smoother experience
+    return () => clearInterval(timer)
+  }, [])
 
-    return () => clearInterval(interval)
-  }, [isTransitioning])
-
-  // Featured services for the showcase with updated colors
-  const featuredServices = [
-    {
-      id: "car-service",
-      title: "Premium Car Service",
-      description: "Complete maintenance package with genuine parts and expert technicians",
-      icon: Car,
-      color: "from-red-500 to-red-600",
-      textColor: "text-red-600",
-      lightColor: "bg-red-50",
-      darkColor: "bg-red-100",
-      stats: { rating: 4.9, completed: "12,450+" },
-    },
-    {
-      id: "mobile-service",
-      title: "Mobile Service",
-      description: "Our technicians come to your location for maximum convenience",
-      icon: Smartphone,
-      color: "from-blue-500 to-blue-600",
-      textColor: "text-blue-600",
-      lightColor: "bg-blue-50",
-      darkColor: "bg-blue-100",
-      stats: { rating: 4.8, completed: "8,320+" },
-    },
-    {
-      id: "car-detailing",
-      title: "Premium Detailing",
-      description: "Restore your vehicle's appearance with our premium detailing service",
-      icon: Sparkles,
-      color: "from-blue-400 to-blue-500",
-      textColor: "text-blue-600",
-      lightColor: "bg-blue-50",
-      darkColor: "bg-blue-100",
-      stats: { rating: 4.9, completed: "5,780+" },
-    },
-  ]
-
-  // All services with updated colors
+  // Service cards data with Lucide icons
   const services = [
     {
       id: "car-service",
       title: "Car Service",
-      description: "Complete maintenance package for your vehicle",
       icon: Car,
       tag: "Special Offer",
-      tagColor: "bg-gradient-to-r from-red-500 to-red-600",
-      popular: true,
-      features: ["Oil change", "Filter replacement", "Multi-point inspection"],
+      tagColor: "bg-red-600",
     },
     {
       id: "mobile-service",
       title: "Mobile Service",
-      description: "We come to your location for convenience",
       icon: Smartphone,
       tag: "Frequently Used",
-      tagColor: "bg-gradient-to-r from-blue-500 to-blue-600",
-      features: ["No travel needed", "Same quality service", "Flexible scheduling"],
+      tagColor: "bg-red-600",
     },
     {
       id: "car-repair",
       title: "Car Repair",
-      description: "Expert diagnostics and repair solutions",
       icon: Wrench,
-      features: ["Computer diagnostics", "Genuine parts", "Warranty included"],
     },
     {
       id: "car-evaluation",
       title: "Car Evaluation",
-      description: "Professional assessment of your vehicle",
       icon: BarChart,
       tag: "New Service",
-      tagColor: "bg-gradient-to-r from-blue-400 to-blue-500",
-      features: ["Detailed report", "Value estimation", "Condition assessment"],
+      tagColor: "bg-red-600",
     },
     {
       id: "car-renewal",
       title: "Car Renewal",
-      description: "Hassle-free vehicle registration renewal",
       icon: RotateCw,
-      features: ["Document handling", "Fast processing", "Compliance check"],
     },
     {
       id: "service-contract",
       title: "Service Contract",
-      description: "Long-term maintenance plans and packages",
       icon: FileText,
       tag: "Top Selling",
-      tagColor: "bg-gradient-to-r from-red-400 to-red-500",
-      popular: true,
-      features: ["Priority scheduling", "Discounted rates", "Comprehensive coverage"],
+      tagColor: "bg-red-600",
     },
     {
       id: "car-detailing",
       title: "Car Detailing",
-      description: "Premium cleaning and polishing services",
       icon: Sparkles,
-      features: ["Interior deep clean", "Paint correction", "Protective coating"],
     },
     {
       id: "roadside-assistance",
-      title: "Roadside Assistance",
-      description: "24/7 emergency support when you need it",
+      title: "Road Assistance",
       icon: Truck,
-      features: ["24/7 availability", "Quick response", "Nationwide coverage"],
     },
     {
       id: "courtesy-car",
       title: "Courtesy Car",
-      description: "Temporary vehicle while yours is serviced",
       icon: Users,
       tag: "New Service",
-      tagColor: "bg-gradient-to-r from-blue-400 to-blue-500",
-      features: ["Various models", "Insurance included", "Flexible duration"],
+      tagColor: "bg-red-600",
     },
   ]
 
-  // Handle manual featured service change
-  const handleFeatureChange = (index) => {
-    if (!isTransitioning && index !== activeIndex) {
-      setIsTransitioning(true)
-      setTimeout(() => {
-        setActiveIndex(index)
-        setTimeout(() => {
-          setIsTransitioning(false)
-        }, 50)
-      }, 300)
-    }
-  }
-
   return (
-    <div className="py-20 relative px-6 md:px-12 bg-gradient-to-b from-white via-gray-50 to-white overflow-hidden">
-      <div className="z-0 absolute w-full h-screen">
-      <div className="fixed-blob top-0 left-0 w-72 h-72 bg-red-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
-        <div className="fixed-blob top-0 right-0 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animation-delay-2000"></div>
-
-      </div>
-      <div className="max-w-7xl mx-auto z-10 relative">
-        {/* Background decorative elements - using fixed positions and reduced number */}
-       
-        {/* Section header */}
-        <div className="text-center mb-16 relative">
-          <Badge className="mb-3 px-4 py-1.5 text-sm bg-gradient-to-r from-red-500 to-red-600 text-white border-none">
-            Our Premium Services
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-black">
-            Exceptional Automotive Solutions
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-lg">
-            Experience the finest automotive services tailored to your needs with our expert team and state-of-the-art
-            facilities
-          </p>
-
-          {/* Decorative line */}
-          <div className="w-24 h-1 bg-gradient-to-r from-red-500 to-blue-500 mx-auto mt-8 rounded-full"></div>
-        </div>
-
-        {/* Featured service showcase - optimized for performance */}
-        <div className="mb-20 relative">
-          <div className="absolute inset-0 bg-white/40 backdrop-blur-md rounded-3xl transform -skew-y-2 shadow-lg border-2 border-gray-400"></div>
-
-          <div className="relative grid grid-cols-1 lg:grid-cols-3 gap-8 p-8 items-center">
-            {/* Featured service image/visual - optimized with will-change */}
-            <div className="lg:col-span-1 flex justify-center">
-              <div className="relative w-64 h-64">
-                {featuredServices.map((service, index) => (
-                  <div
-                    key={service.id}
-                    className={`absolute inset-0 transition-opacity duration-500 ease-in-out will-change-transform will-change-opacity ${
-                      index === activeIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-                    }`}
-                    style={{
-                      transform: index === activeIndex ? "scale(1)" : "scale(0.95)",
-                      transition: "opacity 500ms ease, transform 500ms ease",
-                    }}
-                  >
-                    <div
-                      className="w-full h-full rounded-full p-1 shadow-lg transform rotate-3 hover:rotate-6 transition-transform"
-                      style={{
-                        background: `linear-gradient(to bottom right, ${
-                          index === 0 ? "rgb(239, 68, 68), rgb(220, 38, 38)" : "rgb(59, 130, 246), rgb(37, 99, 235)"
-                        })`,
-                      }}
-                    >
-                      <div className="w-full h-full rounded-full bg-white flex items-center justify-center p-6">
-                        <service.icon size={100} className={index === 0 ? "text-red-500" : "text-blue-500"} />
-                      </div>
-                    </div>
-
-                    {/* Floating badges */}
-                    <div className="absolute -top-4 -right-4 bg-white text-gray-900 rounded-full px-3 py-1 text-sm font-bold shadow-md">
-                      ★ {service.stats.rating}
-                    </div>
-                    <div className="absolute -bottom-4 -left-4 bg-white text-gray-900 rounded-full px-3 py-1 text-sm font-bold shadow-md">
-                      {service.stats.completed} Jobs
-                    </div>
-                  </div>
-                ))}
+    <div className="px-16 py-16 ">
+      <div className="mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left section */}
+          <div className="lg:w-1/2 flex flex-col items-center space-y-6">
+            {/* Customer badge */}
+            <div className="relative w-32 h-32 flex items-center justify-center bg-blue-500 rounded-full">
+              <div className="bg-black rounded-full w-24 h-24 flex flex-col items-center justify-center text-white">
+                <span className="text-2xl font-bold">93K+</span>
+                <span className="text-xs">CUSTOMERS</span>
               </div>
             </div>
 
-            {/* Featured service info - optimized with static height container */}
-            <div className="lg:col-span-2 relative min-h-[300px]">
-              {featuredServices.map((service, index) => (
-                <div
-                  key={service.id}
-                  className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
-                    index === activeIndex ? "opacity-100 z-10" : "opacity-0 z-0"
-                  }`}
-                  style={{
-                    transform: index === activeIndex ? "translateX(0)" : "translateX(20px)",
-                    transition: "opacity 500ms ease, transform 500ms ease",
-                  }}
-                >
-                  <h3 className={`text-3xl font-bold mb-3 ${index === 0 ? "text-red-600" : "text-blue-600"}`}>
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 text-lg mb-6">{service.description}</p>
-                  <div className="flex flex-wrap gap-3 mb-6">
-                    <Badge className={`${index === 0 ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}>
-                      Premium Service
-                    </Badge>
-                    <Badge className={`${index === 0 ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}>
-                      Certified Technicians
-                    </Badge>
-                    <Badge className={`${index === 0 ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}>
-                      Satisfaction Guaranteed
-                    </Badge>
+            {/* Book Now heading */}
+            <div className="text-center lg:text-left">
+              <h1 className="text-5xl font-bold">BOOK NOW</h1>
+              <h2 className="text-4xl font-bold text-blue-500">PAY ON DELIVERY</h2>
+            </div>
+
+            {/* Pricing info */}
+            <div className="text-center">
+              <p className="text-xl">
+                Major Service 249 USD <span className="line-through">was 499 USD</span>
+              </p>
+              <div className="border border-dashed border-gray-400 inline-block px-4 py-2 mt-2">
+                <p>
+                  Use Code <span className="text-blue-500 font-bold">EID2025</span>
+                </p>
+              </div>
+            </div>
+
+            <p className="text-lg">Free car pickup & delivery</p>
+
+            {/* Countdown timer */}
+            <div className="flex justify-center space-x-4 w-full">
+              <div className="bg-black text-white p-4 w-20 text-center">
+                <p className="text-3xl font-bold">{timeLeft.days}</p>
+                <p className="text-xs">DAYS</p>
+              </div>
+              <div className="text-3xl font-bold self-center">:</div>
+              <div className="bg-blue-500 text-white p-4 w-20 text-center">
+                <p className="text-3xl font-bold">{timeLeft.hours}</p>
+                <p className="text-xs">HOURS</p>
+              </div>
+              <div className="text-3xl font-bold self-center">:</div>
+              <div className="bg-blue-500 text-white p-4 w-20 text-center">
+                <p className="text-3xl font-bold">{timeLeft.minutes}</p>
+                <p className="text-xs">MINUTES</p>
+              </div>
+              <div className="text-3xl font-bold self-center">:</div>
+              <div className="bg-blue-500 text-white p-4 w-20 text-center">
+                <p className="text-3xl font-bold">{timeLeft.seconds}</p>
+                <p className="text-xs">SECONDS</p>
+              </div>
+            </div>
+
+            {/* Book Now button */}
+            <button className="bg-blue-500 text-white font-bold py-4 px-12 rounded-full text-xl hover:bg-blue-600 transition-colors">
+              BOOK NOW
+            </button>
+          </div>
+
+          {/* Right section - Service cards */}
+          <div className="lg:w-1/2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-8 ">
+              {services.map((service) => (
+                <Link href={`/services/${service.id}`} key={service.id} className="block group  hover:scale-[1.1] transition-all duration-500">
+                  <div className="card-container ">
+                    <div className="bg-blue-500 telative rounded-lg shadow-md px-4 py-8 flex flex-col items-center justify-center h-full relative hover:shadow-lg transition-shadow overflow-hidden shine-effect">
+                    <div className="size-5 absolute bg-gradient-to-br from-blue-500 blur-xs  to-red-500 rounded-full -top-5 -left-5 group-hover:top-10 group-hover:left-10 group-hover:scale-[19] transition-all duration-1000 ease-in-out"></div>
+                      <div className="mt-2 mb-1 z-20 text-white size-16 rounded-full flex justify-center items-center">
+                        <service.icon size={50} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-lg z-20 font-bold text-white text-center">{service.title}</h3>
+                    </div>
                   </div>
-                  <Link
-                    href={`/services/${service.id}`}
-                    className="inline-flex items-center px-6 py-3 rounded-full text-white font-medium shadow-md hover:shadow-lg transition-all hover:-translate-y-1"
-                    style={{
-                      background: `linear-gradient(to right, ${
-                        index === 0 ? "rgb(239, 68, 68), rgb(220, 38, 38)" : "rgb(59, 130, 246), rgb(37, 99, 235)"
-                      })`,
-                    }}
-                  >
-                    Explore This Service
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </div>
+                </Link>
               ))}
-
-              {/* Indicator dots */}
-              <div className="absolute bottom-0 flex space-x-2">
-                {featuredServices.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleFeatureChange(index)}
-                    className={`w-3 h-3 rounded-full transition-all ${
-                      index === activeIndex ? "bg-gray-800 scale-125" : "bg-gray-300 opacity-50"
-                    }`}
-                    aria-label={`View featured service ${index + 1}`}
-                    disabled={isTransitioning}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* All services grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <Link
-              href={`/services/${service.id}`}
-              key={service.id}
-              className={`block transform transition-all duration-500 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-              }`}
-              style={{ transitionDelay: `${Math.min(index * 50, 500)}ms` }} // Cap the delay to avoid too much staggering
-              onMouseEnter={() => setHoveredCard(service.id)}
-              onMouseLeave={() => setHoveredCard(null)}
-            >
-              <div className="relative h-full backdrop-blur-sm bg-white/70 rounded-xl  shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 group">
-                {/* Shine effect on hover - optimized */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r from-transparent via-white to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-1000 ease-in-out"
-                  style={{ willChange: "transform, opacity" }}
-                ></div>
-
-                {/* Decorative corner */}
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-gray-100 to-transparent"></div>
-
-                {/* Tag */}
-                {service.tag && (
-                  <div
-                    className={`absolute -top-3 right-4 ${service.tagColor} text-white text-xs font-medium py-1 px-3 rounded-full shadow-md z-10`}
-                  >
-                    {service.tag}
-                  </div>
-                )}
-
-                {/* Popular badge */}
-                {service.popular && (
-                  <div className="absolute top-0 left-4 bg-red-500 text-white text-xs font-medium py-1 px-3 rounded-full shadow-md z-10 flex items-center">
-                    <Star className="h-3 w-3 mr-1 fill-white" /> Popular Choice
-                  </div>
-                )}
-
-                <div className="p-8 relative z-10 h-full flex flex-col">
-                  {/* Icon with animated background - optimized */}
-                  <div className="relative mb-6">
-                    <div
-                      className={`absolute inset-0 rounded-full transition-all duration-300 bg-gradient-to-r from-red-100 to-blue-100 ${
-                        hoveredCard === service.id ? "scale-110 opacity-100" : "scale-100 opacity-70"
-                      }`}
-                      style={{ willChange: "transform, opacity" }}
-                    ></div>
-                    <div className="relative w-16 h-16 flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-100">
-                      <service.icon
-                        size={32}
-                        className={`transition-transform duration-300 ${
-                          hoveredCard === service.id ? "scale-110" : "scale-100"
-                        } ${(service.tag && service.tag.includes("Special")) || service.popular ? "text-red-500" : "text-blue-500"}`}
-                        style={{ willChange: "transform" }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <h3
-                    className={`text-xl font-bold mb-3 transition-colors ${
-                      (service.tag && service.tag.includes("Special")) || service.popular
-                        ? "text-gray-900 group-hover:text-red-600"
-                        : "text-gray-900 group-hover:text-blue-600"
-                    }`}
-                  >
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 mb-6 flex-grow">{service.description}</p>
-
-                  {/* Features list */}
-                  <div className="space-y-2 mb-6">
-                    {service.features.map((feature, i) => (
-                      <div key={i} className="flex items-center">
-                        <Check
-                          className={`h-4 w-4 mr-2 flex-shrink-0 ${
-                            (service.tag && service.tag.includes("Special")) || service.popular
-                              ? "text-red-500"
-                              : "text-blue-500"
-                          }`}
-                        />
-                        <span className="text-sm text-gray-600">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Learn more link with animation */}
-                  <div className="mt-auto">
-                    <span
-                      className={`inline-flex items-center font-medium transition-colors ${
-                        (service.tag && service.tag.includes("Special")) || service.popular
-                          ? "text-red-600 group-hover:text-red-700"
-                          : "text-blue-600 group-hover:text-blue-700"
-                      }`}
-                    >
-                      Explore Service
-                      <ArrowRight
-                        className={`ml-2 h-4 w-4 transition-transform duration-300 ${
-                          hoveredCard === service.id ? "translate-x-1" : ""
-                        }`}
-                        style={{ willChange: "transform" }}
-                      />
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="mt-16 text-center relative">
-          <div className="inline-block">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-blue-500 rounded-full blur-xl opacity-30"></div>
-              <Link
-                href="/services"
-                className="relative inline-flex items-center px-8 py-4 rounded-full bg-black text-white font-bold text-lg shadow-xl hover:shadow-lg transition-all hover:-translate-y-1"
-              >
-                View All Services
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Add custom animation styles - optimized */}
-      <style jsx>{`
-        .fixed-blob {
+      {/* CSS for shine effect */}
+      <style jsx global>{`
+        .shine-effect {
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .shine-effect::before {
+          content: '';
           position: absolute;
-          pointer-events: none;
+          top: 0;
+          left: -100%;
+          width: 50%;
+          height: 100%;
+          background: linear-gradient(
+            to right, 
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            rgba(255, 255, 255, 0) 100%
+          );
+          transform: skewX(-25deg);
+          transition: none;
         }
         
-        @keyframes blob {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          50% { transform: translate(20px, 20px) scale(1.1); }
-        }
-        
-        .fixed-blob {
-          animation: blob 15s infinite alternate ease-in-out;
-        }
-        
-        .animation-delay-2000 {
-          animation-delay: 2s;
+        .shine-effect:hover::before {
+          left: 150%;
+          transition: all 1s ease;
         }
       `}</style>
     </div>

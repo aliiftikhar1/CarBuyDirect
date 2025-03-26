@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 export default function OverviewSkeleton() {
     return (
       <div className="space-y-8 mb-4">
