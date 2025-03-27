@@ -52,15 +52,25 @@ const items = [
     icon: ShoppingCart,
   },
   {
+    title: "Hold Payment",
+    url: "/Admin/Pages/HoldPayments",
+    icon: ImageIcon,
+  },
+  {
+    title: "Transactions",
+    url: "/Admin/Pages/Transactions",
+    icon: ImageIcon,
+  },
+  {
     title: "Slider",
     url: "/Admin/Pages/Slider",
     icon: ImageIcon,
   },
-  {
-    title: "ContactUs",
-    url: "/Admin/ContactUs",
-    icon: ImageIcon,
-  },
+  // {
+  //   title: "ContactUs",
+  //   url: "/Admin/ContactUs",
+  //   icon: ImageIcon,
+  // },
 ]
 
 export function AppSidebar() {
