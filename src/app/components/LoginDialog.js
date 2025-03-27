@@ -205,10 +205,38 @@ export function AuthDialogs() {
     }
   }, [notificationsData])
 
-  const handleClick = async (id) => {
-    // console.log("NOTIFICATION ID", id)
-    window.location.href = "/Notifications/" + id;
-
+  const handleClick = async (notification, closeSheet) => {
+    // If notification is already read, directly navigate to the page
+    if (notification.isRead) {
+      // Close the sheet first
+      closeSheet();
+      router.push(`/Notifications/${notification.id}`);
+      return;
+    }
+  
+    try {
+      // Mark the notification as read
+      const response = await fetch("/api/user/notifications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationId: notification.id }),
+      });
+  
+      // Update local state to mark as read
+      setNotificationsData((prev) => 
+        prev.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n))
+      );
+  
+      // Close the sheet first
+      closeSheet();
+  
+      // Redirect to the single notification page
+      router.push(`/Notifications/${notification.id}`);
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      // Optionally, show an error toast
+      toast.error("Failed to mark notification as read");
+    }
   }
 
   return (
@@ -259,7 +287,12 @@ export function AuthDialogs() {
                                 transition: "background-color 0.3s",
                                 "&:hover": { backgroundColor: "#bbdefb" }, // ✅ Hover effect
                               }}
-                              onClick={() => { handleClick(notification.id) }}
+                              onClick={() => { 
+                                handleClick(notification, () => {
+                                  // This assumes you're using a ref or state to control the sheet
+                                  document.querySelector('[data-state="open"]')?.click();
+                                }) 
+                              }}
                             >
                               <ListItemAvatar>
                                 <Avatar alt={matchedUser?.name || "User"} src={matchedUser?.profileImage || "/default-avatar.png"} />
