@@ -154,7 +154,10 @@ export default function SellerNotifications({ id }) {
     }
 
     try {
-      const response = await fetch("/api/user/notifications/deal", {
+      let fetchUrl
+      selectedNotification.regarding==="buy-now"?fetchUrl="/api/user/BuyNow/deal":fetchUrl="/api/user/notifications/deal"
+
+      const response = await fetch(fetchUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalPayload),
@@ -197,7 +200,11 @@ export default function SellerNotifications({ id }) {
     }
 
     try {
-      const response = await fetch("/api/user/dealdone", {
+      let fetchUrl
+      selectedNotification.regarding==="buy-now"?fetchUrl="/api/user/BuyNow/buyNowDealDone":fetchUrl="/api/user/dealdone"
+
+      
+      const response = await fetch(fetchUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

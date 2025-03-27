@@ -21,7 +21,7 @@ export async function POST(request) {
                 senderId: senderId,  // Buyer ka ID
                 receiverId: receiverId, // Seller ka ID
                 auctionId,
-                type: userType?userType:"seller", // Change if needed
+                type: userType==="seller"?"seller":"buyer", // Change if needed
                 regarding,
                 message,
                 price: parseFloat(price) || null, // Ensure price is Float

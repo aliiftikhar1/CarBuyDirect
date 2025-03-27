@@ -219,7 +219,7 @@
 //           <p className="text-sm text-gray-600">• Must be at least 12 characters</p>
 //           <div className="flex items-center gap-2">
 //             <input type="checkbox" checked={agreed} onChange={() => setAgreed(!agreed)} />
-//             <span className="text-sm">I agree to SBX Cars's <a href="#" className="text-blue-600 underline">Terms of Service</a> and <a href="#" className="text-blue-600 underline">Privacy Policy</a>.</span>
+//             <span className="text-sm">I agree to CarBuyDirect Cars's <a href="#" className="text-blue-600 underline">Terms of Service</a> and <a href="#" className="text-blue-600 underline">Privacy Policy</a>.</span>
 //           </div>
 //           <Button
 //             className="w-full bg-yellow-600 text-white rounded-md p-4"
@@ -345,7 +345,7 @@ export function RegistrationDialog({ open, onClose, email }) {
 
           <div className="d-flex align-items-center gap-2">
             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
-            <small>I agree to SBX Cars's <a href="#" className="underline ms-2" style={{fontSize:"15px"}}>Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.</small>
+            <small>I agree to CarBuyDirect Cars's <a href="#" className="underline ms-2" style={{fontSize:"15px"}}>Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.</small>
           </div>
 
           <Button

@@ -95,8 +95,8 @@ export default function ServicePage() {
   ]
 
   return (
-    <div className="px-16 py-16 ">
-      <div className="mx-auto px-4 py-8">
+    <div className="md:px-16 md:py-16 pt-10 ">
+      <div className="mx-auto md:px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left section */}
           <div className="lg:w-1/2 flex flex-col items-center space-y-6">
@@ -104,7 +104,7 @@ export default function ServicePage() {
             <div className="relative w-32 h-32 flex items-center justify-center bg-blue-500 rounded-full">
               <div className="bg-black rounded-full w-24 h-24 flex flex-col items-center justify-center text-white">
                 <span className="text-2xl font-bold">93K+</span>
-                <span className="text-xs">CUSTOMERS</span>
+                <span className="md:text-xs text-[0.6rem]">CUSTOMERS</span>
               </div>
             </div>
 
@@ -129,25 +129,25 @@ export default function ServicePage() {
             <p className="text-lg">Free car pickup & delivery</p>
 
             {/* Countdown timer */}
-            <div className="flex justify-center space-x-4 w-full">
-              <div className="bg-black text-white p-4 w-20 text-center">
+            <div className="flex justify-center space-x-2 md:space-x-4 w-full">
+              <div className="bg-black text-white md:p-4 md:w-20 p-2 w-16 text-center">
                 <p className="text-3xl font-bold">{timeLeft.days}</p>
-                <p className="text-xs">DAYS</p>
+                <p className="md:text-xs text-[0.6rem]">DAYS</p>
               </div>
               <div className="text-3xl font-bold self-center">:</div>
-              <div className="bg-blue-500 text-white p-4 w-20 text-center">
+              <div className="bg-blue-500 text-white md:p-4 md:w-20 p-2 w-16 text-center">
                 <p className="text-3xl font-bold">{timeLeft.hours}</p>
-                <p className="text-xs">HOURS</p>
+                <p className="md:text-xs text-[0.6rem]">HOURS</p>
               </div>
               <div className="text-3xl font-bold self-center">:</div>
-              <div className="bg-blue-500 text-white p-4 w-20 text-center">
+              <div className="bg-blue-500 text-white md:p-4 md:w-20 p-2 w-16 text-center">
                 <p className="text-3xl font-bold">{timeLeft.minutes}</p>
-                <p className="text-xs">MINUTES</p>
+                <p className="md:text-xs text-[0.6rem]">MINUTES</p>
               </div>
               <div className="text-3xl font-bold self-center">:</div>
-              <div className="bg-blue-500 text-white p-4 w-20 text-center">
+              <div className="bg-blue-500 text-white md:p-4 md:w-20 p-2 w-16 text-center">
                 <p className="text-3xl font-bold">{timeLeft.seconds}</p>
-                <p className="text-xs">SECONDS</p>
+                <p className="md:text-xs text-[0.6rem]">SECONDS</p>
               </div>
             </div>
 
@@ -158,17 +158,17 @@ export default function ServicePage() {
           </div>
 
           {/* Right section - Service cards */}
-          <div className="lg:w-1/2">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 px-8 ">
+          <div className="lg:w-1/2 md:mt-0 mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 md:px-8  px-2">
               {services.map((service) => (
-                <Link href={`/services/${service.id}`} key={service.id} className="block group  hover:scale-[1.1] transition-all duration-500">
+                <Link href={`/Car-Service/${service.id}`} key={service.id} className="block group  hover:scale-[1.1] transition-all duration-500">
                   <div className="card-container ">
                     <div className="bg-blue-500 telative rounded-lg shadow-md px-4 py-8 flex flex-col items-center justify-center h-full relative hover:shadow-lg transition-shadow overflow-hidden shine-effect">
                     <div className="size-5 absolute bg-gradient-to-br from-blue-500 blur-xs  to-red-500 rounded-full -top-5 -left-5 group-hover:top-10 group-hover:left-10 group-hover:scale-[19] transition-all duration-1000 ease-in-out"></div>
-                      <div className="mt-2 mb-1 z-20 text-white size-16 rounded-full flex justify-center items-center">
+                      <div className="mt-2 mb-1 z-10 text-white size-16 rounded-full flex justify-center items-center">
                         <service.icon size={50} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-lg z-20 font-bold text-white text-center">{service.title}</h3>
+                      <h3 className="text-lg z-10 font-bold text-white text-center">{service.title}</h3>
                     </div>
                   </div>
                 </Link>

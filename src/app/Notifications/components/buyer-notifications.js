@@ -589,6 +589,7 @@ export default function SellerNotifications({ id }) {
                                       amount={replyNotifications[replyNotifications.length - 1].price}
                                       auction={selectedNotification.auction}
                                       notificationId={selectedNotification.id}
+                                      regarding={selectedNotification.regarding}
                                     />
                                   )}
                                   {replyNotifications[replyNotifications.length - 1].regarding === "payment-done" ? (

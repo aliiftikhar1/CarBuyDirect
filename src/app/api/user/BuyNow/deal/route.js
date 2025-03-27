@@ -1,34 +1,35 @@
 import prisma from "@/lib/prisma";
-import { sendDealDoneNotificationEmailFromByer } from "@/lib/sendDoneDealEmail";
+import {  sendMakeDealNotificationEmail } from "@/lib/sendMakeDealNotificationEmail";
 import { NextResponse } from "next/server";
+
+
+
 export async function POST(request) {
     try {
         const data = await request.json();
-        const { price, auctionId, sellerId, userId, receiverEmail, buyerName, vehicleYear, vehicleModel } = data;
+
+        const { originalprice, price,replyOf,userType,regarding, message, auctionId, receiverId, senderId, receiverEmail, userName, vehicleYear, vehicleModel } = data;
         const carDetails = {
             vehicleYear, vehicleModel, price
         }
-        console.log("senderId",userId)
-        const sendEmail = await sendDealDoneNotificationEmailFromByer(receiverEmail, buyerName, carDetails)
+        const response = await sendMakeDealNotificationEmail(receiverEmail, userName, carDetails, message)
+        console.log(response)
+        // // Notification ko database me save karna
         const resposne = await prisma.notification.create({
             data: {
-                senderId: userId,  // Buyer ka ID
-                receiverId: sellerId, // Seller ka ID
+                // originalprice,
+                senderId: senderId,  // Buyer ka ID
+                receiverId: receiverId, // Seller ka Id
                 auctionId,
-                type: "done", // Change if needed
-                message:"done",
+                type: userType==="seller"?"seller":"buyer", // Change if needed
+                regarding,
+                message,
                 price: parseFloat(price) || null, // Ensure price is Float
+                replyOf,
+                isRead:false
             },
         });
-
-        if (sendEmail) {
-            return NextResponse.json({
-                status: 200,
-                success: true,
-                message: "Notification sent successfully Via Email",
-                resposne,
-            });
-        }
+        console.log("RESPONSE FROM NOTIFICTION", resposne)
         return NextResponse.json({
             status: 200,
             success: true,

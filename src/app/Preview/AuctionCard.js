@@ -62,7 +62,7 @@ export default function Auction({ items, watchdata }) {
                                 {item?.Watching?.length}
                             </div>)}
                         <a href={`/Auction/${item.CarSubmission?.webSlug}`} className="cursor-pointer">
-                            <div className="bg-white h-[90%] group relative shadow-lg overflow-hidden ">
+                            <div className="bg-white h-[89%] group relative shadow-lg overflow-hidden ">
                                 <img
                                     src={
                                         item?.CarSubmission?.SubmissionImages?.find(
@@ -99,7 +99,8 @@ export default function Auction({ items, watchdata }) {
                         <div className="flex-grow h-16 flex w-full justify-center items-center mt-2">
                             {item.status === "Coming-Soon" ? (
                                 <h2 className="text-xl font-[200] tracking-tight">Comming Soon</h2>
-                            ) : item.status === "Scheduled" ? (<div className={`flex w-full ${item.CarSubmission?.buy&&"justify-between"} justify-center`}>
+                            ) : item.status === "Scheduled" ? (<div className={`flex w-full justify-center`}>
+                                <div className="flex flex-col gap-2 mt-1">
                                 <div className="text-left  flex gap-2 md:gap-4 items-center">
                                     <p className="text-xl font-[200] tracking-tight items-center">
                                         Auction Begins In
@@ -113,6 +114,7 @@ export default function Auction({ items, watchdata }) {
                                 {item.CarSubmission?.buy && (
                                     <BuynowButton data={item} />
                                 )}
+                                </div>
                             </div>
                             ) : item.status === "Ended" ? (
                                 <div className="text-left flex gap-4">

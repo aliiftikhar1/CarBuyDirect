@@ -30,7 +30,7 @@ import { AlertCircle, CreditCard } from "lucide-react"
 // You'll need to replace this with your actual Stripe publishable key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "")
 
-export default function DealDonePayment({ auction , notificationId,amount}) {
+export default function DealDonePayment({ auction , notificationId,amount,regarding}) {
   const [open, setOpen] = useState(false)
   const userDetails = useSelector((state) => state.CarUser.userDetails)
   const stripeCustomerId = userDetails.stripeCustomerId
@@ -43,14 +43,14 @@ export default function DealDonePayment({ auction , notificationId,amount}) {
       </Button>
 
       <Elements stripe={stripePromise}>
-        <PaymentDialog open={open} setOpen={setOpen} notificationId={notificationId} amount={amount} stripeCustomerId={stripeCustomerId} auction={auction} />
+        <PaymentDialog open={open} userDetails={userDetails} setOpen={setOpen} notificationId={notificationId} amount={amount} stripeCustomerId={stripeCustomerId} auction={auction} regarding={regarding}/>
       </Elements>
     </div>
   )
 }
 
-function PaymentDialog({ open, setOpen, stripeCustomerId, auction, amount, notificationId }) {
-  console.log("Displaig auction before payment", auction)
+function PaymentDialog({ open, setOpen, stripeCustomerId, auction, amount, notificationId, regarding ,userDetails}) {
+  console.log("Displaig auction before payment", auction,"Amount",amount,"notification id ",notificationId)
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
@@ -241,6 +241,19 @@ function PaymentDialog({ open, setOpen, stripeCustomerId, auction, amount, notif
       if (result.error) {
         throw new Error(result.error.message)
       }else{
+      if(regarding&&regarding==="buy-now"){
+        const response = await fetch("/api/user/BuyNow/postDealDoneUpdation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            auction: auction,
+            userId: userDetails.id,
+            userEmail: userDetails.email,
+             amount: amount,
+              notificationId: notificationId
+          }),
+        })
+      }else{
         const response = await fetch("/api/user/endAuction/postDealDoneUpdation", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -251,9 +264,9 @@ function PaymentDialog({ open, setOpen, stripeCustomerId, auction, amount, notif
               notificationId: notificationId
           }),
         })
+      }
   
-        const data = await response.json()
-
+        
         
     }
       // Payment successful

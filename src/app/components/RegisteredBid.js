@@ -122,7 +122,7 @@ function RegisteredBid({ open, onClose, email }) {
                         </div>
                         <div className="d-flex align-items-center gap-2">
                             <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
-                            <small>I agree to SBX Cars's <a href="#" className="underline ms-2" style={{ fontSize: "15px" }}>Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.</small>
+                            <small>I agree to CarBuyDirect Cars's <a href="#" className="underline ms-2" style={{ fontSize: "15px" }}>Terms of Service</a> and <a href="#" className="underline">Privacy Policy</a>.</small>
                         </div>
                         <Button
                             className="w-full bg-black text-white rounded-none px-4 py-6"

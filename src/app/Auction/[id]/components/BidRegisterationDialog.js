@@ -299,7 +299,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
           <div className="space-y-4 text-center flex flex-col justify-center w-full h-full">
             <Image
               src="/logo/1.png"
-              alt="SBX Cars"
+              alt="CarBuyDirect Cars"
               width={1200}
               height={1200}
               className="mx-auto w-[50%] h-12 object-cover"

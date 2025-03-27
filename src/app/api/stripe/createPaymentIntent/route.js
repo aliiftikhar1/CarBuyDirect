@@ -8,6 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 export async function POST(request) {
   try {
     const { amount, currency, customerId } = await request.json()
+    console.log(amount, currency,customerId)
 
     if (!amount || !currency || !customerId) {
       return NextResponse.json({ error: "Amount, currency, and customer ID are required" }, { status: 400 })
