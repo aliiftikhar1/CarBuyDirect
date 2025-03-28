@@ -12,7 +12,7 @@ function TransactionHistory() {
   async function fetchTransactions() {
     try {
       // Include user ID in the request to filter transactions
-      const response = await fetch(`/api/admin/transactions`)
+      const response = await fetch(`/api/admin/transactions/1`)
 
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.status}`)

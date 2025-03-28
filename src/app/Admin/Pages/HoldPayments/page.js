@@ -11,7 +11,7 @@ function HoldPaymentHistory() {
 
   async function fetchHoldPayments() {
     try {
-      const response = await fetch(`/api/admin/holdPayments`)
+      const response = await fetch(`/api/admin/holdPayments/1`)
 
       if (!response.ok) {
         throw new Error(`Failed to fetch hold payments: ${response.status}`)

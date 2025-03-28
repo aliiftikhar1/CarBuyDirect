@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 
 const fetchSoldItems = async () => {
-  const response = await fetch("/api/admin/soldoutManagement")
+  const response = await fetch("/api/admin/soldoutManagement/1")
   if (!response.ok) {
     throw new Error("Failed to fetch sold items")
   }
