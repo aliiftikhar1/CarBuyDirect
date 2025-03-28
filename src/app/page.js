@@ -214,6 +214,10 @@ export default function Home() {
       toast.error("Failed to fetch auctions");
     }
   }
+  function onWatch(){
+    fetchWatch()
+    GetAuctions()
+  }
 
   useEffect(() => {
     GetAuctions();
@@ -239,7 +243,7 @@ export default function Home() {
         ))}
       </div>
       <PricingSection />
-      {loading ? <AuctionListSkeleton /> : <Auction items={auctionItems} watchdata={watch} />}
+      {loading ? <AuctionListSkeleton /> : <Auction items={auctionItems} watchdata={watch} OnWatch={onWatch}/>}
       <Reviews />
       <AboutUsSection />
       <CTASection />

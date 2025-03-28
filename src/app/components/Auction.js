@@ -1,10 +1,13 @@
 import { Star } from "lucide-react";
 import { useSelector } from "react-redux";
 import TimerComponent from "./CountDownTimer";
+import { useState } from "react";
 
-export default function Auction({ items, watchdata }) {
+export default function Auction({ items, watchdata ,OnWatch}) {
+    const [loadingAction,setloadingAction]=useState('')
     const userid = useSelector((state) => state.CarUser.userDetails?.id);
-    function handleWatch() {
+    function handleWatch(item) {
+        console.log("TEM",item)
         if (!userid) {
             toast.message("Login to watch auction!!")
             return
@@ -194,7 +197,7 @@ export default function Auction({ items, watchdata }) {
                 {items.slice(0,3).map((item) => (
                     <div key={item.id} className="md:border relative py-2  md:p-4 ">
                         {watchdata.find((watch) => (watch.auctionId === item.id && watch.userId === userid)) ? (
-                            <div onClick={handleWatch} className="z-10 cursor-pointer absolute top-6 left-6 right-auto md:left-auto md:right-6 group bg-black text-white gap-1 text-sm md:text-lg rounded-full flex px-2 py-1">
+                            <div onClick={()=>handleWatch(item)} className="z-10 cursor-pointer absolute top-6 left-6 right-auto md:left-auto md:right-6 group bg-black text-white gap-1 text-sm md:text-lg rounded-full flex px-2 py-1">
                                 {/* <div className="size-5 group-hover:animate-ping bg-white rounded-full absolute"></div> */}
                                 <Star
                                     className="text-white transition-all group-hover:animate-ping absolute duration-300 fill-white group-hover:text-white"
@@ -203,7 +206,7 @@ export default function Auction({ items, watchdata }) {
                                     className="text-white transition-all duration-300 fill-white group-hover:text-white"
                                 />
                                 {item?.Watching?.length}
-                            </div>) : (<div onClick={handleWatch} className="z-10 cursor-pointer absolute top-6 left-6 right-auto md:left-auto md:right-6 group bg-black text-white gap-1 text-sm md:text-lg rounded-full flex px-2 py-1">
+                            </div>) : (<div onClick={()=>handleWatch(item)} className="z-10 cursor-pointer absolute top-6 left-6 right-auto md:left-auto md:right-6 group bg-black text-white gap-1 text-sm md:text-lg rounded-full flex px-2 py-1">
                                 <Star
                                     className="text-white size-5 md:size-6 transition-all duration-300 group-hover:fill-white group-hover:text-white"
                                 />

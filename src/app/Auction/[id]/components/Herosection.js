@@ -389,7 +389,7 @@ export default function HeroSection({ data, triggerfetch }) {
                 Card / Credit Card / PayPal surcharges that will apply.
               </div>
             </div>
-            {data.status === 'Live' ? <>
+            {data.status === 'Live' && <>
               <div className="space-y-3">
                 <div className="font-medium">Bid {data?.CarSubmission.currency} {parseInt(data?.Bids.length > 0) ? parseInt(data.Bids[0].price) + 100 : parseInt(data?.CarSubmission?.price) + 100} or more</div>
                 <div className="flex gap-2">
@@ -432,7 +432,6 @@ export default function HeroSection({ data, triggerfetch }) {
                 </Button>
               </div>
             </>
-              : <>{data.status === 'Ended' ? <p className="text-3xl text-red-500 text-left md:text-center font-[800] tracking-tight">Sold Out</p> : ""}</>
             }
           </div>
           <div className="mt-4 pt-4 border-t">

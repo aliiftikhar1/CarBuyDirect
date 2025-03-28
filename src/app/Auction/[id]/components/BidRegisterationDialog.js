@@ -380,7 +380,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label htmlFor="name" className="text-sm">
-                  Full Name (optional)
+                  Full Name 
                 </Label>
                 <Input
                   id="name"
