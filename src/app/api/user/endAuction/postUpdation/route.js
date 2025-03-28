@@ -15,7 +15,7 @@ export async function POST(request) {
       const transactionId = Math.floor(10000000 + Math.random() * 90000000);  
       return `txn_${transactionId}`;
   }
-  await prisma.transaction.create({
+  const newtransaction = await prisma.transaction.create({
       data: {
           userId: latestBid.userId,
           amount: latestBid.price,
@@ -26,6 +26,9 @@ export async function POST(request) {
           status: "Paid",  
       },
   });
+  if(!newtransaction){
+    return NextResponse.json({ error: "Error making new transaction" }, { status: 400 })
+  }
 
     // Prepare notification payload
     const Finalpayload = {

@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
-import { Pencil } from 'lucide-react';
-import { updateAuction } from "./actions";
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@radix-ui/react-label"
+import { Pencil } from "lucide-react"
+import { updateAuction } from "./actions"
 
 export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const [formData, setFormData] = useState({
     id: auction.id,
     carSubmissionId: auction.carId,
@@ -17,46 +17,55 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
     endDate: auction.endDate,
     location: auction.location,
     status: auction.status,
-    featured:auction.featured,
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+    featured: auction.featured,
+  })
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const { carSubmissionId, startDate, endDate, location, status, featured } = formData;
-    if (!carSubmissionId || !startDate || !endDate || !location || !status || !featured) {
-      setError("All fields are required.");
-      return;
+    const { carSubmissionId, startDate, endDate, location, status } = formData
+    if (!carSubmissionId || !startDate || !endDate || !location || !status || formData.featured === undefined) {
+      setError("All fields are required.")
+      return
     }
 
-    setLoading(true);
+    setLoading(true)
     try {
-      const result = await updateAuction(formData);
+      // Convert featured to string before sending to server action
+      const dataToSend = {
+        ...formData,
+        featured: formData.featured === true || formData.featured === "true" ? "true" : "false",
+      }
+
+      const result = await updateAuction(dataToSend)
       if (result.success) {
-        setError("");
-        setOpen(false);
-        onUpdate(result.data);
+        setError("")
+        setOpen(false)
+        onUpdate(result.data)
+        window.location.reload()
       } else {
-        setError(result.error || "Failed to update auction.");
+        setError(result.error || "Failed to update auction.")
       }
     } catch (err) {
-      console.error("Error updating auction:", err);
-      setError("An error occurred. Please try again.");
+      console.error("Error updating auction:", err)
+      setError("An error occurred. Please try again.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
-
-  // useEffect(() => {
-  //   console.log("Form Data:", formData);
-  // }, [formData]);
+  }
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 16); // This ensures the format is yyyy-MM-ddThh:mm
-  };
+    const date = new Date(dateString)
+    return date.toISOString().slice(0, 16) // This ensures the format is yyyy-MM-ddThh:mm
+  }
+
+  // Helper function to determine if featured is true
+  const isFeatured = () => {
+    return formData.featured === true || formData.featured === "true" ? "true" : "false"
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -131,20 +140,23 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
               <option value="Sold">Sold</option>
             </select>
           </div>
-             <div>
-            <Label htmlFor="status">Featured</Label>
+          <div>
+            <Label htmlFor="featured">Featured</Label>
             <select
               id="featured"
               name="featured"
-              value={formData.featured}
-              onChange={(e) => setFormData((prev) => ({ ...prev, featured: e.target.value }))}
+              value={isFeatured()}
+              onChange={(e) => {
+                const value = e.target.value === "true"
+                setFormData((prev) => ({ ...prev, featured: value }))
+              }}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
               <option value="" disabled>
                 Select
               </option>
-              <option value='true'>Yes</option>
-              <option value='false'>No</option>
+              <option value="true">Yes</option>
+              <option value="false">No</option>
             </select>
           </div>
           <Button type="submit" disabled={loading}>
@@ -153,5 +165,6 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
+
