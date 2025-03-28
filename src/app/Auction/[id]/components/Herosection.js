@@ -42,7 +42,7 @@ export default function HeroSection({ data, triggerfetch }) {
   const [isBidModal, setIsBidModal] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [holdLoading, setHoldLoading] = useState(false);
- 
+
   useEffect(() => {
     if (userid) {
 
@@ -50,7 +50,7 @@ export default function HeroSection({ data, triggerfetch }) {
         setLoading(true)
         try {
           const response = await fetch(`/api/user/getUserDetails/${userid}`);
-          
+
           const result = await response.json();
           setUser(result.user);
           setLoading(false)
@@ -65,7 +65,7 @@ export default function HeroSection({ data, triggerfetch }) {
     }
   }, [userid, handler]);
 
-  const isEligible = user?.cardName ;
+  const isEligible = user?.cardName;
 
 
   const handlePlaceBid = () => {
@@ -77,20 +77,20 @@ export default function HeroSection({ data, triggerfetch }) {
       toast("You are not currently registered.");
       console.log(user)
       setIsBidModal(true)
-    } else if(user?.HoldPayments.length > 0){
-      let holddata = user.HoldPayments.filter((hold) => (hold.auctionId === data?.id&&hold.status === "requires_capture"))
-      
-      if(holddata.length > 0){
+    } else if (user?.HoldPayments.length > 0) {
+      let holddata = user.HoldPayments.filter((hold) => (hold.auctionId === data?.id && hold.status === "requires_capture"))
+
+      if (holddata.length > 0) {
         setIsBidDialogOpen(true);
         setIsModalOpen(false);
       }
-      else{
+      else {
         setIsModalOpen(true)
       }
-          
+
       // setIsBidDialogOpen(true);
     }
-    else{
+    else {
       console.log(user)
       setIsModalOpen(true)
     }
@@ -187,12 +187,12 @@ export default function HeroSection({ data, triggerfetch }) {
     : null
   const handleConfirm = async () => {
     setHoldLoading(true);
-   
+
     try {
       const res = await fetch("/api/stripe/hold-amount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userid , auctionId: data?.id }) // Static ID for testing, use dynamic user ID
+        body: JSON.stringify({ userId: userid, auctionId: data?.id }) // Static ID for testing, use dynamic user ID
       });
       const data2 = await res.json();
 
@@ -210,7 +210,7 @@ export default function HeroSection({ data, triggerfetch }) {
       console.log('ERROR FROM SERVER SIDE', error.message)
       toast.error("Failed to hold amount. Please try again.");
     }
- 
+
     setHoldLoading(false);
   };
   return (
@@ -284,7 +284,7 @@ export default function HeroSection({ data, triggerfetch }) {
                 ) : data.status === 'Scheduled' ? (
                   <div className="text-left flex gap-4">
                     <p className="text-xl  font-[200] tracking-tight">Auction Begins On</p>
-                    <TimerComponent className="gap-1 text-lg" endDate={data.startDate} />
+                    <TimerComponent className="gap-1 text-lg " endDate={data.startDate} />
                   </div>
                 ) : data.status === 'Ended' ? (
                   <div className="text-left flex gap-4">
@@ -469,7 +469,7 @@ export default function HeroSection({ data, triggerfetch }) {
                 </DialogTitle>
               </DialogHeader>
               <div className="w-full" style={{ gap: "20px 20px" }}>
-                <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6" onClick={() => { setIsDialogOpen(true); }} >Register to bid</Button>
+                <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6" onClick={() => { setIsDialogOpen(true); setIsBidModal(false); }} >Register to bid</Button>
                 {/* <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6">Sell my vehicle</Button>
                 <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6">Continue</Button> */}
               </div>
@@ -481,49 +481,49 @@ export default function HeroSection({ data, triggerfetch }) {
             </DialogContent>
           </Dialog>
           <Dialog open={isBidDialogOpen} onOpenChange={setIsBidDialogOpen}>
-  <DialogContent className="max-w-lg rounded-2xl shadow-xl text-gray-700 border border-gray-300">
-    <div className="p-6 space-y-6">
-      {/* Title */}
-      <h2 className="text-3xl font-bold text-gray-800 text-center">Place Your Bid</h2>
+            <DialogContent className="max-w-lg rounded-2xl shadow-xl text-gray-700 border border-gray-300">
+              <div className="p-6 space-y-6">
+                {/* Title */}
+                <h2 className="text-3xl font-bold text-gray-800 text-center">Place Your Bid</h2>
 
-      {/* Bid Info Section */}
-      <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
-        <div>
-          <p className="text-sm text-gray-500">Current Bid</p>
-          <p className="text-2xl font-semibold text-gray-900">${currentBid}</p>
-          <p className="text-xs text-gray-500">{bids} bids</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500">Your Bid (Min: ${currentBid + 100})</p>
-          <input
-            type="number"
-            className="w-32 p-2 mt-1 border border-gray-300 rounded-lg text-center text-gray-800 focus:ring focus:ring-blue-300"
-            value={bidAmount}
-            min={currentBid + 100}
-            onChange={(e) => setBidAmount(Number(e.target.value))}
-          />
-        </div>
-      </div>
+                {/* Bid Info Section */}
+                <div className="flex items-center justify-between bg-gray-100 p-4 rounded-lg">
+                  <div>
+                    <p className="text-sm text-gray-500">Current Bid</p>
+                    <p className="text-2xl font-semibold text-gray-900">${currentBid}</p>
+                    <p className="text-xs text-gray-500">{bids} bids</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Your Bid (Min: ${currentBid + 100})</p>
+                    <input
+                      type="number"
+                      className="w-32 p-2 mt-1 border border-gray-300 rounded-lg text-center text-gray-800 focus:ring focus:ring-blue-300"
+                      value={bidAmount}
+                      min={currentBid + 100}
+                      onChange={(e) => setBidAmount(Number(e.target.value))}
+                    />
+                  </div>
+                </div>
 
-      {/* Buttons */}
-      <div className="flex justify-end space-x-3">
-        <Button
-          className="px-6 py-2 text-lg font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition duration-200"
-          onClick={confirmBid}
-        >
-          Confirm Bid
-        </Button>
-        <Button
-          variant="ghost"
-          className="px-6 py-2 text-lg font-medium border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200"
-          onClick={() => setIsBidDialogOpen(false)}
-        >
-          Cancel
-        </Button>
-      </div>
-    </div>
-  </DialogContent>
-</Dialog>
+                {/* Buttons */}
+                <div className="flex justify-end space-x-3">
+                  <Button
+                    className="px-6 py-2 text-lg font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition duration-200"
+                    onClick={confirmBid}
+                  >
+                    Confirm Bid
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="px-6 py-2 text-lg font-medium border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition duration-200"
+                    onClick={() => setIsBidDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
             <DialogContent >

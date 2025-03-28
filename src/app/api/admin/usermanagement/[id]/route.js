@@ -43,7 +43,7 @@ export async function PUT(request,{params}) {
                 name: data.name,
                 email: data.email,
                 type: data.type || "user", // Default type if not provided
-                image: data.image || null,
+                image: data.image !== undefined ? data.image : undefined,
                 username: data.username || null,
                 bio: data.bio || null,
                 password: hashedPassword || undefined, 

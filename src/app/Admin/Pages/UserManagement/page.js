@@ -122,17 +122,7 @@ export default function UserManagement() {
     }
   };
 
-  // Image change handler with Base64 conversion
-  // const handleImageChange = (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setimage(reader.result); // Set the base64 string
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
+
   const handleImageChange = async (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -153,7 +143,9 @@ export default function UserManagement() {
     if (image) {
       userData.image = image;
     }
-
+    else{
+      userData.image= undefined
+    }
     setLoadingAction('form');
     // try {
     if (currentUser) {
@@ -182,13 +174,14 @@ export default function UserManagement() {
       }
     }
 
+    setimage(null)
     setLoadingAction(null)
-    // } catch (err) {
-    //   toast.error(err.message);
-    // } finally {
-    //   setLoadingAction(null);
-    // }
+
   };
+
+  useEffect(()=>{
+    setimage(null)
+  },[isModalOpen])
 
 
   return (

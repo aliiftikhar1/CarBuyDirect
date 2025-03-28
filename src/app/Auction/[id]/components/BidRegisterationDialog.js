@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,7 @@ import {
   CardExpiryElement,
   CardCvcElement,
 } from "@stripe/react-stripe-js"
+import { debounce } from "lodash"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
@@ -37,6 +38,9 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState("")
   const dispatch = useDispatch()
+  const [isChecking, setIsChecking] = useState(false)
+  const [usernameStatus, setUsernameStatus] = useState("idle")
+  const [statusMessage, setStatusMessage] = useState("")
 
   // Stripe hooks
   const stripe = useStripe()
@@ -140,7 +144,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
               city: formData.city,
               state: formData.province,
               postal_code: formData.zipcode,
-              country: formData.country==="Pakistan"? "PK":formData.country,
+              country: formData.country === "Pakistan" ? "PK" : formData.country,
             },
           },
         })
@@ -235,6 +239,61 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
       },
     },
   }
+
+  const checkUsername = useCallback(
+    debounce(async (username) => {
+      if (!username || username.length < 3) {
+        setUsernameStatus("idle")
+        setStatusMessage("")
+        return
+      }
+
+      setIsChecking(true)
+      try {
+        const response = await fetch("/api/dataVerification/username", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username }),
+        })
+
+        const data = await response.json()
+        console.log("Data ",data)
+
+        if (response.status === 201) {
+          // Username exists
+          setUsernameStatus("invalid")
+          setStatusMessage(data.message)
+        } else if (response.status === 200) {
+          // Username is available
+          setUsernameStatus("valid")
+          setStatusMessage(data.message)
+        } else {
+          // Error
+          setUsernameStatus("error")
+          setStatusMessage("Failed to verify username")
+        }
+      } catch (error) {
+        setUsernameStatus("error")
+        setStatusMessage("Error checking username")
+        console.error("Error verifying username:", error)
+      } finally {
+        setIsChecking(false)
+      }
+    }, 500),
+    [],
+  )
+
+  // Check username when it changes
+  useEffect(() => {
+    if (formData.username) {
+      checkUsername(formData.username)
+    } else {
+      setUsernameStatus("idle")
+      setStatusMessage("")
+    }
+  }, [formData.username, checkUsername])
 
   return (
     <Card className="w-full flex flex-col justify-between max-w-full border-none shadow-none p-0 overflow-hidden">
@@ -337,14 +396,39 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                 <Label htmlFor="username" className="text-sm">
                   Username
                 </Label>
-                <Input
-                  id="username"
-                  placeholder="Enter your username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  className="h-9"
-                />
-                <p className="text-xs text-muted-foreground">Your username will be displayed alongside your bids.</p>
+                <div className="relative">
+                  <Input
+                    id="username"
+                    placeholder="Enter your username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    className={`h-9 ${
+                      usernameStatus === "invalid"
+                        ? "border-red-500 focus-visible:ring-red-500"
+                        : usernameStatus === "valid"
+                          ? "border-green-500 focus-visible:ring-green-500"
+                          : ""
+                    }`}
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    {isChecking && <Loader className="h-4 w-4 animate-spin text-muted-foreground" />}
+                    {!isChecking && usernameStatus === "valid" && <Check className="h-4 w-4 text-green-500" />}
+                    {!isChecking && usernameStatus === "invalid" && <AlertCircle className="h-4 w-4 text-red-500" />}
+                  </div>
+                </div>
+                {statusMessage && (
+                  <p
+                    className={`text-xs ${
+                      usernameStatus === "invalid"
+                        ? "text-red-500"
+                        : usernameStatus === "valid"
+                          ? "text-green-500"
+                          : "text-muted-foreground"
+                    }`}
+                  >
+                    {statusMessage}
+                  </p>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -634,7 +718,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
             className={`${currentStep > 1 ? "ml-auto" : "w-full"}`}
             onClick={nextStep}
             size="sm"
-            disabled={isValidating}
+            disabled={isValidating || (currentStep === 2 && usernameStatus === "invalid")}
           >
             {isValidating && currentStep === 5 ? <Loader className="animate-spin mr-1 h-3 w-3" /> : null}
             Next <ArrowRight className="ml-1 h-3 w-3" />

@@ -26,7 +26,7 @@ export async function POST(request) {
                 address: data.address,
                 status: 'active',
                 verified: data.verified === 'on' ? true : false,
-                phoneNo: data.phoneNo || '03000000000',
+                phoneNo: data.phoneNo || null,
                 stripeCustomerId: customer.id
             },
         });
