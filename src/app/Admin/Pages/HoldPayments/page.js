@@ -102,7 +102,7 @@ function HoldPaymentHistory() {
               </tr>
             </thead>
             <tbody className="text-gray-700 text-sm">
-              {holdPayments.map((payment, index) => (
+              {holdPayments.slice().reverse().map((payment, index) => (
                 <tr key={payment.id} className="border-b hover:bg-gray-50 transition duration-200">
                   <td className="py-3 px-6">{index + 1}</td>
                   <td className="py-3 px-6">{payment.paymentIntentId}</td>

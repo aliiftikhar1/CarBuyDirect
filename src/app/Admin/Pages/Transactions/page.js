@@ -107,7 +107,7 @@ function TransactionHistory() {
               </tr>
             </thead>
             <tbody className="text-gray-700 text-sm">
-              {transactions.map((txn,id) => (
+              {transactions.slice().reverse().map((txn,id) => (
                 <tr key={txn.id} className="border-b hover:bg-gray-50 transition duration-200">
                   <td className="py-3 px-6">{id+1}</td>
                   <th className="py-3 px-6">{txn.user.name}</th>
