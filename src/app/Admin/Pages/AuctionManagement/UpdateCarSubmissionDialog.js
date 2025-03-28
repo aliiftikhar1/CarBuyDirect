@@ -44,7 +44,6 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
         setError("")
         setOpen(false)
         onUpdate(result.data)
-        window.location.reload()
       } else {
         setError(result.error || "Failed to update auction.")
       }

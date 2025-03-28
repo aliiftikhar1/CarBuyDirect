@@ -97,6 +97,7 @@ function TransactionHistory() {
             <thead className="bg-gray-100">
               <tr className="text-gray-600 uppercase text-sm leading-normal">
                 <th className="py-3 px-6">No.</th>
+                <th className="py-3 px-6">User</th>
                 <th className="py-3 px-6">Details</th>
                 <th className="py-3 px-6">Date</th>
                 <th className="py-3 px-6">Amount</th>
@@ -109,6 +110,7 @@ function TransactionHistory() {
               {transactions.map((txn,id) => (
                 <tr key={txn.id} className="border-b hover:bg-gray-50 transition duration-200">
                   <td className="py-3 px-6">{id+1}</td>
+                  <th className="py-3 px-6">{txn.user.name}</th>
                   <td className="py-3 px-6">{txn.order_id}</td>
                   <td className="py-3 px-6">{formatDate(txn.createdAt)}</td>
                   <td className="py-3 px-6">
