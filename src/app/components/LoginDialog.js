@@ -353,7 +353,7 @@ export function AuthDialogs() {
                 <ScrollArea className=" mt-6">
                   {(watching && watching.length > 0) ? (
                     watching.map((item) => (
-                      <Card key={item.id} className="mb-4">
+                      <Card key={item.id} className="mb-4 hover:scale-[1.02] border" onClick={()=>window.location.href=`/Auction/${item.Auction.CarSubmission.webSlug}`}>
                         <CardContent className="p-4 flex">
                           <img
                             src={item.Auction.CarSubmission.SubmissionImages[0].data || "/placeholder.svg"}

@@ -100,12 +100,12 @@ function Comments({ data }) {
                                 return (
                                     <div key={comment.id} className="flex items-start mb-4">
                                         <img
-                                            src={user?.image || '/bydeault.jpg'}
+                                            src={comment?.User?.image || '/bydeault.jpg'}
                                             alt="User"
                                             className="w-10 h-10 rounded-full mr-3"
                                         />
                                         <div>
-                                            <h6 className="font-semibold">{user ? user.name : "Unknown User"}</h6>
+                                            <h6 className="font-semibold">{comment.User.name || "Unknown User"}</h6>
                                             <p className="text-sm text-gray-500">{formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}</p>
                                             <p className="mt-2 text-gray-700">{comment.text}</p>
                                             <div className="flex items-center mt-2 space-x-4">

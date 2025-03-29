@@ -47,6 +47,12 @@ export async function GET(request) {
         }
         const comments = await prisma.comment.findMany({
             where: { auctionId: parseInt(auctionId) },
+            include:{
+                User:true,
+                Auction:true,
+                Likes:true
+            }
+            ,
             orderBy: { createdAt: "desc" }
         });
         return NextResponse.json({

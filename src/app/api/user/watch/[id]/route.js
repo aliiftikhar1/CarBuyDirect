@@ -17,6 +17,7 @@ export async function GET(request, { params }) {
                                 vehicleModel:true,
                                 vehicleMake:true,
                                 vehicleYear:true,
+                                webSlug:true,
                                 SubmissionImages:{
                                     where:{
                                         label:"portrait"

@@ -41,6 +41,9 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
   const [isChecking, setIsChecking] = useState(false)
   const [usernameStatus, setUsernameStatus] = useState("idle")
   const [statusMessage, setStatusMessage] = useState("")
+  const [nameMatchError, setNameMatchError] = useState("")
+  const [formErrors, setFormErrors] = useState({})
+  const [touched, setTouched] = useState({})
 
   // Stripe hooks
   const stripe = useStripe()
@@ -70,10 +73,115 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-    }))
+    setFormData((prevData) => {
+      const newData = {
+        ...prevData,
+        [id]: value,
+      }
+
+      // Check name match when either name or cardName changes
+      if (id === "name" || id === "cardName") {
+        if (id === "name" && newData.cardName && value !== newData.cardName) {
+          setNameMatchError("Name on card must match your full name")
+        } else if (id === "cardName" && newData.name && value !== newData.name) {
+          setNameMatchError("Name on card must match your full name")
+        } else {
+          setNameMatchError("")
+        }
+      }
+
+      // Mark field as touched
+      setTouched((prev) => ({
+        ...prev,
+        [id]: true,
+      }))
+
+      // Validate the field
+      validateField(id, value)
+
+      return newData
+    })
+  }
+
+  const validateField = (fieldName, value) => {
+    const errors = { ...formErrors }
+
+    switch (fieldName) {
+      case "name":
+        errors.name = !value.trim() ? "Name is required" : ""
+        break
+      case "username":
+        errors.username = !value.trim() ? "Username is required" : ""
+        break
+      case "email":
+        errors.email = !value.trim() ? "Email is required" : !/\S+@\S+\.\S+/.test(value) ? "Email is invalid" : ""
+        break
+      case "phoneNo":
+        errors.phoneNo = !value.trim() ? "Phone number is required" : ""
+        break
+      case "address":
+        errors.address = !value.trim() ? "Address is required" : ""
+        break
+      case "city":
+        errors.city = !value.trim() ? "City is required" : ""
+        break
+      case "province":
+        errors.province = !value.trim() ? "State/Province is required" : ""
+        break
+      case "zipcode":
+        errors.zipcode = !value.trim() ? "Zip/Postal code is required" : ""
+        break
+      case "cardName":
+        errors.cardName = !value.trim() ? "Name on card is required" : ""
+        break
+      default:
+        break
+    }
+
+    setFormErrors(errors)
+  }
+
+  const validateStep = () => {
+    let isValid = true
+    const newErrors = { ...formErrors }
+    const newTouched = { ...touched }
+
+    // Define required fields for each step
+    const requiredFields = {
+      2: ["name", "username", "email", "phoneNo"],
+      3: ["address", "city", "province", "zipcode"],
+      5: ["cardName"],
+    }
+
+    // If current step has required fields, validate them
+    if (requiredFields[currentStep]) {
+      requiredFields[currentStep].forEach((field) => {
+        // Mark all fields in this step as touched
+        newTouched[field] = true
+
+        // Check if field is empty
+        if (!formData[field] || !formData[field].trim()) {
+          newErrors[field] = `${
+            field.charAt(0).toUpperCase() +
+            field
+              .slice(1)
+              .replace(/([A-Z])/g, " $1")
+              .trim()
+          } is required`
+          isValid = false
+        }
+      })
+
+      // Special validation for email format
+      if (currentStep === 2 && formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+        newErrors.email = "Email is invalid"
+        isValid = false
+      }
+    }
+
+    setTouched(newTouched)
+    setFormErrors(newErrors)
+    return isValid
   }
 
   const handleSelectChange = (key, value) => {
@@ -81,6 +189,13 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
       ...prevData,
       [key]: value,
     }))
+
+    setTouched((prev) => ({
+      ...prev,
+      [key]: true,
+    }))
+
+    validateField(key, value)
   }
 
   const handlePaymentMethodSelect = (method) => {
@@ -104,10 +219,25 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
     }
   }
 
+  const validateNameMatch = () => {
+    if (formData.name && formData.cardName && formData.name !== formData.cardName) {
+      setNameMatchError("Name on card must match your full name")
+      return false
+    }
+    setNameMatchError("")
+    return true
+  }
+
   const validateCardDetails = async () => {
     if (currentStep === 5) {
       setIsValidating(true)
       setCardError("")
+
+      // Check if name and card name match
+      if (!validateNameMatch()) {
+        setIsValidating(false)
+        return false
+      }
 
       try {
         // Check if stripe and elements are loaded
@@ -210,12 +340,29 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
   }
 
   const nextStep = async () => {
+    // First validate the current step
+    if (!validateStep()) {
+      toast.error("Please fill in all required fields")
+      return
+    }
+
     if (currentStep === 5) {
+      // Check if name matches card name
+      if (!validateNameMatch()) {
+        toast.error(nameMatchError)
+        return
+      }
+
       const isValid = await validateCardDetails()
       if (!isValid) {
         toast.error(cardError || "Please check your card details")
         return
       }
+    }
+
+    if (currentStep === 7 && !paymentMethod) {
+      toast.error("Please select a payment method")
+      return
     }
 
     setCurrentStep((prev) => prev + 1)
@@ -259,7 +406,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
         })
 
         const data = await response.json()
-        console.log("Data ",data)
+        console.log("Data ", data)
 
         if (response.status === 201) {
           // Username exists
@@ -284,6 +431,15 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
     }, 500),
     [],
   )
+
+  const handleBlur = (e) => {
+    const { id, value } = e.target
+    setTouched((prev) => ({
+      ...prev,
+      [id]: true,
+    }))
+    validateField(id, value)
+  }
 
   // Check username when it changes
   useEffect(() => {
@@ -380,15 +536,17 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label htmlFor="name" className="text-sm">
-                  Full Name 
+                  Full Name
                 </Label>
                 <Input
                   id="name"
                   placeholder="Enter your full name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="h-9"
+                  onBlur={handleBlur}
+                  className={`h-9 ${touched.name && formErrors.name ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                 />
+                {touched.name && formErrors.name && <p className="text-xs text-red-500">{formErrors.name}</p>}
                 <p className="text-xs text-muted-foreground">Please verify that this is your complete legal name.</p>
               </div>
 
@@ -402,6 +560,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                     placeholder="Enter your username"
                     value={formData.username}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                     className={`h-9 ${
                       usernameStatus === "invalid"
                         ? "border-red-500 focus-visible:ring-red-500"
@@ -416,6 +575,9 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                     {!isChecking && usernameStatus === "invalid" && <AlertCircle className="h-4 w-4 text-red-500" />}
                   </div>
                 </div>
+                {touched.username && formErrors.username && (
+                  <p className="text-xs text-red-500">{formErrors.username}</p>
+                )}
                 {statusMessage && (
                   <p
                     className={`text-xs ${
@@ -442,8 +604,10 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="h-9"
+                  onBlur={handleBlur}
+                  className={`h-9 ${touched.email && formErrors.email ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                 />
+                {touched.email && formErrors.email && <p className="text-xs text-red-500">{formErrors.email}</p>}
                 <p className="text-xs text-muted-foreground">
                   We'll use this email for account verification and notifications.
                 </p>
@@ -457,8 +621,10 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                   placeholder="Phone Number"
                   value={formData.phoneNo}
                   onChange={handleInputChange}
-                  className="h-9"
+                  onBlur={handleBlur}
+                  className={`h-9 ${touched.phoneNo && formErrors.phoneNo ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                 />
+                {touched.phoneNo && formErrors.phoneNo && <p className="text-xs text-red-500">{formErrors.phoneNo}</p>}
                 <p className="text-xs text-muted-foreground">We'll use this number to contact you about your bids.</p>
               </div>
             </div>
@@ -479,8 +645,10 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                 placeholder="Address"
                 value={formData.address}
                 onChange={handleInputChange}
-                className="h-9"
+                onBlur={handleBlur}
+                className={`h-9 ${touched.address && formErrors.address ? "border-red-500 focus-visible:ring-red-500" : ""}`}
               />
+              {touched.address && formErrors.address && <p className="text-xs text-red-500">{formErrors.address}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -493,8 +661,10 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                   placeholder="City"
                   value={formData.city}
                   onChange={handleInputChange}
-                  className="h-9"
+                  onBlur={handleBlur}
+                  className={`h-9 ${touched.city && formErrors.city ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                 />
+                {touched.city && formErrors.city && <p className="text-xs text-red-500">{formErrors.city}</p>}
               </div>
               <div className="space-y-1">
                 <Label htmlFor="country" className="text-sm">
@@ -524,8 +694,12 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                   placeholder="State / Province"
                   value={formData.province}
                   onChange={handleInputChange}
-                  className="h-9"
+                  onBlur={handleBlur}
+                  className={`h-9 ${touched.province && formErrors.province ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                 />
+                {touched.province && formErrors.province && (
+                  <p className="text-xs text-red-500">{formErrors.province}</p>
+                )}
               </div>
               <div className="space-y-1">
                 <Label htmlFor="zipcode" className="text-sm">
@@ -536,8 +710,10 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                   placeholder="Postal / Zip code"
                   value={formData.zipcode}
                   onChange={handleInputChange}
-                  className="h-9"
+                  onBlur={handleBlur}
+                  className={`h-9 ${touched.zipcode && formErrors.zipcode ? "border-red-500 focus-visible:ring-red-500" : ""}`}
                 />
+                {touched.zipcode && formErrors.zipcode && <p className="text-xs text-red-500">{formErrors.zipcode}</p>}
               </div>
             </div>
           </div>
@@ -556,6 +732,9 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                 "You're just a few steps away from bidding on your dream car. Let's continue with your payment
                 information."
               </p>
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <span>Guaranteed safe & secure checkout</span>
             </div>
           </div>
         )}
@@ -577,8 +756,11 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
                 placeholder="Name on Card"
                 value={formData.cardName}
                 onChange={handleInputChange}
-                className={`h-9 ${cardError && !formData.cardName ? "border-red-500" : ""}`}
+                onBlur={handleBlur}
+                className={`h-9 ${(cardError && !formData.cardName) || nameMatchError ? "border-red-500" : ""}`}
               />
+              {touched.cardName && formErrors.cardName && <p className="text-xs text-red-500">{formErrors.cardName}</p>}
+              {nameMatchError && <p className="text-xs text-red-500">{nameMatchError}</p>}
             </div>
 
             <div className="space-y-3">
@@ -718,7 +900,11 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
             className={`${currentStep > 1 ? "ml-auto" : "w-full"}`}
             onClick={nextStep}
             size="sm"
-            disabled={isValidating || (currentStep === 2 && usernameStatus === "invalid")}
+            disabled={
+              isValidating ||
+              (currentStep === 2 && usernameStatus === "invalid") ||
+              (currentStep === 7 && !paymentMethod)
+            }
           >
             {isValidating && currentStep === 5 ? <Loader className="animate-spin mr-1 h-3 w-3" /> : null}
             Next <ArrowRight className="ml-1 h-3 w-3" />

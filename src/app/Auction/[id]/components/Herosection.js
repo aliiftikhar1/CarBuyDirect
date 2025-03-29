@@ -14,95 +14,93 @@ import { useSelector } from "react-redux"
 import { Loader } from "lucide-react"
 import TimerComponent from "@/app/components/CountDownTimer"
 import { formatDistance } from "date-fns"
-import { AuthDialogs } from "@/app/components/LoginDialog"
 import BidLogin from "@/app/components/BidLogin"
 import { Typography } from "@mui/material"
 import Comments from "./Comments"
 import BidModal from "@/app/components/BidModal"
 import { toast } from "sonner"
 
-
-
 export default function HeroSection({ data, triggerfetch }) {
   const images = data.CarSubmission.SubmissionImages || []
   const [isBidDetailOpen, setIsBidDetailOpen] = useState(false)
   const [currentImage, setCurrentImage] = useState(0)
   const [visibleThumbnails, setVisibleThumbnails] = useState([])
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isBidDialogOpen, setIsBidDialogOpen] = useState(false);
-  const [user, setUser] = useState(null);
-  const [currentBid, setCurrentBid] = useState(parseInt(data?.Bids[0]?.price) || parseInt(data?.CarSubmission?.price) || 0); // Current bid
-  const [bidAmount, setBidAmount] = useState(parseInt(currentBid) + 100); // Default bid value
-  const [bids, setBids] = useState(data?.Bids?.length || 0); // Total bids
-  const userid = useSelector((state) => state.CarUser.userDetails?.id);
-  const userDetails = useSelector((data) => data.CarUser.userDetails);
-  const [loading, setLoading] = useState(false);
-  const [handler, setHandler] = useState(false);
-  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isBidDialogOpen, setIsBidDialogOpen] = useState(false)
+  const [user, setUser] = useState(null)
+  const [currentBid, setCurrentBid] = useState(
+    Number.parseInt(data?.Bids[0]?.price) || Number.parseInt(data?.CarSubmission?.price) || 0,
+  ) // Current bid
+  const [bidAmount, setBidAmount] = useState(Number.parseInt(currentBid) + 100) // Default bid value
+  const [bids, setBids] = useState(data?.Bids?.length || 0) // Total bids
+  const userid = useSelector((state) => state.CarUser.userDetails?.id)
+  const userDetails = useSelector((data) => data.CarUser.userDetails)
+  const [loading, setLoading] = useState(false)
+  const [handler, setHandler] = useState(false)
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
   const [isBidModal, setIsBidModal] = useState(false)
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [holdLoading, setHoldLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [holdLoading, setHoldLoading] = useState(false)
+  const [watching, setWatching] = useState()
+  const [isWatching, setIsWatching] = useState(false)
 
   useEffect(() => {
     if (userid) {
-
       const fetchUserDetails = async () => {
         setLoading(true)
         try {
-          const response = await fetch(`/api/user/getUserDetails/${userid}`);
+          const response = await fetch(`/api/user/getUserDetails/${userid}`)
 
-          const result = await response.json();
-          setUser(result.user);
+          const result = await response.json()
+          setUser(result.user)
           setLoading(false)
         } catch (error) {
           setLoading(false)
-          console.error("Error fetching user details:", error);
+          console.error("Error fetching user details:", error)
         }
+      }
 
-      };
-
-      fetchUserDetails();
+      fetchUserDetails()
     }
-  }, [userid, handler]);
+  }, [userid, handler])
 
-  const isEligible = user?.cardName;
-
+  const isEligible = user?.cardName
 
   const handlePlaceBid = () => {
     if (!user) {
-      toast("Please login to place a bid.");
+      toast("Please login to place a bid.")
       console.log(user)
-      setIsAccountModalOpen(true);
+      setIsAccountModalOpen(true)
     } else if (!isEligible) {
-      toast("You are not currently registered.");
+      toast("You are not currently registered.")
       console.log(user)
       setIsBidModal(true)
     } else if (user?.HoldPayments.length > 0) {
-      let holddata = user.HoldPayments.filter((hold) => (hold.auctionId === data?.id && hold.status === "requires_capture"))
+      const holddata = user.HoldPayments.filter(
+        (hold) => hold.auctionId === data?.id && hold.status === "requires_capture",
+      )
 
       if (holddata.length > 0) {
-        setIsBidDialogOpen(true);
-        setIsModalOpen(false);
-      }
-      else {
+        setIsBidDialogOpen(true)
+        setIsModalOpen(false)
+      } else {
         setIsModalOpen(true)
       }
 
       // setIsBidDialogOpen(true);
-    }
-    else {
+    } else {
       console.log(user)
       setIsModalOpen(true)
     }
-  };
+  }
 
   const confirmBid = async () => {
     if (bidAmount < currentBid + 100) {
-      toast(`Bid amount must be at least $${currentBid + 100}.`);
-      return;
+      toast(`Bid amount must be at least $${currentBid + 100}.`)
+      return
     }
 
-    setLoading(true); // Start loading state
+    setLoading(true) // Start loading state
     try {
       const response = await fetch(`/api/user/bid`, {
         method: "POST",
@@ -116,28 +114,28 @@ export default function HeroSection({ data, triggerfetch }) {
           userId: userid,
           carId: data.CarSubmission.id,
         }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error(`Failed to place bid. Status: ${response.status}`);
+        throw new Error(`Failed to place bid. Status: ${response.status}`)
       }
 
-      const result = await response.json();
-      console.log("Bid placed successfully:", result);
+      const result = await response.json()
+      console.log("Bid placed successfully:", result)
 
-      setCurrentBid(bidAmount);
-      setBidAmount(bidAmount + 100);
-      setBids((prevBids) => prevBids + 1);
-      triggerfetch((prev) => !prev);
+      setCurrentBid(bidAmount)
+      setBidAmount(bidAmount + 100)
+      setBids((prevBids) => prevBids + 1)
+      triggerfetch((prev) => !prev)
       // alert("Bid placed successfully!");
-      setIsBidDialogOpen(false);
+      setIsBidDialogOpen(false)
     } catch (error) {
-      console.error("Error occurred while placing bid:", error);
-      alert("An error occurred while placing your bid. Please try again.");
+      console.error("Error occurred while placing bid:", error)
+      alert("An error occurred while placing your bid. Please try again.")
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false) // End loading state
     }
-  };
+  }
 
   useEffect(() => {
     // Initialize `currentImage` with the index of the image whose label is "horizontal"
@@ -186,33 +184,85 @@ export default function HeroSection({ data, triggerfetch }) {
     ? getReserveStatus(currentPrice, Number.parseFloat(data.CarSubmission.reservedPrice))
     : null
   const handleConfirm = async () => {
-    setHoldLoading(true);
+    setHoldLoading(true)
 
     try {
       const res = await fetch("/api/stripe/hold-amount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userid, auctionId: data?.id }) // Static ID for testing, use dynamic user ID
-      });
-      const data2 = await res.json();
+        body: JSON.stringify({ userId: userid, auctionId: data?.id }), // Static ID for testing, use dynamic user ID
+      })
+      const data2 = await res.json()
 
       if (data2.success) {
-        toast.success("$500 Hold Successful! You can now bid.");
-        setIsBidDialogOpen(true);
-        setIsModalOpen(false);
+        toast.success("$500 Hold Successful! You can now bid.")
+        setIsBidDialogOpen(true)
+        setIsModalOpen(false)
         setHandler(!handler)
       } else {
-        toast.error(`Error: ${data2.message}`);
-        setIsModalOpen(false);
+        toast.error(`Error: ${data2.message}`)
+        setIsModalOpen(false)
       }
     } catch (error) {
-      setIsModalOpen(false);
-      console.log('ERROR FROM SERVER SIDE', error.message)
-      toast.error("Failed to hold amount. Please try again.");
+      setIsModalOpen(false)
+      console.log("ERROR FROM SERVER SIDE", error.message)
+      toast.error("Failed to hold amount. Please try again.")
     }
 
-    setHoldLoading(false);
-  };
+    setHoldLoading(false)
+  }
+
+  async function fetchWatching() {
+    try {
+      const response = await fetch(`/api/user/watch/${userid}`)
+      const result = await response.json()
+      setWatching(result.data)
+
+      // Check if current auction is in the user's watch list
+      const isCurrentAuctionWatched = result.data?.some((item) => item.auctionId === data.id)
+      setIsWatching(isCurrentAuctionWatched)
+    } catch (error) {
+      console.error("Error fetching watch status:", error)
+    }
+  }
+
+  function handleWatch() {
+    if (!userid) {
+      toast.message("Login to watch auction!!")
+      return
+    }
+
+    const endpoint = isWatching ? `/api/user/watch` : `/api/user/watch`
+
+    fetch(endpoint, {
+      method: "POST",
+      body: JSON.stringify({
+        auctionId: data.id,
+        userId: userid,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.ok) {
+          setIsWatching(!isWatching)
+          toast.success(isWatching ? "Removed from watch list" : "Added to watch list")
+        } else {
+          toast.error("Failed to update watch status")
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating watch status:", error)
+        toast.error("An error occurred")
+      })
+  }
+
+  useEffect(() => {
+    if (userid) {
+      fetchWatching()
+    }
+  }, [userid])
   return (
     <div className="w-full px-4 md:px-8 lg:px-36 flex flex-col gap-8 md:py-8">
       <div className="flex flex-col md:flex-row gap-8">
@@ -251,23 +301,26 @@ export default function HeroSection({ data, triggerfetch }) {
 
           {/* Thumbnails */}
           <div className="hidden md:flex gap-2 pb-2">
-            {visibleThumbnails.slice().reverse().map((index) => (
-              <button
-                key={images[index].id}
-                onClick={() => setCurrentImage(index)}
-                className={`relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden ${currentImage === index ? "ring-2 ring-red-500 shadow-[0_0_10px_red]" : ""
+            {visibleThumbnails
+              .slice()
+              .reverse()
+              .map((index) => (
+                <button
+                  key={images[index].id}
+                  onClick={() => setCurrentImage(index)}
+                  className={`relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden ${
+                    currentImage === index ? "ring-2 ring-red-500 shadow-[0_0_10px_red]" : ""
                   }`}
-              >
-                <Image
-                  src={images[index].data || "/placeholder.svg"}
-                  alt={`Thumbnail ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </button>
-            ))}
+                >
+                  <Image
+                    src={images[index].data || "/placeholder.svg"}
+                    alt={`Thumbnail ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
           </div>
-
         </div>
         {/* Right side - Details */}
         <div className="space-y-3 md:w-2/5">
@@ -278,20 +331,20 @@ export default function HeroSection({ data, triggerfetch }) {
             </h1>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-red-600">
-                {data.status === 'Coming-Soon' ? (
+                {data.status === "Coming-Soon" ? (
                   <h2 className="text-xl  font-[200] tracking-tight">Comming Soon</h2>
                   // <p className="text-sm sm:text-base text-left text-gray-600">Coming Soon</p>
-                ) : data.status === 'Scheduled' ? (
+                ) : data.status === "Scheduled" ? (
                   <div className="text-left flex gap-4">
                     <p className="text-xl  font-[200] tracking-tight">Auction Begins On</p>
                     <TimerComponent className="gap-1 text-lg " endDate={data.startDate} />
                   </div>
-                ) : data.status === 'Ended' ? (
+                ) : data.status === "Ended" ? (
                   <div className="text-left flex gap-4">
                     <p className="text-xl  font-[200] tracking-tight">Auction Ended</p>
                     {/* <p className="text-sm sm:text-base text-left text-gray-600">Sold Out</p> */}
                   </div>
-                ) : data.status === 'Sold' ? (
+                ) : data.status === "Sold" ? (
                   <div className="text-left flex gap-4">
                     <p className="text-lg md:text-2xl text-left text-gray-600">Sold Out</p>
                   </div>
@@ -305,16 +358,16 @@ export default function HeroSection({ data, triggerfetch }) {
                     </span>
                   </div>
                 )}
-
               </div>
-              {(data.status === 'Scheduled' || data.status === 'Live') && <Button variant="ghost" className="text-red-600 flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                Remind me
-              </Button>}
-
+              {(data.status === "Scheduled" || data.status === "Live") && (
+                <Button variant="ghost" className="text-red-600 flex items-center gap-2">
+                  <Bell className="h-4 w-4" />
+                  Remind me
+                </Button>
+              )}
             </div>
             <div className="space-y-2">
-              {data.status === 'Live' &&
+              {data.status === "Live" && (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     Current Bid
@@ -325,7 +378,8 @@ export default function HeroSection({ data, triggerfetch }) {
                       <DialogContent className="m-2 md:m-0 md:max-w-3xl">
                         <DialogHeader>
                           <DialogTitle>
-                            Bid Details for {data?.CarSubmission.vehicleYear} {data?.CarSubmission.vehicleMake} {data?.CarSubmission.vehicleModel}
+                            Bid Details for {data?.CarSubmission.vehicleYear} {data?.CarSubmission.vehicleMake}{" "}
+                            {data?.CarSubmission.vehicleModel}
                           </DialogTitle>
                         </DialogHeader>
                         <Table>
@@ -343,7 +397,9 @@ export default function HeroSection({ data, triggerfetch }) {
                                 <TableCell>
                                   {bid.currency} {bid.price.toLocaleString()}
                                 </TableCell>
-                                <TableCell>{formatDistance(new Date(bid.createdAt), new Date(), { addSuffix: true })}</TableCell>
+                                <TableCell>
+                                  {formatDistance(new Date(bid.createdAt), new Date(), { addSuffix: true })}
+                                </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -357,82 +413,109 @@ export default function HeroSection({ data, triggerfetch }) {
                       <div className="flex gap-1 items-center text-sm">
                         <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" /> No Reserve
                       </div>
-                    ) : <>
-                      {reserveStatus && (
-                        <p
-                          className={`text-xs flex gap-1 items-center md:text-sm ${reserveStatus === "Reserve met"
-                            ? "text-green-500"
-                            : reserveStatus === "Reserve near"
-                              ? "text-yellow-500"
-                              : "text-red-500"
+                    ) : (
+                      <>
+                        {reserveStatus && (
+                          <p
+                            className={`text-xs flex gap-1 items-center md:text-sm ${
+                              reserveStatus === "Reserve met"
+                                ? "text-green-500"
+                                : reserveStatus === "Reserve near"
+                                  ? "text-yellow-500"
+                                  : "text-red-500"
                             }`}
-                        >
-                          {reserveStatus === "Reserve met"
-                            ? <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" />
-                            : reserveStatus === "Reserve near"
-                              ? <CircleMinus className="size-5 rounded-full text-yellow-500 p-[1px]" />
-                              : <CirclePlus className="size-5  rotate-45 rounded-full text-red-500 p-[1px]" />}
-                          {reserveStatus}
-                        </p>
-                      )}
-                    </>}
+                          >
+                            {reserveStatus === "Reserve met" ? (
+                              <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" />
+                            ) : reserveStatus === "Reserve near" ? (
+                              <CircleMinus className="size-5 rounded-full text-yellow-500 p-[1px]" />
+                            ) : (
+                              <CirclePlus className="size-5  rotate-45 rounded-full text-red-500 p-[1px]" />
+                            )}
+                            {reserveStatus}
+                          </p>
+                        )}
+                      </>
+                    )}
                     {/* <span>No reserve</span>
                     <Info className="h-4 w-4" /> */}
                   </div>
                 </div>
-              }
+              )}
 
-              <div className="text-2xl md:text-4xl font-bold">{data?.CarSubmission.currency} {data?.Bids.length > 0 ? parseInt(data.Bids[0].price) : parseInt(data?.CarSubmission?.price)}</div>
+              <div className="text-2xl md:text-4xl font-bold">
+                {data?.CarSubmission.currency}{" "}
+                {data?.Bids.length > 0
+                  ? Number.parseInt(data.Bids[0].price)
+                  : Number.parseInt(data?.CarSubmission?.price)}
+              </div>
 
               <div className="text-sm text-gray-600">
                 <span className="text-blue-600">$690</span> buyers premium not included in the price. Excludes any Debit
                 Card / Credit Card / PayPal surcharges that will apply.
               </div>
             </div>
-            {data.status === 'Live' && <>
-              <div className="space-y-3">
-                <div className="font-medium">Bid {data?.CarSubmission.currency} {parseInt(data?.Bids.length > 0) ? parseInt(data.Bids[0].price) + 100 : parseInt(data?.CarSubmission?.price) + 100} or more</div>
-                <div className="flex gap-2">
-                  <Input type="text" value={parseInt(data?.Bids[0]?.price) + 100 || parseInt(data.CarSubmission.price) + 100} className="text-lg" />
-                  <Tabs defaultValue="autobid" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="autobid" className="text-sm">
-                        Autobid
-                      </TabsTrigger>
-                      <TabsTrigger value="standard" className="text-sm">
-                        Standard
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
-                  <Button size="icon" variant="ghost">
-                    <Info className="h-4 w-4" />
+            {data.status === "Live" && (
+              <>
+                <div className="space-y-3">
+                  <div className="font-medium">
+                    Bid {data?.CarSubmission.currency}{" "}
+                    {Number.parseInt(data?.Bids[0]?.price) + 100 || Number.parseInt(data.CarSubmission.price) + 100} or
+                    more
+                  </div>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      value={
+                        Number.parseInt(data?.Bids[0]?.price) + 100 || Number.parseInt(data.CarSubmission.price) + 100
+                      }
+                      className="text-lg"
+                    />
+                    <Tabs defaultValue="autobid" className="w-full">
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="autobid" className="text-sm">
+                          Autobid
+                        </TabsTrigger>
+                        <TabsTrigger value="standard" className="text-sm">
+                          Standard
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                    <Button size="icon" variant="ghost">
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    variant="solid"
+                    size="lg"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    onClick={handlePlaceBid}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader className="animate-spin" size={20} />
+                        Loading...
+                      </span>
+                    ) : (
+                      "Place A Bid"
+                    )}
+                  </Button>
+
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={handleWatch}
+                    className={`w-full ${isWatching ? "bg-red-50" : "bg-gray-50"}`}
+                  >
+                    <Heart className={`h-4 w-4 mr-2 ${isWatching ? "fill-red-500 text-red-500" : ""}`} />
+                    {isWatching ? "Watching" : "Watch"}
                   </Button>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <Button
-                  variant="solid"
-                  size="lg" className="w-full bg-red-600 hover:bg-red-700 text-white"
-                  onClick={handlePlaceBid}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <span className="flex items-center gap-2">
-                      <Loader className="animate-spin" size={20} />
-                      Loading...
-                    </span>
-                  ) : (
-                    "Place A Bid"
-                  )}
-                </Button>
-
-                <Button size="lg" variant="outline" className="w-full bg-gray-50">
-                  <Heart className="h-4 w-4 mr-2" />
-                  Watch
-                </Button>
-              </div>
-            </>
-            }
+              </>
+            )}
           </div>
           <div className="mt-4 pt-4 border-t">
             <div className="flex items-center gap-4">
@@ -458,17 +541,25 @@ export default function HeroSection({ data, triggerfetch }) {
               <DialogHeader>
                 <DialogTitle className="text-2xl">
                   <div className="">
-                    <Typography variant="body1" style={{ marginTop: '20px' }}>
+                    <Typography variant="body1" style={{ marginTop: "20px" }}>
                       Welcome!
                     </Typography>
-                    <Typography variant="body2" style={{ marginBottom: '20px' }}>
+                    <Typography variant="body2" style={{ marginBottom: "20px" }}>
                       What would you like to do next?
                     </Typography>
                   </div>
                 </DialogTitle>
               </DialogHeader>
               <div className="w-full" style={{ gap: "20px 20px" }}>
-                <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6" onClick={() => { setIsDialogOpen(true); setIsBidModal(false); }} >Register to bid</Button>
+                <Button
+                  className="w-full mt-3 bg-black text-white rounded-none px-4 py-6"
+                  onClick={() => {
+                    setIsDialogOpen(true)
+                    setIsBidModal(false)
+                  }}
+                >
+                  Register to bid
+                </Button>
                 {/* <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6">Sell my vehicle</Button>
                 <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6">Continue</Button> */}
               </div>
@@ -525,7 +616,7 @@ export default function HeroSection({ data, triggerfetch }) {
           </Dialog>
 
           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <DialogContent >
+            <DialogContent>
               <BidModal onClose={() => setIsModalOpen(false)} onConfirm={handleConfirm} loading={holdLoading} />
             </DialogContent>
           </Dialog>
@@ -540,12 +631,7 @@ export default function HeroSection({ data, triggerfetch }) {
         <div>
           <TabsSection data={data} />
         </div>
-        <div>
-          {
-            user ?
-              <Comments data={data} /> : ""
-          }
-        </div>
+        <div>{user ? <Comments data={data} /> : ""}</div>
       </div>
     </div>
   )
