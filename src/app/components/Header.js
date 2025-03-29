@@ -116,7 +116,7 @@ export default function Header() {
     <>
       <div className="w-full h-16 md:h-20 flex justify-center items-center z-20 sticky top-0 border-b text-black bg-white px-2 md:px-20">
         <div className="flex justify-between border-b items-center w-full bg-white z-20">
-          <div className="flex justify-center items-center">
+          <div className="flex justify-start items-center md:w-[12rem] ">
             <MainNav isOpen={isOpen} onOpenChange={setIsOpen}>
               <Menu className="size-7 md:size-10 cursor-pointer" />
             </MainNav>
@@ -124,7 +124,7 @@ export default function Header() {
           <a href="/" className="flex flex-col justify-center items-center">
             <img src="/logo/1.png" className="h-16 md:h-20 w-[50vw] md:w-[25vw] object-cover" alt="Logo" />
           </a>
-          <div className="flex gap-4 text-lg font-[400] tracking-wider justify-center items-center relative">
+          <div className="flex md:w-[12rem] gap-4 text-lg font-[400] tracking-wider justify-center items-center relative">
             {/* {user?.type === "seller" && (
               <Link href="/Seller" className="hidden md:flex px-4 py-1 rounded-full border-2 border-gray-600">
                 Seller Panel
@@ -139,7 +139,7 @@ export default function Header() {
                     value={searchTerm}
                     onChange={handleSearch}
                     placeholder="Search for auctions..."
-                    className="absolute top-10 right-0 md:top-0 md:right-0 md:relative transition-all duration-300 ease-in-out transform border p-3 rounded-2xl w-64 shadow-md bg-white z-30"
+                    className="absolute top-10 -right-10 md:-top-1 md:right-10  transition-all duration-300 ease-in-out transform border p-3 rounded-2xl w-64 shadow-md bg-white z-30"
                   />
                 )}
                 <Search
@@ -154,7 +154,7 @@ export default function Header() {
                 />
 
                 {searchOpen && searchTerm && filteredAuctions.length > 0 && (
-                  <div className="absolute right-0 md:right-8 top-20 md:top-10 w-64 bg-white shadow-lg rounded-md border z-30 max-h-60 overflow-y-auto">
+                  <div className="absolute -right-10 md:right-8 top-20 md:top-10 w-64 bg-white shadow-lg rounded-md border z-30 max-h-60 overflow-y-auto">
                     {filteredAuctions.map((auction) => (
                       <a
                         href={`/Auction/${auction.CarSubmission.webSlug}`}
@@ -173,7 +173,7 @@ export default function Header() {
                 )}
 
                 {searchOpen && searchTerm && filteredAuctions.length === 0 && (
-                  <div className="absolute right-0 md:right-8 top-20 md:top-10 w-64 bg-white shadow-lg rounded-md border z-30 p-3">
+                  <div className="absolute -right-10 md:right-8 top-20 md:top-10 w-64 bg-white shadow-lg rounded-md border z-30 p-3">
                     <p className="text-gray-500 text-sm">No matching results found</p>
                   </div>
                 )}
