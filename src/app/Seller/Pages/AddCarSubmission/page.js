@@ -36,6 +36,7 @@ export default function ContactForm() {
   const [years, setYears] = useState([]);
   const [files, setFiles] = useState([])
   const [selectBrand, setSelectedBrand]=useState(null)
+  const [selectMake, setSelectedMake]=useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [editorContent, setEditorContent] = useState({
     description: "",
@@ -244,7 +245,7 @@ export default function ContactForm() {
             <label htmlFor="vehicleModel" className="text-sm font-medium">
               Vehicle model *
             </label>
-            <CarApiAutocompleteInput options={models} name="vehicleModel" />
+            <CarApiAutocompleteInput options={models} setSelectedBrand={setSelectedMake} name="vehicleModel" />
             {/* <Input id="vehicleModel" name="vehicleModel" required /> */}
           </div>
 
