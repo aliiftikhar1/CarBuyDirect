@@ -8,14 +8,14 @@ export default function ServiceDetails() {
   const router = useRouter()
   const { serviceid } = useParams()
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
+    carCategory: "",
+    carType: "",
+    buildYear: "",
     carBrand: "",
     carModel: "",
-    carYear: "",
-    additionalInfo: "",
+    location: "",
+    serviceDate: "",
+    serviceTime: "",
   })
 
   const handleChange = (e) => {
@@ -202,12 +202,9 @@ export default function ServiceDetails() {
 
   return (
     <div className="min-h-screen py-10 md:px-16">
-    
       <div className=" mx-auto md:px-4 md:py-8">
-        
-
         <div className="bg-white rounded-lg  overflow-hidden">
-          <div className="p-6 md:p-8">
+          <div className="p-6 md:p-4">
             <div className="flex flex-col lg:flex-row gap-8">
               {/* LEFT SIDE: Service Details */}
               <div className="lg:w-1/2">
@@ -246,149 +243,178 @@ export default function ServiceDetails() {
               </div>
 
               {/* RIGHT SIDE: Booking Form */}
-              <div className="lg:w-1/2 lg:border-l lg:pl-8">
-                <h2 className="text-2xl font-bold mb-6 text-center">Book Your Service</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Personal Information */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Personal Information</h3>
+              <div className="lg:w-1/2 lg:border-l lg:pl-8 md:scale-[0.9]  ">
+                <h2 className="text-2xl font-bold mb-3 text-center">Book Your Service</h2>
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  {/* Vehicle Information */}
+                  <div className="space-y-2">
+                    <div className="p-4 border rounded-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="carCategory" className="block text-sm font-medium text-gray-700 mb-1">
+                            Car Category
+                          </label>
+                          <select
+                            id="carCategory"
+                            name="carCategory"
+                            value={formData.carCategory || ""}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select car category</option>
+                            <option value="sedan">Sedan</option>
+                            <option value="suv">SUV</option>
+                            <option value="hatchback">Hatchback</option>
+                            <option value="truck">Truck</option>
+                            <option value="van">Van</option>
+                          </select>
+                        </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                          Full Name *
-                        </label>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div>
+                          <label htmlFor="carType" className="block text-sm font-medium text-gray-700 mb-1">
+                            Car Type
+                          </label>
+                          <select
+                            id="carType"
+                            name="carType"
+                            value={formData.carType || ""}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select Car Type</option>
+                            <option value="economy">Economy</option>
+                            <option value="luxury">Luxury</option>
+                            <option value="sports">Sports</option>
+                            <option value="electric">Electric</option>
+                            <option value="hybrid">Hybrid</option>
+                          </select>
+                        </div>
                       </div>
 
-                      <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                          Email Address *
+                      <div className="mt-4">
+                        <label htmlFor="buildYear" className="block text-sm font-medium text-gray-700 mb-1">
+                          Build Year
                         </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
+                        <select
+                          id="buildYear"
+                          name="buildYear"
+                          value={formData.buildYear || ""}
                           onChange={handleChange}
-                          required
                           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                          Phone Number *
-                        </label>
-                        <input
-                          type="tel"
-                          id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        >
+                          <option value="">Select build year</option>
+                          {years.map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
-                      <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                          Address
+                      <div className="mt-4">
+                        <label htmlFor="carBrand" className="block text-sm font-medium text-gray-700 mb-1">
+                          Car Brand
                         </label>
-                        <input
-                          type="text"
-                          id="address"
-                          name="address"
-                          value={formData.address}
+                        <select
+                          id="carBrand"
+                          name="carBrand"
+                          value={formData.carBrand || ""}
                           onChange={handleChange}
                           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        >
+                          <option value="">Select Car Brand</option>
+                          <option value="toyota">Toyota</option>
+                          <option value="honda">Honda</option>
+                          <option value="ford">Ford</option>
+                          <option value="bmw">BMW</option>
+                          <option value="mercedes">Mercedes</option>
+                          <option value="audi">Audi</option>
+                          <option value="tesla">Tesla</option>
+                        </select>
+                      </div>
+
+                      <div className="mt-4">
+                        <label htmlFor="carModel" className="block text-sm font-medium text-gray-700 mb-1">
+                          Car Model
+                        </label>
+                        <select
+                          id="carModel"
+                          name="carModel"
+                          value={formData.carModel || ""}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Select Car Model</option>
+                          {/* Models would be dynamically populated based on selected brand */}
+                          <option value="camry">Camry</option>
+                          <option value="corolla">Corolla</option>
+                          <option value="civic">Civic</option>
+                          <option value="accord">Accord</option>
+                          <option value="f150">F-150</option>
+                          <option value="mustang">Mustang</option>
+                        </select>
                       </div>
                     </div>
                   </div>
 
-                  {/* Vehicle Information */}
-                  <div className="space-y-4 pt-4">
-                    <h3 className="text-lg font-semibold">Vehicle Information</h3>
+                  {/* Location */}
+                  <div className="space-y-4">
+                    <div className="p-4 border rounded-lg">
+                      <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+                        Location
+                      </label>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location || ""}
+                        onChange={handleChange}
+                        placeholder="Search Your Location"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="carBrand" className="block text-sm font-medium text-gray-700 mb-1">
-                          Car Brand *
+                  {/* Date and Time */}
+                  <div className="space-y-4">
+                    <div className="p-4 border rounded-lg">
+                      <div className="mb-4">
+                        <label htmlFor="serviceDate" className="block text-sm font-medium text-gray-700 mb-1">
+                          Service Date
                         </label>
                         <input
-                          type="text"
-                          id="carBrand"
-                          name="carBrand"
-                          value={formData.carBrand}
+                          type="date"
+                          id="serviceDate"
+                          name="serviceDate"
+                          value={formData.serviceDate || ""}
                           onChange={handleChange}
-                          required
-                          placeholder="e.g. Toyota, BMW, Mercedes"
                           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
 
                       <div>
-                        <label htmlFor="carModel" className="block text-sm font-medium text-gray-700 mb-1">
-                          Car Model *
+                        <label htmlFor="serviceTime" className="block text-sm font-medium text-gray-700 mb-1">
+                          Service Time
                         </label>
-                        <input
-                          type="text"
-                          id="carModel"
-                          name="carModel"
-                          value={formData.carModel}
+                        <select
+                          id="serviceTime"
+                          name="serviceTime"
+                          value={formData.serviceTime || ""}
                           onChange={handleChange}
-                          required
-                          placeholder="e.g. Camry, X5, C-Class"
                           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        >
+                          <option value="">Select Time</option>
+                          <option value="9:00">9:00 AM</option>
+                          <option value="10:00">10:00 AM</option>
+                          <option value="11:00">11:00 AM</option>
+                          <option value="12:00">12:00 PM</option>
+                          <option value="13:00">1:00 PM</option>
+                          <option value="14:00">2:00 PM</option>
+                          <option value="15:00">3:00 PM</option>
+                          <option value="16:00">4:00 PM</option>
+                          <option value="17:00">5:00 PM</option>
+                        </select>
                       </div>
-                    </div>
-
-                    <div>
-                      <label htmlFor="carYear" className="block text-sm font-medium text-gray-700 mb-1">
-                        Car Year *
-                      </label>
-                      <select
-                        id="carYear"
-                        name="carYear"
-                        value={formData.carYear}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="">Select Year</option>
-                        {years.map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label htmlFor="additionalInfo" className="block text-sm font-medium text-gray-700 mb-1">
-                        Additional Information
-                      </label>
-                      <textarea
-                        id="additionalInfo"
-                        name="additionalInfo"
-                        value={formData.additionalInfo}
-                        onChange={handleChange}
-                        rows={3}
-                        placeholder="Please provide any additional details about your service requirements"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      ></textarea>
                     </div>
                   </div>
 
