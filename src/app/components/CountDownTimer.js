@@ -31,7 +31,7 @@ export default function TimerComponent({ className = "", endDate }) {
   }, []);
 
   return (
-    <div className={cn("flex  items-center justify-center text-center gap-2 p-0  rounded-lg", className)}>
+    <div className={cn("flex items-center justify-center text-center gap-2 p-0  rounded-lg", className)}>
 
       {timeLeft.days > 10000 ? (
         <>
@@ -39,7 +39,7 @@ export default function TimerComponent({ className = "", endDate }) {
           <span className="text-lg font-bold">{new Date(endDate).toLocaleDateString()}</span>
         </>
       ) : (
-        <div className="flex md:w-full w-[20rem] gap-2 text-lg font-semibold items-center">
+        <div className="flex w-full  gap-2 text-lg font-semibold items-center">
           <Clock className="w-5 h-5 text-gray-600" />
           {timeLeft.days > 0 && (
             <span>

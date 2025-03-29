@@ -42,6 +42,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { getAllUsersServices } from "@/Services/getallusers.services"
+import Image from "next/image"
 export function AuthDialogs() {
   const [open, setOpen] = useState(false)
   const [open2, setOpen2] = useState(false)
@@ -381,12 +382,32 @@ export function AuthDialogs() {
                 </ScrollArea>
               </SheetContent>
             </Sheet>
-            <div ref={dropdownRef}
+            {user.image?
+            <div
+            ref={dropdownRef}
+            className="cursor-pointer flex overflow-hidden items-center text-black-500 justify-center size-12 rounded-full  font-extrabold text-2xl bg-gray-200/70"
+             onClick={toggleDropdown}>
+             <Image 
+             src={user.image}
+             width={800}
+             height={800}
+           >
+           </Image>
+           </div>
+           :
+           <div ref={dropdownRef}
+           className="cursor-pointer flex items-center text-black-500 justify-center size-12 rounded-full  font-extrabold text-2xl bg-gray-200/70"
+           onClick={toggleDropdown}
+         >
+           {`${user?.name || ""}`.toUpperCase().slice(0, 1) || "?"}
+         </div>
+           }
+            {/* <div ref={dropdownRef}
               className="cursor-pointer flex items-center text-black-500 justify-center size-12 rounded-full  font-extrabold text-2xl bg-gray-200/70"
               onClick={toggleDropdown}
             >
               {`${user?.name || ""}`.toUpperCase().slice(0, 1) || "?"}
-            </div>
+            </div> */}
           </div>
         ) : (
           <DialogTrigger asChild>

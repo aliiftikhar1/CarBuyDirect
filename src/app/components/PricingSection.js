@@ -113,7 +113,7 @@ export default function PricePlan() {
       <div className="w-full  text-center text-4xl font-bold pb-8">
         Price Plans
       </div>
-      <div className="grid md:grid-cols-2 gap-8 max-w-4xl h-[33rem] mx-auto">
+      <div className="grid md:grid-cols-2 gap-8 md:max-w-4xl h-full md:h-[33rem] mx-auto">
         {plans.map((plan) => (
           <Card
           key={plan.id}

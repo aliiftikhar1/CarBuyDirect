@@ -122,7 +122,7 @@ export default function Header() {
             </MainNav>
           </div>
           <a href="/" className="flex flex-col justify-center items-center">
-            <img src="/logo/1.png" className="h-16 md:h-20 w-[70vw] md:w-[25vw] object-cover" alt="Logo" />
+            <img src="/logo/1.png" className="h-16 md:h-20 w-[50vw] md:w-[25vw] object-cover" alt="Logo" />
           </a>
           <div className="flex gap-4 text-lg font-[400] tracking-wider justify-center items-center relative">
             {/* {user?.type === "seller" && (
