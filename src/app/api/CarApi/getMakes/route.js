@@ -1,28 +1,45 @@
 import { NextResponse } from "next/server"
 
-// Get the API token from environment variables
-// You'll need to add this to your .env.local file
-const API_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjYXJhcGkuYXBwIiwic3ViIjoiMjQxY2FmNTAtYTBlYi00NGFiLTlhZDQtYWYyNmM4NjJiNjAyIiwiYXVkIjoiMjQxY2FmNTAtYTBlYi00NGFiLTlhZDQtYWYyNmM4NjJiNjAyIiwiZXhwIjoxNzQyOTczNjU0LCJpYXQiOjE3NDIzNjg4NTQsImp0aSI6Ijk3YjE0MDg2LWY2ZjktNDcyMS04MjJlLTQwNGVkZWI1ODg5MSIsInVzZXIiOnsic3Vic2NyaXB0aW9ucyI6WyJzdGFydGVyIl0sInJhdGVfbGltaXRfdHlwZSI6ImhhcmQiLCJhZGRvbnMiOnsiYW50aXF1ZV92ZWhpY2xlcyI6ZmFsc2UsImRhdGFfZmVlZCI6ZmFsc2V9fX0.8HSFyUvE36O3vVcxRp1cmq1IJN57hi8lpBNl9T7AzeA"
-// process.env.CAR_API_TOKEN
+// Authentication function to get a token
+async function getAuthToken() {
+  const apiToken = "758d2b2c-2c0c-4385-85d1-23438c97a7db"
+  const apiSecret = "d0dff6786389b5d52760dbdd2f804704"
+
+  const response = await fetch("https://carapi.app/api/auth/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      api_token: apiToken,
+      api_secret: apiSecret,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error(`Authentication failed: ${response.status}`)
+  }
+
+  // The response is a JWT token
+  const token = await response.text()
+  return token
+}
 
 export async function GET(request) {
   try {
-    // Check if we have the API token
-    if (!API_TOKEN) {
-      return NextResponse.json({ error: "API token not configured" }, { status: 500 })
-    }
+    // Get authentication token first
+    const token = await getAuthToken()
 
     const searchParams = request.nextUrl.searchParams
     const limit = searchParams.get("limit") || "1000"
-    
+
     const url = `https://carapi.app/api/makes?limit=${limit}`
 
     const response = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${API_TOKEN}`,
+        Authorization: `Bearer ${token}`,
         Accept: "application/json",
       },
-      
       next: { revalidate: 3600 },
     })
 
@@ -43,7 +60,7 @@ export async function GET(request) {
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error fetching car makes:", error)
-    return NextResponse.json({ error: "Failed to fetch car makes" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "Failed to fetch car makes" }, { status: 500 })
   }
 }
 
