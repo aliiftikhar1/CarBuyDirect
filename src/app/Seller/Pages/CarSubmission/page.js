@@ -586,7 +586,7 @@ export default function AdminCarSubmissions() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="price">Expected Price</Label>
+                  <Label htmlFor="price">Bid Start Price</Label>
                   <div className="flex gap-2">
                     <Input
                       id="price"

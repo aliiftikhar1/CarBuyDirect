@@ -331,7 +331,7 @@ export default function ContactForm() {
           </div>
           <div className="space-y-2">
             <label htmlFor="price" className="text-sm font-medium">
-              Expected Price
+              Bid Start Price
             </label>
             <div className="flex gap-2">
               <Input id="price" name="price" className="flex-1" />
