@@ -161,9 +161,13 @@ export function AuthDialogs() {
   }
 
   useEffect(() => {
-    fetchWatching()
-    fetchNotifications()
-  }, [userId])
+    const interval = setInterval(() => {
+      fetchWatching();
+      fetchNotifications();
+    }, 3000); // Calls functions every 3 seconds
+  
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [userId]);
 
   async function fetchNotifications() {
     setLoading(true)

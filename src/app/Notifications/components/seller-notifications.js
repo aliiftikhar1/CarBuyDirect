@@ -410,7 +410,7 @@ export default function SellerNotifications({ id }) {
                         <p className="text-muted-foreground text-sm">
                           Buy Price:{" "}
                           
-                            selectedNotification.auction?.CarSubmission?.buyPrice
+                            {selectedNotification.auction?.CarSubmission?.buyPrice}
                         </p>
                         }
                       </div>

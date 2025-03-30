@@ -19,7 +19,7 @@ import { getAllAuctionDataService } from "@/Services/getallaucntion.services"
 import Payment from "./Payment"
 import DealDonePayment from "./DealDonePayment"
 
-export default function SellerNotifications({ id }) {
+export default function BuyerNotifications({ id }) {
   const router = useRouter()
   const [allNotifications, setAllNotifications] = useState([])
   const [mainNotifications, setMainNotifications] = useState([])

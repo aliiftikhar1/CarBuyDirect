@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Bell, Heart, HelpCircle, Info, ChevronLeft, ChevronRight, Check, CircleMinus, CirclePlus } from "lucide-react"
+import { Bell, Heart, HelpCircle, Info, ChevronLeft, ChevronRight, Check, CircleMinus, CirclePlus, Phone, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -19,6 +19,7 @@ import { Typography } from "@mui/material"
 import Comments from "./Comments"
 import BidModal from "@/app/components/BidModal"
 import { toast } from "sonner"
+import { FaEnvelope } from "react-icons/fa"
 
 export default function HeroSection({ data, triggerfetch }) {
   const images = data.CarSubmission.SubmissionImages || []
@@ -308,9 +309,8 @@ export default function HeroSection({ data, triggerfetch }) {
                 <button
                   key={images[index].id}
                   onClick={() => setCurrentImage(index)}
-                  className={`relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden ${
-                    currentImage === index ? "ring-2 ring-red-500 shadow-[0_0_10px_red]" : ""
-                  }`}
+                  className={`relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden ${currentImage === index ? "ring-2 ring-red-500 shadow-[0_0_10px_red]" : ""
+                    }`}
                 >
                   <Image
                     src={images[index].data || "/placeholder.svg"}
@@ -417,13 +417,12 @@ export default function HeroSection({ data, triggerfetch }) {
                       <>
                         {reserveStatus && (
                           <p
-                            className={`text-xs flex gap-1 items-center md:text-sm ${
-                              reserveStatus === "Reserve met"
+                            className={`text-xs flex gap-1 items-center md:text-sm ${reserveStatus === "Reserve met"
                                 ? "text-green-500"
                                 : reserveStatus === "Reserve near"
                                   ? "text-yellow-500"
                                   : "text-red-500"
-                            }`}
+                              }`}
                           >
                             {reserveStatus === "Reserve met" ? (
                               <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" />
@@ -520,22 +519,33 @@ export default function HeroSection({ data, triggerfetch }) {
           <div className="mt-4 pt-4 border-t">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
-                <span className="text-white text-xl">VA</span>
+                <span className="text-white text-xl">
+                  {data.Seller.name.split(" ").map((s) => s.charAt(0)).join("")}
+                </span>
               </div>
               <div>
-                <h3 className="font-semibold text-lg">VIC Auto</h3>
+                <h3 className="font-semibold text-lg">{data.Seller.name}</h3>
                 <p className="text-gray-600 text-sm">Enquires about the item</p>
               </div>
             </div>
             <div className="mt-4 flex items-center gap-4">
-              <Button variant="outline" className="flex-1 text-blue-600 border-blue-600">
-                <span className="mr-2">📞</span> Call
+              <Button
+                variant="outline"
+                className="flex-1 text-blue-600 border-blue-600"
+                onClick={() => window.location.href = `tel:${data.Seller.phoneNo}`}
+              >
+                <span className="mr-2"><Phone/></span> Call
               </Button>
-              <Button variant="link" className="flex-1 text-blue-600">
-                Send an email
+              <Button
+                variant="outline"
+                className="flex-1 text-blue-600"
+                onClick={() => window.location.href = `mailto:${data.Seller.email}`}
+              >
+                <span className="mr-2"><Mail/></span> Send an email
               </Button>
             </div>
           </div>
+
           <Dialog open={isBidModal} onOpenChange={setIsBidModal}>
             <DialogContent className="max-w-xs md:max-w-sm p-4">
               <DialogHeader>

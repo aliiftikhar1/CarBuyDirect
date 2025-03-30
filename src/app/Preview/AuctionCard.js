@@ -100,8 +100,8 @@ export default function Auction({ items, watchdata }) {
                             {item.status === "Coming-Soon" ? (
                                 <h2 className="text-xl font-[200] tracking-tight">Comming Soon</h2>
                             ) : item.status === "Scheduled" ? (<div className={`flex w-full justify-center`}>
-                                <div className="flex flex-col gap-2 mt-1">
-                                <div className="text-left  flex gap-2 md:gap-4 items-center">
+                                <div className="flex flex-col gap-2 mt-1 w-full h-full">
+                                <div className="text-left  flex gap-2 md:gap-4 items-center justify-center">
                                     <p className="text-xl font-[200] tracking-tight items-center">
                                         Auction Begins In
                                     </p>

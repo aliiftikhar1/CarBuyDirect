@@ -22,7 +22,10 @@ export async function GET(request, { params }) {
                 Seller: {
                     select: {
                         name: true,
-                        type: true
+                        type: true,
+                        phoneNo:true,
+                        email:true,
+
                     }
                 },
                 Bids: {
