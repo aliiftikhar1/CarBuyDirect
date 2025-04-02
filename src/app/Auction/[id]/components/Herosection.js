@@ -4,7 +4,7 @@ import Image from "next/image"
 import { Bell, Heart, HelpCircle, Info, ChevronLeft, ChevronRight, Check, CircleMinus, CirclePlus, Phone, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 import OverviewSection from "./OverView"
 import TabsSection from "./TabsSection"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -20,6 +20,7 @@ import Comments from "./Comments"
 import BidModal from "@/app/components/BidModal"
 import { toast } from "sonner"
 import { FaEnvelope } from "react-icons/fa"
+import BiddingType from "./BiddingType"
 
 export default function HeroSection({ data, triggerfetch }) {
   const images = data.CarSubmission.SubmissionImages || []
@@ -470,19 +471,9 @@ export default function HeroSection({ data, triggerfetch }) {
                       }
                       className="text-lg"
                     />
-                    <Tabs defaultValue="autobid" className="w-full">
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="autobid" className="text-sm">
-                          Autobid
-                        </TabsTrigger>
-                        <TabsTrigger value="standard" className="text-sm">
-                          Standard
-                        </TabsTrigger>
-                      </TabsList>
-                    </Tabs>
-                    <Button size="icon" variant="ghost">
-                      <Info className="h-4 w-4" />
-                    </Button>
+                    
+                    <BiddingType userId={userid} auctionId={data.id}/>
+                    
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

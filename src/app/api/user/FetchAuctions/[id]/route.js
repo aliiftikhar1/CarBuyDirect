@@ -36,6 +36,7 @@ export async function GET(request, { params }) {
                         User: true
                     }
                 },
+                Autobid:true
             }
         });
 

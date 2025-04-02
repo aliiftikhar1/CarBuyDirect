@@ -65,6 +65,7 @@ model User {
   receipts   Receipt[]  @relation("userReceipt")
   transactions Transaction[]  @relation("userTransaction")
   HoldPayments HoldPayments[] @relation("userholdPayments")
+  Autobid   Autobid[]   @relation("AutobiduserId")
 }
 
 model CarSubmission {
@@ -163,6 +164,7 @@ model Auction {
   Comment          Comment[]    @relation("auctionComment")
   Like           Like[]   @relation("auctionLike")
   HoldPayments HoldPayments[] @relation("userAuctions")
+  Autobid       Autobid[]   @relation("autobidAuction")
 }
 
 model Watching {
@@ -182,6 +184,7 @@ model Bidding {
   carId     Int
   currency  String
   price     Int
+  type      String  @default("Manual")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -317,4 +320,19 @@ model Receipt {
 
     transaction   Transaction? @relation("transactionReceipt", fields: [transactionId], references: [id], onDelete: Cascade)
     user          User?        @relation("userReceipt", fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Autobid {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  auctionId     Int
+  maxAmount     Int  
+  incrementAmount Int  
+  status        String 
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  User    User    @relation("AutobiduserId", fields: [userId], references: [id], onDelete: Cascade)
+  Auction Auction @relation("autobidAuction", fields: [auctionId], references: [id], onDelete: Cascade)
 }
