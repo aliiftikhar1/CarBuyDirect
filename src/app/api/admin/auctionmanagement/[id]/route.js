@@ -16,7 +16,7 @@ export async function GET(request,{params}){
                           name: true,
                         },
                       },
-                      Brand:true,
+                      
                     },
                   },
                 },

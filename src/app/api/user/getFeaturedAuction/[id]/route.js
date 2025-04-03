@@ -11,7 +11,6 @@ export async function GET(request){
                 CarSubmission:{
                     include:{
                         SubmissionImages:true,
-                        Brand:true
                     }
                 },
                 Seller:{

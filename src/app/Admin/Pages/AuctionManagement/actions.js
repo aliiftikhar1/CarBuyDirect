@@ -138,7 +138,7 @@ export async function updateAuction(data) {
           include: {
             User: true,
             SubmissionImages: true,
-            Brand: true
+           
           }
         },
         Seller: {},

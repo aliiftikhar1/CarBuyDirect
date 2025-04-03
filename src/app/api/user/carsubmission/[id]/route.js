@@ -11,7 +11,7 @@ export async function GET(request,{params}){
             include:{
                 User: true,
                 SubmissionImages: true,
-                Brand:true,
+                
             }
         })
         return NextResponse.json({success:true,data:carsubmisions})

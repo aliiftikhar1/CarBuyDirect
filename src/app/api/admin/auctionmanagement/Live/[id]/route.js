@@ -15,7 +15,7 @@ export async function GET(request){
                           name: true,
                         },
                       },
-                      Brand:true,
+                      
                     },
                   },
                   Bids:true,
