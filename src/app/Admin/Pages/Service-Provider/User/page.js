@@ -59,6 +59,10 @@ export default function ServiceProviderPage() {
 
   const handleUserSelect = (user) => {
     setSelectedUser(user)
+    setFormData({
+      zipcode: user.zipcode || "",
+      location: user.address || "",
+    })
     setOpen(true)
   }
 
@@ -71,11 +75,6 @@ export default function ServiceProviderPage() {
       return
     }
 
-    if (!formData.zipcode || !formData.location) {
-      toast("Please fill in all required fields.")
-      return
-    }
-
     try {
       const response = await fetch("/api/admin/serviceProvider/User", {
         method: "POST",
@@ -84,8 +83,8 @@ export default function ServiceProviderPage() {
         },
         body: JSON.stringify({
           userId: selectedUser.id,
-          zipcode: formData.zipcode,
-          location: formData.location,
+          zipcode: selectedUser.zipcode || formData.zipcode,
+          location: selectedUser.address || formData.location,
         }),
       })
 
@@ -180,7 +179,7 @@ export default function ServiceProviderPage() {
             <DialogTitle>Create Service Provider</DialogTitle>
             <DialogDescription>
               {selectedUser
-                ? `Convert ${selectedUser.name} to a service provider by providing the required information.`
+                ? `Convert ${selectedUser.name} to a service provider using their profile information.`
                 : "Select a user first"}
             </DialogDescription>
           </DialogHeader>
@@ -196,19 +195,24 @@ export default function ServiceProviderPage() {
                       onValueChange={(value) => {
                         const user = users.find((u) => u.id === Number.parseInt(value))
                         setSelectedUser(user)
+                        setFormData({
+                          zipcode: user.zipcode || "",
+                          location: user.address || "",
+                        })
                       }}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a user" />
                       </SelectTrigger>
                       <SelectContent>
-                        {users.length>0&&users
-                          .filter((user) => !user.serviceProvider)
-                          .map((user) => (
-                            <SelectItem key={user.id} value={user.id.toString()}>
-                              {user.name} ({user.email})
-                            </SelectItem>
-                          ))}
+                        {users.length > 0 &&
+                          users
+                            .filter((user) => !user.serviceProvider)
+                            .map((user) => (
+                              <SelectItem key={user.id} value={user.id.toString()}>
+                                {user.name} ({user.email})
+                              </SelectItem>
+                            ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -218,27 +222,33 @@ export default function ServiceProviderPage() {
                 <Label htmlFor="zipcode" className="text-right">
                   Zipcode
                 </Label>
-                <Input
-                  id="zipcode"
-                  name="zipcode"
-                  value={formData.zipcode}
-                  onChange={handleInputChange}
-                  className="col-span-3"
-                  placeholder="Enter zipcode"
-                />
+                <div className="col-span-3 flex items-center">
+                  <Input
+                    id="zipcode"
+                    name="zipcode"
+                    value={formData.zipcode}
+                    onChange={handleInputChange}
+                    className="w-full"
+                    placeholder="Using user's zipcode"
+                    // readOnly
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="location" className="text-right">
                   Location
                 </Label>
-                <Input
-                  id="location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  className="col-span-3"
-                  placeholder="Enter location"
-                />
+                <div className="col-span-3 flex items-center">
+                  <Input
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="w-full"
+                    placeholder="Using user's address"
+                    // readOnly
+                  />
+                </div>
               </div>
             </div>
             <DialogFooter>
