@@ -16,7 +16,7 @@ import { Providers } from './providers';
 
 export default function LayoutContent({ children }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith('/Admin') || pathname.startsWith('/Seller') || pathname.startsWith('/Login');
+  const isAdmin = pathname.startsWith('/Admin') || pathname.startsWith('/Seller') || pathname.startsWith('/Login')|| pathname.startsWith('/Service-Provider');
 
   return (
     <Providers>

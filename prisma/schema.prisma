@@ -7,18 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Brand {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  image       String   @db.LongText
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  CarSubmission   CarSubmission[]
-
-}
-
 model User {
   id          Int      @id @default(autoincrement())
   name        String
@@ -66,6 +54,8 @@ model User {
   transactions Transaction[]  @relation("userTransaction")
   HoldPayments HoldPayments[] @relation("userholdPayments")
   Autobid   Autobid[]   @relation("AutobiduserId")
+  serviceProvider  ServiceProvider? 
+  serviceRequests  ServiceRequest[] 
 }
 
 model CarSubmission {
@@ -107,7 +97,7 @@ model CarSubmission {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 
-  Brand            Brand?     @relation(fields: [brand], references: [id], onDelete: Cascade)
+  
   User             User       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   SubmissionImages CarSubmissionImage[]
   Auction          Auction[]
@@ -335,4 +325,57 @@ model Autobid {
 
   User    User    @relation("AutobiduserId", fields: [userId], references: [id], onDelete: Cascade)
   Auction Auction @relation("autobidAuction", fields: [auctionId], references: [id], onDelete: Cascade)
+}
+
+
+
+model ServiceProvider {
+  id       Int    @id @default(autoincrement())
+  userId   Int    @unique
+  zipcode  String
+  location String
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services Service[]
+  serviceRequests ServiceRequest[] // Add this line to establish the reverse relation
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Service {
+  id                Int    @id @default(autoincrement())
+  serviceproviderId Int
+  title             String
+  features          Json   // Stores multiple features dynamically
+  timeslots         Json   // Stores available time slots dynamically
+  price             Float
+
+  serviceProvider   ServiceProvider @relation(fields: [serviceproviderId], references: [id], onDelete: Cascade)
+  serviceRequests   ServiceRequest[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model ServiceRequest {
+  id                Int    @id @default(autoincrement())
+  userId            Int
+  serviceproviderId Int
+  serviceId         Int
+  carMake           String
+  carModel          String
+  selectedtimeslot  String
+  status            RequestStatus @default(PENDING)
+
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  serviceProvider  ServiceProvider @relation(fields: [serviceproviderId], references: [id], onDelete: Cascade)
+  service          Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELED
 }

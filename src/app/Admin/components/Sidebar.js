@@ -66,6 +66,11 @@ const items = [
     url: "/Admin/Pages/Slider",
     icon: ImageIcon,
   },
+  {
+    title: "Service Provider",
+    url: "/Admin/Pages/Service-Provider/User",
+    icon: ImageIcon,
+  },
   // {
   //   title: "ContactUs",
   //   url: "/Admin/ContactUs",
