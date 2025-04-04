@@ -22,7 +22,7 @@ import { toast } from "sonner"
 import { FaEnvelope } from "react-icons/fa"
 import BiddingType from "./BiddingType"
 
-export default function HeroSection({ data, setHandler , handler}) {
+export default function HeroSection({ data, triggerfetch, trigger }) {
   const images = data.CarSubmission.SubmissionImages || []
   const [isBidDetailOpen, setIsBidDetailOpen] = useState(false)
   const [currentImage, setCurrentImage] = useState(0)
@@ -38,7 +38,7 @@ export default function HeroSection({ data, setHandler , handler}) {
   const userid = useSelector((state) => state.CarUser.userDetails?.id)
   const userDetails = useSelector((data) => data.CarUser.userDetails)
   const [loading, setLoading] = useState(false)
-  // const [handler, setHandler] = useState(false)
+  const [handler, setHandler] = useState(false)
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
   const [isBidModal, setIsBidModal] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -128,7 +128,7 @@ export default function HeroSection({ data, setHandler , handler}) {
       setCurrentBid(bidAmount)
       setBidAmount(bidAmount + 100)
       setBids((prevBids) => prevBids + 1)
-      setHandler(!handler)
+      triggerfetch(!trigger)
       // alert("Bid placed successfully!");
       setIsBidDialogOpen(false)
     } catch (error) {

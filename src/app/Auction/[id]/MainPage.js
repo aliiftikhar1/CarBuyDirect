@@ -10,7 +10,7 @@ export default function Car() {
   const [auctionItem, setAuctionItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [handler, setHandler] = useState(false);
+  const [trigger, triggerfetch] = useState(false);
   const userid = useSelector((data) => data.CarUser?.userDetails?.id);
 
   const GetAuctions = async () => {
@@ -51,7 +51,7 @@ export default function Car() {
 
   useEffect(() => {
     GetAuctions();
-  }, [handler, id]); // Fetch auction data when handler or id changes
+  }, [trigger, id]); // Fetch auction data when handler or id changes
 
   // useEffect(() => {
   //   if (!auctionItem) return;
@@ -88,7 +88,7 @@ export default function Car() {
 
   return (
     <div className="flex flex-col justify-center items-center h-auto mt-12">
-      {auctionItem && <HeroSection data={auctionItem} setHandler={setHandler} handler={handler} />}
+      {auctionItem && <HeroSection data={auctionItem} triggerfetch={triggerfetch} trigger={trigger}/>}
     </div>
   );
 }
