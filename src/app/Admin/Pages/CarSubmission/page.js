@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
-import { Label } from "@radix-ui/react-label"
+import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 const JoditEditor = dynamic(() => import("jodit-react"), {
@@ -16,9 +16,13 @@ import Image from "next/image"
 import { toast } from "sonner"
 import dynamic from "next/dynamic"
 import { AutocompleteInput } from "./AutoCompleteInput"
+import { YearAutocompleteInput } from "./AutocompleteYear"
+import { CarApiAutocompleteInput } from "./AutocompleteBrands"
 
 export default function AdminCarSubmissions() {
-  const [buy, setBuy] = useState("False");
+  const [buy, setBuy] = useState("False")
+  const [models, setModels] = useState([])
+  const [years, setYears] = useState([])
   const [categories, setCategories] = useState(["SuperCar", "LuxuryCar"])
   const [bodyTypes, setBodyTypes] = useState(["Metal", "Plastic"])
   const [transmissions, setTransmissions] = useState(["Self", "Manual"])
@@ -64,12 +68,17 @@ export default function AdminCarSubmissions() {
     reserved: "",
     reservedPrice: "",
     webSlug: "",
+    buy: "False",
+    buyPrice: "",
   })
   const [imageLabels, setImageLabels] = useState({})
   const [loading, setloading] = useState(true)
 
   useEffect(() => {
     console.log("Form Data is ", formData)
+    if (formData.buy === "True") {
+      // Handle buy price logic if needed
+    }
   }, [formData])
   async function fetchSubmissions() {
     fetch(`/api/admin/carsubmissions/all/1`)
@@ -85,25 +94,21 @@ export default function AdminCarSubmissions() {
   }
   const fetchBrands = async () => {
     try {
-      setloading(true);
-      const endpoints2 = [
-        `/api/CarApi/getMakes`,
-        `/api/CarApi/getModels`,
-        `/api/CarApi/getYears`,
-      ];
+      setloading(true)
+      const endpoints2 = [`/api/CarApi/getMakes`, `/api/CarApi/getModels`, `/api/CarApi/getYears`]
 
       // Fetch all data concurrently
-      const responses2 = await Promise.all(endpoints2.map((endpoint) => fetch(endpoint)));
+      const responses2 = await Promise.all(endpoints2.map((endpoint) => fetch(endpoint)))
 
       // Parse all responses as JSON
-      const data2 = await Promise.all(responses2.map((response) => response.json()));
-      console.log("Data from car api is : ",data2)
+      const data2 = await Promise.all(responses2.map((response) => response.json()))
+      console.log("Data from car api is : ", data2)
 
       // Update the state with the fetched data
-      setBrands(data2[0].data);
-      setModels(data2[1].data);
-      setYears(data2[2]);
-      
+      setBrands(data2[0].data)
+      setModels(data2[1].data)
+      setYears(data2[2])
+
       const endpoints = [
         `/api/user/FetchLists/BodyTypes`,
         `/api/user/FetchLists/Categories`,
@@ -112,27 +117,27 @@ export default function AdminCarSubmissions() {
         `/api/user/FetchLists/ExteriorColor`,
         `/api/user/FetchLists/FuelType`,
         `/api/user/FetchLists/Transmissions`,
-      ];
+      ]
 
       // Fetch all data concurrently
-      const responses = await Promise.all(endpoints.map((endpoint) => fetch(endpoint)));
+      const responses = await Promise.all(endpoints.map((endpoint) => fetch(endpoint)))
 
       // Parse all responses as JSON
-      const data = await Promise.all(responses.map((response) => response.json()));
-      setBodyTypes(data[0].bodyType);
-      setCategories(data[1].vehiclecategory);
-      setConditions(data[2].vehiclecondition);
-      setEngineCapacities(data[3].vehicleengineCapacity);
-      setExteriorColors(data[4].vehicleexteriorColor);
-      setFuelTypes(data[5].vehiclefuelType);
-      setTransmissions(data[6].vehicletransmission);
+      const data = await Promise.all(responses.map((response) => response.json()))
+      setBodyTypes(data[0].bodyType)
+      setCategories(data[1].vehiclecategory)
+      setConditions(data[2].vehiclecondition)
+      setEngineCapacities(data[3].vehicleengineCapacity)
+      setExteriorColors(data[4].vehicleexteriorColor)
+      setFuelTypes(data[5].vehiclefuelType)
+      setTransmissions(data[6].vehicletransmission)
 
-      setloading(false);
+      setloading(false)
     } catch (error) {
-      setloading(false);
-      toast.error('Failed to fetch brands');
+      setloading(false)
+      toast.error("Failed to fetch brands")
     }
-  };
+  }
   useEffect(() => {
     fetchSubmissions()
     fetchBrands()
@@ -193,6 +198,8 @@ export default function AdminCarSubmissions() {
       reserved: submission.reserved === true ? "True" : "False" || "",
       reservedPrice: submission.reservedPrice || "",
       webSlug: submission.webSlug || "",
+      buy: submission.buy === true ? "True" : "False" || "False",
+      buyPrice: submission.buyPrice || "",
     })
     setIsUpdateDialogOpen(true)
   }
@@ -501,22 +508,13 @@ export default function AdminCarSubmissions() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <AutocompleteInput
-                  options={brands}
-                  setFormData={setFormData}
-                  value={formData.vehicleMake}
-                  name="vehicleMake"
-                  label="Vehicle Make"
-                  required
-                />
+              <CarApiAutocompleteInput options={brands} value={formData.vehicleMake}  onChange={(e) => handleFormChange("vehicleMake", e.target.value)} name="vehicleMake" />
+                
 
                 <div className="space-y-2">
-                  <Label htmlFor="vehicleModel">Vehicle model</Label>
-                  <Input
-                    id="vehicleModel"
-                    value={formData.vehicleModel}
-                    onChange={(e) => handleFormChange("vehicleModel", e.target.value)}
-                  />
+                  {/* <Label htmlFor="vehicleModel">Vehicle model</Label> */}
+                  <CarApiAutocompleteInput options={models} value={formData.vehicleModel}  onChange={(e) => handleFormChange("vehicleModel", e.target.value)} name="vehicleModel" />
+                
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
@@ -563,12 +561,8 @@ export default function AdminCarSubmissions() {
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="vehicleYear">Vehicle year</Label>
-                  <Input
-                    id="vehicleYear"
-                    value={formData.vehicleYear}
-                    onChange={(e) => handleFormChange("vehicleYear", e.target.value)}
-                  />
+                  {/* <Label htmlFor="vehicleYear">Vehicle year</Label> */}
+                  <YearAutocompleteInput options={years} name="vehicleYear" value={formData.vehicleYear}  onChange={(e) => handleFormChange("vehicleYear", e.target.value)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="vin">VIN or Chassis No.</Label>
@@ -641,32 +635,38 @@ export default function AdminCarSubmissions() {
                   label="Condition"
                   required
                 />
-                 <div className="space-y-2">
-            <label htmlFor="buy" className="text-sm font-medium">
-              Buy*
-            </label>
-            <div className="flex gap-2">
-              <Select name="buy" defaultValue="False"  onValueChange={(value) => handleFormChange("buy", value)}>
-                <SelectTrigger className="w-[80px]">
-                  <SelectValue placeholder="No" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="True">Yes</SelectItem>
-                  <SelectItem value="False">No</SelectItem>
-                </SelectContent>
-              </Select>
-              {buy === "True" && (
-                <Input
-                  id="buyPrice"
-                  placeholder="Enter Amount"
-                  name="buyPrice"
-                  onChange={(e) => handleFormChange("buyPrice", e.target.value)}
-                  required
-                  className="flex-1"
-                />
-              )}
-            </div>
-          </div>
+                <div className="space-y-2">
+                  <label htmlFor="buy" className="text-sm font-medium">
+                    Buy*
+                  </label>
+                  <div className="flex gap-2">
+                    <Select
+                      name="buy"
+                      value={formData.buy}
+                      defaultValue={formData.buy}
+                      onValueChange={(value) => handleFormChange("buy", value)}
+                    >
+                      <SelectTrigger className="w-[80px]">
+                        <SelectValue placeholder="No" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="True">Yes</SelectItem>
+                        <SelectItem value="False">No</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {formData.buy === "True" && (
+                      <Input
+                        id="buyPrice"
+                        placeholder="Enter Amount"
+                        name="buyPrice"
+                        value={formData.buyPrice}
+                        onChange={(e) => handleFormChange("buyPrice", e.target.value)}
+                        required
+                        className="flex-1"
+                      />
+                    )}
+                  </div>
+                </div>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
