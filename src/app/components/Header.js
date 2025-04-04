@@ -107,7 +107,7 @@ export default function Header() {
 
           <div className="flex md:w-[12rem] gap-4 text-lg font-[400] tracking-wider justify-center items-center relative">
             {user?.type === "seller" && (
-              <Link href="/Seller" className="hidden md:flex px-4 py-1 rounded-full border-2 border-gray-600">
+              <Link href="/Seller" className="hidden absolute -left-[10rem] md:flex px-4 py-1 rounded-full border-2 border-gray-600">
                 Seller Panel
               </Link>
             )}
@@ -115,7 +115,7 @@ export default function Header() {
             <div ref={searchRef} className="relative flex items-center">
               <div className="relative flex justify-center items-center">
                 {searchOpen && (
-                  <div className="absolute top-10 -right-10 md:-top-1 md:right-10 transition-all duration-300 ease-in-out transform border p-1 rounded-2xl w-64 shadow-md bg-white z-30 flex items-center">
+                  <div className="absolute top-10 -right-10 md:-top-2 md:right-10 transition-all duration-300 ease-in-out transform border p-1 rounded-2xl w-64 shadow-md bg-white z-30 flex items-center">
                     <Input
                       ref={inputRef}
                       type="text"
