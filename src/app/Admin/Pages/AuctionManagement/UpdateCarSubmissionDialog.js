@@ -40,9 +40,12 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
       // Convert featured to string before sending to server action
       const dataToSend = {
         ...formData,
-        featured: formData.featured === true || formData.featured === "true" ? "true" : "false",
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        featured: formData.featured === "true" ? "true" : "false",
       }
 
+      console.log("Data to send:", dataToSend)
       const result = await updateAuction(dataToSend)
       if (result.success) {
         setError("")
