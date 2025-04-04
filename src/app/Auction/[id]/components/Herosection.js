@@ -38,7 +38,7 @@ export default function HeroSection({ data, setHandler , handler}) {
   const userid = useSelector((state) => state.CarUser.userDetails?.id)
   const userDetails = useSelector((data) => data.CarUser.userDetails)
   const [loading, setLoading] = useState(false)
-  const [handler, setHandler] = useState(false)
+  // const [handler, setHandler] = useState(false)
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false)
   const [isBidModal, setIsBidModal] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
