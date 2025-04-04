@@ -72,7 +72,31 @@ export async function POST(request) {
 
 export async function GET() {
     try {
-        const allWatching = await prisma.watching.findMany();
+        const allWatching = await prisma.watching.findMany({
+            include:{
+                Auction:{
+                    include:{
+                        CarSubmission:{
+                            select:{
+                                vehicleModel:true,
+                                vehicleMake:true,
+                                vehicleYear:true,
+                                webSlug:true,
+                                SubmissionImages:{
+                                    where:{
+                                        label:"portrait"
+                                    },
+                                    select:{
+                                        data:true
+                                    }
+                                }
+                            }
+                        }
+                    }
+             
+                }
+            }
+        });
 
         return NextResponse.json(
             { success: true, data: allWatching },
