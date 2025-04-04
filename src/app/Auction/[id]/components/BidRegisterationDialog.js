@@ -24,15 +24,15 @@ import { debounce } from "lodash"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
 
-export default function BidRegistrationForm({ setHandler, setIsDialogOpen }) {
+export default function BidRegistrationForm({ setHandler, setIsDialogOpen , handler}) {
   return (
     <Elements stripe={stripePromise}>
-      <BidRegistrationFormContent setHandler={setHandler} setIsDialogOpen={setIsDialogOpen} />
+      <BidRegistrationFormContent setHandler={setHandler} handler={handler} setIsDialogOpen={setIsDialogOpen} />
     </Elements>
   )
 }
 
-function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
+function BidRegistrationFormContent({ setHandler, setIsDialogOpen , handler}) {
   const userdetails = useSelector((data) => data.CarUser.userDetails)
   const [loader, setLoader] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
@@ -327,7 +327,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen }) {
       if (response.status) {
         setLoader(false)
         toast.success("Form submitted successfully!")
-        setHandler((prev) => !prev)
+        setHandler(!handler)
         setIsDialogOpen((prev) => !prev)
       } else {
         setLoader(false)
