@@ -9,6 +9,7 @@ export default function Home() {
   const [loading, setloading] = useState(false)
   const [auctionItems, setAuctionItems] = useState([])
   const [watch, setwatch] = useState([])
+  const [handler, setHandler] = useState(false)
   async function GetAuctions() {
     try {
       setloading(true)
@@ -18,7 +19,7 @@ export default function Home() {
       fetchWatch()
       setloading(false)
     } catch (error) {
-      toast.error("Failed to fetch auctions")
+      toast("Failed to fetch auctions")
     }
   }
 
@@ -30,19 +31,20 @@ export default function Home() {
       setwatch(data.data)
       setloading(false)
     } catch (error) {
-      toast.error("Failed to fetch auctions")
+      toast("Failed to fetch auctions")
     }
   }
   useEffect(() => {
     GetAuctions()
-  }, [])
+  }, [handler])
+
   return (
     <main className="min-h-screen mt-20">
       {/* {loading ? <div className="flex w-full h-full justify-center items-center"><Loader className="animate-spin" /></div> :
         <Auction items={auctionItems} watchdata={watch} />
       } */}
       {loading ? <AuctionListSkeleton /> :
-        <Auction items={auctionItems} watchdata={watch} />
+        <Auction items={auctionItems} watchdata={watch} setHandler={setHandler}/>
       }
     </main>
   )

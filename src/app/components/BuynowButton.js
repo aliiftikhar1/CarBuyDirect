@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import BidRegistrationForm from "../Auction/[id]/components/BidRegisterationDialog"
 
-function BuynowButton({ data }) {
+function BuynowButton({ data, setHandler }) {
   const [open, setOpen] = useState(false)
   const [dealOpen, setDealOpen] = useState(false)
   const [price, setPrice] = useState("")
@@ -141,7 +141,7 @@ function BuynowButton({ data }) {
       {/* Registration Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <BidRegistrationForm setIsDialogOpen={setIsDialogOpen} />
+          <BidRegistrationForm setHandler={setHandler} setIsDialogOpen={setIsDialogOpen} />
         </DialogContent>
       </Dialog>
 

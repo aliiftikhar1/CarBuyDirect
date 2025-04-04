@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import BuynowButton from "../components/BuynowButton";
 import { justify } from "jodit/esm/plugins/justify/justify";
 
-export default function Auction({ items, watchdata }) {
+export default function Auction({ items, watchdata , setHandler}) {
 
     const userid = useSelector((state) => state.CarUser.userDetails?.id);
     function handleWatch() {
@@ -112,7 +112,7 @@ export default function Auction({ items, watchdata }) {
                                     />
                                 </div>
                                 {item.CarSubmission?.buy && (
-                                    <BuynowButton data={item} />
+                                    <BuynowButton data={item} setHandler={setHandler} />
                                 )}
                                 </div>
                             </div>
