@@ -54,6 +54,8 @@ export async function PUT(request, { params }) {
         condition,
         reserved,
         reservedPrice,
+        buyPrice,
+        buy,
         imageLabels,
         webSlug
     } = data;
@@ -102,6 +104,8 @@ export async function PUT(request, { params }) {
                     condition,
                     reserved: reserved === 'True' ? true : false,
                     reservedPrice: parseInt(reservedPrice),
+                    buy: buy === 'True' ? true : false,
+                    buyPrice: parseInt(buyPrice),
                     webSlug
                 },
             });

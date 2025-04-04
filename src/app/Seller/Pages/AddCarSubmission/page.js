@@ -21,6 +21,12 @@ import { YearAutocompleteInput } from "./AutocompleteYear"
 export default function ContactForm() {
   const editor = useRef(null)
   const user = useSelector((data) => data.CarUser.userDetails)
+  const fullName = user?.name || ""; // e.g., "Ali Iftikhar"
+const [firstName, ...rest] = fullName.trim().split(" ");
+const lastName = rest.join(" "); // in case last name has multiple parts
+
+console.log("First Name:", firstName);
+console.log("Last Name:", lastName);
   const [loading, setloading] = useState(true)
   const [reserved, setReserved] = useState("False");
   const [buy, setBuy] = useState("False");
@@ -205,13 +211,13 @@ export default function ContactForm() {
             <label htmlFor="firstName" className="text-sm font-medium">
               First Name *
             </label>
-            <Input id="firstName" name="firstName" required />
+            <Input id="firstName" name="firstName" value={firstName} disabled required />
           </div>
           <div className="space-y-2">
             <label htmlFor="lastName" className="text-sm font-medium">
               Last Name *
             </label>
-            <Input id="lastName" name="lastName" required />
+            <Input id="lastName" name="lastName" value={lastName} disabled required />
           </div>
 
           <div className="space-y-2">
