@@ -139,8 +139,8 @@ console.log("Last Name:", lastName);
       const formData = new FormData(e.currentTarget)
       const jsonData = Object.fromEntries(formData.entries())
 
-      jsonData.firstname = firstName
-      jsonData.lastname = lastName
+      jsonData.firstName = firstName
+      jsonData.lastName = lastName
       jsonData.sellerId = user.id
       jsonData.email = user.email
       jsonData.phone = user.phoneNo
