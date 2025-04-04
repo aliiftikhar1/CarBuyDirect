@@ -4,7 +4,7 @@ export async function GET(request) {
   try {
     const products = await prisma.car.findMany({
       include: {
-        Brand: true,
+        
         Images: true,
         // ProductImages: true,
       },
