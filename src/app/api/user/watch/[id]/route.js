@@ -7,7 +7,7 @@ export async function GET(request, { params }) {
     try {
         const watching = await prisma.Watching.findMany({
             where: {
-                userId: parseInt(id, 10), // Explicitly parse as an integer
+                userId: parseInt(id, 10), 
             },
             include:{
                 Auction:{
@@ -37,7 +37,7 @@ export async function GET(request, { params }) {
         if (!watching || watching.length === 0) {
             return NextResponse.json(
                 { success: false, message: "Watching not found" },
-                { status: 404 }
+                { status: 201 }
             );
         }
 

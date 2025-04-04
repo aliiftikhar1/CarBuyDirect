@@ -1,5 +1,4 @@
-import { formatDate } from "@/lib/utils"
-
+import { formatDate } from "@/utils/formatdate"
 export default function AuctionList({ auctions }) {
   return (
     <div>
