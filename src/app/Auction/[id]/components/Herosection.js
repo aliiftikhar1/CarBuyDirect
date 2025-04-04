@@ -373,8 +373,8 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                     <p className="text-lg md:text-2xl text-left text-gray-600">Sold Out</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    <span className="flex items-center gap-1">
+                  <div className="flex md:grid md:grid-cols-2 gap-4 mt-2 w-full ">
+                    <span className="flex items-center gap-1 w-full ">
                       <TimerComponent className="gap-1" endDate={data.endDate} />
                       <button>
                         <HelpCircle className="h-4 w-4 text-gray-400" />
@@ -399,35 +399,37 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                       <DialogTrigger asChild>
                         <span className="text-blue-600 cursor-pointer hover:underline">{data?.Bids.length}</span>
                       </DialogTrigger>
-                      <DialogContent className="m-2 md:m-0 md:max-w-3xl">
+                      <DialogContent className="m-2 md:m-0 md:max-w-3xl max-h-[80vh] overflow-hidden flex flex-col">
                         <DialogHeader>
                           <DialogTitle>
                             Bid Details for {data?.CarSubmission.vehicleYear} {data?.CarSubmission.vehicleMake}{" "}
                             {data?.CarSubmission.vehicleModel}
                           </DialogTitle>
                         </DialogHeader>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Bidder</TableHead>
-                              <TableHead>Amount</TableHead>
-                              <TableHead>Time</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {data?.Bids.map((bid) => (
-                              <TableRow key={bid.id}>
-                                <TableCell>{bid.User.name}</TableCell>
-                                <TableCell>
-                                  {bid.currency} {bid.price.toLocaleString()}
-                                </TableCell>
-                                <TableCell>
-                                  {formatDistance(new Date(bid.createdAt), new Date(), { addSuffix: true })}
-                                </TableCell>
+                        <div className="overflow-y-auto flex-1">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Bidder</TableHead>
+                                <TableHead>Amount</TableHead>
+                                <TableHead>Time</TableHead>
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                            </TableHeader>
+                            <TableBody>
+                              {data?.Bids.map((bid) => (
+                                <TableRow key={bid.id}>
+                                  <TableCell>{bid.User.name}</TableCell>
+                                  <TableCell>
+                                    {bid.currency} {bid.price.toLocaleString()}
+                                  </TableCell>
+                                  <TableCell>
+                                    {formatDistance(new Date(bid.createdAt), new Date(), { addSuffix: true })}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
                       </DialogContent>
                     </Dialog>
                   </div>
@@ -596,12 +598,14 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
             </DialogContent>
           </Dialog>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="max-w-4xl h-[80vh] overflow-y-auto">
-              <BidRegistrationForm setHandler={setHandler} handler={handler} setIsDialogOpen={setIsDialogOpen} />
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+              <div className="h-full overflow-y-auto">
+                <BidRegistrationForm setHandler={setHandler} handler={handler} setIsDialogOpen={setIsDialogOpen} />
+              </div>
             </DialogContent>
           </Dialog>
           <Dialog open={isBidDialogOpen} onOpenChange={setIsBidDialogOpen}>
-            <DialogContent className="max-w-lg rounded-2xl shadow-xl text-gray-700 border border-gray-300">
+            <DialogContent className="max-w-lg rounded-2xl shadow-xl text-gray-700 border border-gray-300 max-h-[80vh] overflow-y-auto">
               <div className="p-6 space-y-6">
                 {/* Title */}
                 <h2 className="text-3xl font-bold text-gray-800 text-center">Place Your Bid</h2>
