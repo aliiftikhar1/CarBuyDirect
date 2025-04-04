@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useRef, useState } from "react"
 import { Upload, Loader2 } from "lucide-react"
@@ -21,28 +20,28 @@ import { YearAutocompleteInput } from "./AutocompleteYear"
 export default function ContactForm() {
   const editor = useRef(null)
   const user = useSelector((data) => data.CarUser.userDetails)
-  const fullName = user?.name || ""; // e.g., "Ali Iftikhar"
-const [firstName, ...rest] = fullName.trim().split(" ");
-const lastName = rest.join(" "); // in case last name has multiple parts
+  const fullName = user?.name || "" // e.g., "Ali Iftikhar"
+  const [firstName, ...rest] = fullName.trim().split(" ")
+  const lastName = rest.join(" ") // in case last name has multiple parts
 
-console.log("First Name:", firstName);
-console.log("Last Name:", lastName);
+  console.log("First Name:", firstName)
+  console.log("Last Name:", lastName)
   const [loading, setloading] = useState(true)
-  const [reserved, setReserved] = useState("False");
-  const [buy, setBuy] = useState("False");
-  const [categories, setCategories] = useState(["SuperCar", "LuxuryCar"]);
-  const [bodyTypes, setBodyTypes] = useState(["Metal", "Plastic"]);
-  const [transmissions, setTransmissions] = useState(["Self", "Manual"]);
-  const [engineCapacities, setEngineCapacities] = useState(["1200", "1000"]);
-  const [fuelTypes, setFuelTypes] = useState(["Gas", "Petrol"]);
-  const [exteriorColors, setExteriorColors] = useState(["Red", "Yellow"]);
-  const [conditions, setConditions] = useState(["Used", "New"]);
-  const [brands, setBrands] = useState(["Make"]);
-  const [models, setModels] = useState([]);
-  const [years, setYears] = useState([]);
+  const [reserved, setReserved] = useState("False")
+  const [buy, setBuy] = useState("False")
+  const [categories, setCategories] = useState(["SuperCar", "LuxuryCar"])
+  const [bodyTypes, setBodyTypes] = useState(["Metal", "Plastic"])
+  const [transmissions, setTransmissions] = useState(["Self", "Manual"])
+  const [engineCapacities, setEngineCapacities] = useState(["1200", "1000"])
+  const [fuelTypes, setFuelTypes] = useState(["Gas", "Petrol"])
+  const [exteriorColors, setExteriorColors] = useState(["Red", "Yellow"])
+  const [conditions, setConditions] = useState(["Used", "New"])
+  const [brands, setBrands] = useState(["Make"])
+  const [models, setModels] = useState([])
+  const [years, setYears] = useState([])
   const [files, setFiles] = useState([])
-  const [selectBrand, setSelectedBrand]=useState(null)
-  const [selectMake, setSelectedMake]=useState(null)
+  const [selectBrand, setSelectedBrand] = useState(null)
+  const [selectMake, setSelectedMake] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [editorContent, setEditorContent] = useState({
     description: "",
@@ -50,11 +49,11 @@ console.log("Last Name:", lastName);
     notes: "",
   })
 
-  useEffect(()=>{
-    console.log("Selected Make is ",selectBrand)
-    const brandmodels = models.filter((data)=>data.make_id==selectBrand)
+  useEffect(() => {
+    console.log("Selected Make is ", selectBrand)
+    const brandmodels = models.filter((data) => data.make_id == selectBrand)
     setModels(brandmodels)
-  },[selectBrand])
+  }, [selectBrand])
   const handleDrop = (e) => {
     e.preventDefault()
     const droppedFiles = Array.from(e.dataTransfer.files)
@@ -63,25 +62,21 @@ console.log("Last Name:", lastName);
 
   const fetchBrands = async () => {
     try {
-      setloading(true);
-      const endpoints2 = [
-        `/api/CarApi/getMakes`,
-        `/api/CarApi/getModels`,
-        `/api/CarApi/getYears`,
-      ];
+      setloading(true)
+      const endpoints2 = [`/api/CarApi/getMakes`, `/api/CarApi/getModels`, `/api/CarApi/getYears`]
 
       // Fetch all data concurrently
-      const responses2 = await Promise.all(endpoints2.map((endpoint) => fetch(endpoint)));
+      const responses2 = await Promise.all(endpoints2.map((endpoint) => fetch(endpoint)))
 
       // Parse all responses as JSON
-      const data2 = await Promise.all(responses2.map((response) => response.json()));
-      console.log("Data from car api is : ",data2)
+      const data2 = await Promise.all(responses2.map((response) => response.json()))
+      console.log("Data from car api is : ", data2)
 
       // Update the state with the fetched data
-      setBrands(data2[0].data);
-      setModels(data2[1].data);
-      setYears(data2[2]);
-      
+      setBrands(data2[0].data)
+      setModels(data2[1].data)
+      setYears(data2[2])
+
       const endpoints = [
         `/api/user/FetchLists/BodyTypes`,
         `/api/user/FetchLists/Categories`,
@@ -90,31 +85,31 @@ console.log("Last Name:", lastName);
         `/api/user/FetchLists/ExteriorColor`,
         `/api/user/FetchLists/FuelType`,
         `/api/user/FetchLists/Transmissions`,
-      ];
+      ]
 
       // Fetch all data concurrently
-      const responses = await Promise.all(endpoints.map((endpoint) => fetch(endpoint)));
+      const responses = await Promise.all(endpoints.map((endpoint) => fetch(endpoint)))
 
       // Parse all responses as JSON
-      const data = await Promise.all(responses.map((response) => response.json()));
-      setBodyTypes(data[0].bodyType);
-      setCategories(data[1].vehiclecategory);
-      setConditions(data[2].vehiclecondition);
-      setEngineCapacities(data[3].vehicleengineCapacity);
-      setExteriorColors(data[4].vehicleexteriorColor);
-      setFuelTypes(data[5].vehiclefuelType);
-      setTransmissions(data[6].vehicletransmission);
+      const data = await Promise.all(responses.map((response) => response.json()))
+      setBodyTypes(data[0].bodyType)
+      setCategories(data[1].vehiclecategory)
+      setConditions(data[2].vehiclecondition)
+      setEngineCapacities(data[3].vehicleengineCapacity)
+      setExteriorColors(data[4].vehicleexteriorColor)
+      setFuelTypes(data[5].vehiclefuelType)
+      setTransmissions(data[6].vehicletransmission)
 
-      setloading(false);
+      setloading(false)
     } catch (error) {
-      setloading(false);
-      toast.error('Failed to fetch brands');
+      setloading(false)
+      toast.error("Failed to fetch brands")
     }
-  };
+  }
 
   useEffect(() => {
-    fetchBrands();
-  }, []);
+    fetchBrands()
+  }, [])
   const handleFileSelect = (e) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files)
@@ -139,8 +134,10 @@ console.log("Last Name:", lastName);
       const formData = new FormData(e.currentTarget)
       const jsonData = Object.fromEntries(formData.entries())
 
-      jsonData.firstName = firstName
-      jsonData.lastName = lastName
+      // Make sure firstName and lastName are properly set from the form values
+      // or from the user object if the form fields are disabled
+      jsonData.firstName = formData.get("firstName") || firstName || ""
+      jsonData.lastName = formData.get("lastName") || lastName || ""
       jsonData.sellerId = user.id
       jsonData.email = user.email
       jsonData.phone = user.phoneNo
@@ -213,13 +210,13 @@ console.log("Last Name:", lastName);
             <label htmlFor="firstName" className="text-sm font-medium">
               First Name *
             </label>
-            <Input id="firstName" name="firstName" value={firstName} disabled required />
+            <Input id="firstName" name="firstName" defaultValue={firstName} disabled required />
           </div>
           <div className="space-y-2">
             <label htmlFor="lastName" className="text-sm font-medium">
               Last Name *
             </label>
-            <Input id="lastName" name="lastName" value={lastName} disabled required />
+            <Input id="lastName" name="lastName" defaultValue={lastName} disabled required />
           </div>
 
           <div className="space-y-2">
@@ -240,12 +237,10 @@ console.log("Last Name:", lastName);
 
         <h3 className="text-2xl font-semibold text-[#B08968] ">Vehicle</h3>
 
-
-
         <div className="grid md:grid-cols-4 gap-6">
           <div className="space-y-2">
             <label htmlFor="vehicleMake" className="text-sm font-medium">
-            Vehicle make *
+              Vehicle make *
             </label>
             <CarApiAutocompleteInput options={brands} setSelectedBrand={setSelectedBrand} name="vehicleMake" />
           </div>
@@ -272,13 +267,7 @@ console.log("Last Name:", lastName);
                 </SelectContent>
               </Select>
               {reserved === "True" && (
-                <Input
-                  id="reservedPrice"
-                  placeholder="Enter Amount"
-                  name="reservedPrice"
-                  required
-                  className="flex-1"
-                />
+                <Input id="reservedPrice" placeholder="Enter Amount" name="reservedPrice" required className="flex-1" />
               )}
             </div>
           </div>
@@ -295,7 +284,7 @@ console.log("Last Name:", lastName);
             <label htmlFor="vehicleYear" className="text-sm font-medium">
               Vehicle year *
             </label>
-            <YearAutocompleteInput options={years} name="vehicleYear"  />
+            <YearAutocompleteInput options={years} name="vehicleYear" />
             {/* <Input id="vehicleYear" name="vehicleYear" required /> */}
           </div>
           <div className="space-y-2">
@@ -370,13 +359,7 @@ console.log("Last Name:", lastName);
                 </SelectContent>
               </Select>
               {buy === "True" && (
-                <Input
-                  id="buyPrice"
-                  placeholder="Enter Amount"
-                  name="buyPrice"
-                  required
-                  className="flex-1"
-                />
+                <Input id="buyPrice" placeholder="Enter Amount" name="buyPrice" required className="flex-1" />
               )}
             </div>
           </div>
@@ -415,7 +398,7 @@ console.log("Last Name:", lastName);
               value={editorContent[field]}
               tabIndex={1}
               onBlur={(newContent) => setEditorContent((prev) => ({ ...prev, [field]: newContent }))}
-              onChange={() => { }}
+              onChange={() => {}}
             />
           </div>
         ))}
