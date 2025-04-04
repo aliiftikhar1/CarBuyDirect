@@ -7,8 +7,7 @@ export async function GET(request){
             include:{
                 CarSubmission:{
                     include:{
-                        SubmissionImages:true,
-                        
+                        SubmissionImages:true,            
                     }
                 },
                 Seller:{

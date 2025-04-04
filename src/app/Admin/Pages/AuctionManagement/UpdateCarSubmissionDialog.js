@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,6 +22,10 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  useEffect(()=>{
+    console.log("Form Data",formData)
+  },[formData])
+  
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -56,9 +60,19 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
   }
 
   const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return date.toISOString().slice(0, 16) // This ensures the format is yyyy-MM-ddThh:mm
-  }
+    if (!dateString) return "";
+    const date = new Date(dateString);
+  
+    // Format date and time properly in local timezone
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+  
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+  
 
   // Helper function to determine if featured is true
   const isFeatured = () => {
