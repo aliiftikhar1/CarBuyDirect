@@ -30,7 +30,7 @@ export async function POST(request) {
     // Prepare notification payload
     const Finalpayload = {
       price: amount,
-      message: "Car Sold Out to"+" "+auction.Bids[auction.Bids.length-1].User.name,
+      message: "Car Sold Out ",
       auctionId: auction.id,
       receiverId: auction.CarSubmission.User.id,
       senderId: latestBid.userId,
