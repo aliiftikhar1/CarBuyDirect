@@ -259,6 +259,7 @@ function PaymentDialog({ open, setOpen, stripeCustomerId, auction, notificationI
       toast.success("Your payment has been processed successfully")
 
       setOpen(false)
+      window.location.reload()
     } catch (error) {
       console.error("Payment error:", error)
       toast.error( "There was an error processing your payment")
