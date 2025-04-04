@@ -1,7 +1,18 @@
 "use client"
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Bell, Heart, HelpCircle, Info, ChevronLeft, ChevronRight, Check, CircleMinus, CirclePlus, Phone, Mail } from "lucide-react"
+import {
+  Bell,
+  Heart,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+  CircleMinus,
+  CirclePlus,
+  Phone,
+  Mail,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -19,7 +30,6 @@ import { Typography } from "@mui/material"
 import Comments from "./Comments"
 import BidModal from "@/app/components/BidModal"
 import { toast } from "sonner"
-import { FaEnvelope } from "react-icons/fa"
 import BiddingType from "./BiddingType"
 
 export default function HeroSection({ data, triggerfetch, trigger }) {
@@ -45,6 +55,13 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
   const [holdLoading, setHoldLoading] = useState(false)
   const [watching, setWatching] = useState()
   const [isWatching, setIsWatching] = useState(false)
+
+  // Update state when data changes
+  useEffect(() => {
+    setCurrentBid(Number.parseInt(data?.Bids[0]?.price) || Number.parseInt(data?.CarSubmission?.price) || 0)
+    setBids(data?.Bids?.length || 0)
+    setBidAmount(Number.parseInt(data?.Bids[0]?.price) + 100 || Number.parseInt(data?.CarSubmission?.price) + 100)
+  }, [data])
 
   useEffect(() => {
     if (userid) {
@@ -88,8 +105,6 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       } else {
         setIsModalOpen(true)
       }
-
-      // setIsBidDialogOpen(true);
     } else {
       console.log(user)
       setIsModalOpen(true)
@@ -125,15 +140,22 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       const result = await response.json()
       console.log("Bid placed successfully:", result)
 
+      // Update local state
       setCurrentBid(bidAmount)
       setBidAmount(bidAmount + 100)
       setBids((prevBids) => prevBids + 1)
+
+      // Trigger parent component to refresh auction data
       triggerfetch(!trigger)
-      // alert("Bid placed successfully!");
+
+      // Close the bid dialog
       setIsBidDialogOpen(false)
+
+      // Show success message
+      toast.success("Bid placed successfully!")
     } catch (error) {
       console.error("Error occurred while placing bid:", error)
-      alert("An error occurred while placing your bid. Please try again.")
+      toast.error("An error occurred while placing your bid. Please try again.")
     } finally {
       setLoading(false) // End loading state
     }
@@ -185,6 +207,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
   const reserveStatus = data.CarSubmission?.reserved
     ? getReserveStatus(currentPrice, Number.parseFloat(data.CarSubmission.reservedPrice))
     : null
+
   const handleConfirm = async () => {
     setHoldLoading(true)
 
@@ -192,7 +215,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       const res = await fetch("/api/stripe/hold-amount", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userid, auctionId: data?.id }), // Static ID for testing, use dynamic user ID
+        body: JSON.stringify({ userId: userid, auctionId: data?.id }),
       })
       const data2 = await res.json()
 
@@ -234,7 +257,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       return
     }
 
-    const endpoint = isWatching ? `/api/user/watch` : `/api/user/watch`
+    const endpoint = `/api/user/watch`
 
     fetch(endpoint, {
       method: "POST",
@@ -265,6 +288,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       fetchWatching()
     }
   }, [userid])
+
   return (
     <div className="w-full px-4 md:px-8 lg:px-36 flex flex-col gap-8 md:py-8">
       <div className="flex flex-col md:flex-row gap-8">
@@ -310,8 +334,9 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                 <button
                   key={images[index].id}
                   onClick={() => setCurrentImage(index)}
-                  className={`relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden ${currentImage === index ? "ring-2 ring-red-500 shadow-[0_0_10px_red]" : ""
-                    }`}
+                  className={`relative w-28 h-28 flex-shrink-0 rounded-lg overflow-hidden ${
+                    currentImage === index ? "ring-2 ring-red-500 shadow-[0_0_10px_red]" : ""
+                  }`}
                 >
                   <Image
                     src={images[index].data || "/placeholder.svg"}
@@ -333,17 +358,15 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-red-600">
                 {data.status === "Coming-Soon" ? (
-                  <h2 className="text-xl  font-[200] tracking-tight">Comming Soon</h2>
-                  // <p className="text-sm sm:text-base text-left text-gray-600">Coming Soon</p>
+                  <h2 className="text-xl font-[200] tracking-tight">Coming Soon</h2>
                 ) : data.status === "Scheduled" ? (
                   <div className="text-left flex gap-4">
-                    <p className="text-xl  font-[200] tracking-tight">Auction Begins On</p>
-                    <TimerComponent className="gap-1 text-lg " endDate={data.startDate} />
+                    <p className="text-xl font-[200] tracking-tight">Auction Begins On</p>
+                    <TimerComponent className="gap-1 text-lg" endDate={data.startDate} />
                   </div>
                 ) : data.status === "Ended" ? (
                   <div className="text-left flex gap-4">
-                    <p className="text-xl  font-[200] tracking-tight">Auction Ended</p>
-                    {/* <p className="text-sm sm:text-base text-left text-gray-600">Sold Out</p> */}
+                    <p className="text-xl font-[200] tracking-tight">Auction Ended</p>
                   </div>
                 ) : data.status === "Sold" ? (
                   <div className="text-left flex gap-4">
@@ -407,7 +430,6 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                         </Table>
                       </DialogContent>
                     </Dialog>
-                    {/* <span className="text-blue-600">{data?.Bids.length}</span> */}
                   </div>
                   <div className="flex items-center gap-1 text-green-600">
                     {data.CarSubmission?.reserved === false ? (
@@ -418,27 +440,26 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                       <>
                         {reserveStatus && (
                           <p
-                            className={`text-xs flex gap-1 items-center md:text-sm ${reserveStatus === "Reserve met"
+                            className={`text-xs flex gap-1 items-center md:text-sm ${
+                              reserveStatus === "Reserve met"
                                 ? "text-green-500"
                                 : reserveStatus === "Reserve near"
                                   ? "text-yellow-500"
                                   : "text-red-500"
-                              }`}
+                            }`}
                           >
                             {reserveStatus === "Reserve met" ? (
                               <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" />
                             ) : reserveStatus === "Reserve near" ? (
                               <CircleMinus className="size-5 rounded-full text-yellow-500 p-[1px]" />
                             ) : (
-                              <CirclePlus className="size-5  rotate-45 rounded-full text-red-500 p-[1px]" />
+                              <CirclePlus className="size-5 rotate-45 rounded-full text-red-500 p-[1px]" />
                             )}
                             {reserveStatus}
                           </p>
                         )}
                       </>
                     )}
-                    {/* <span>No reserve</span>
-                    <Info className="h-4 w-4" /> */}
                   </div>
                 </div>
               )}
@@ -465,15 +486,16 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                   </div>
                   <div className="flex gap-2">
                     <Input
-                      type="text"
-                      value={
+                      type="number"
+                      value={bidAmount}
+                      onChange={(e) => setBidAmount(Number(e.target.value))}
+                      min={
                         Number.parseInt(data?.Bids[0]?.price) + 100 || Number.parseInt(data.CarSubmission.price) + 100
                       }
                       className="text-lg"
                     />
-                    
-                    <BiddingType userId={userid} auctionId={data.id}/>
-                    
+
+                    <BiddingType userId={userid} auctionId={data.id} />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -511,7 +533,10 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
                 <span className="text-white text-xl">
-                  {data.Seller.name.split(" ").map((s) => s.charAt(0)).join("")}
+                  {data.Seller.name
+                    .split(" ")
+                    .map((s) => s.charAt(0))
+                    .join("")}
                 </span>
               </div>
               <div>
@@ -523,16 +548,22 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
               <Button
                 variant="outline"
                 className="flex-1 text-blue-600 border-blue-600"
-                onClick={() => window.location.href = `tel:${data.Seller.phoneNo}`}
+                onClick={() => (window.location.href = `tel:${data.Seller.phoneNo}`)}
               >
-                <span className="mr-2"><Phone/></span> Call
+                <span className="mr-2">
+                  <Phone />
+                </span>{" "}
+                Call
               </Button>
               <Button
                 variant="outline"
                 className="flex-1 text-blue-600"
-                onClick={() => window.location.href = `mailto:${data.Seller.email}`}
+                onClick={() => (window.location.href = `mailto:${data.Seller.email}`)}
               >
-                <span className="mr-2"><Mail/></span> Send an email
+                <span className="mr-2">
+                  <Mail />
+                </span>{" "}
+                Send an email
               </Button>
             </div>
           </div>
@@ -561,8 +592,6 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                 >
                   Register to bid
                 </Button>
-                {/* <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6">Sell my vehicle</Button>
-                <Button className="w-full mt-3 bg-black text-white rounded-none px-4 py-6">Continue</Button> */}
               </div>
             </DialogContent>
           </Dialog>
@@ -601,8 +630,16 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                   <Button
                     className="px-6 py-2 text-lg font-medium bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition duration-200"
                     onClick={confirmBid}
+                    disabled={loading}
                   >
-                    Confirm Bid
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader className="animate-spin" size={16} />
+                        Processing...
+                      </span>
+                    ) : (
+                      "Confirm Bid"
+                    )}
                   </Button>
                   <Button
                     variant="ghost"
