@@ -199,7 +199,10 @@ export default function BuyerNotifications({ id }) {
     }
 
     try {
-      const response = await fetch("/api/user/dealdone", {
+      let fetchUrl
+      selectedNotification.regarding==="buy-now"?fetchUrl="/api/user/BuyNow/buyNowDealDone":fetchUrl="/api/user/dealdone"
+
+      const response = await fetch(fetchUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
