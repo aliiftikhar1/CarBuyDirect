@@ -601,7 +601,7 @@ export default function BuyerNotifications({ id }) {
                                     </p>
                                   ) : (
                                     <>
-                                      {replyNotifications[replyNotifications.length - 1]?.type === "buyer" ? (
+                                      {replyNotifications[replyNotifications.length - 1]?.type === "buyer" && replyNotifications[replyNotifications.length - 1]?.regarding!=="payment-pending" ? (
                                         <div className="flex gap-2 text-amber-500">
                                           <Clock className="h-5 w-5" />
                                           <p>Waiting for Seller's reply</p>
