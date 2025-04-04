@@ -5,32 +5,15 @@ import { cn } from "@/lib/utils";
 import { Clock } from "lucide-react";
 
 export default function TimerComponent({ className = "", endDate }) {
-  const getOrCreateEndDate = () => {
-    return endDate ? new Date(endDate) : new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-  };
-
-  const [flashSaleEndDate] = useState(getOrCreateEndDate);
+ 
   const [timeLeft, setTimeLeft] = useState({});
-
-  const calculateTimeLeft = () => {
-    const now = Date.now();
-    const difference = flashSaleEndDate.getTime() - now;
-    return difference > 0
-      ? {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / (1000 * 60)) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-      }
-      : { days: 0, hours: 0, minutes: 0, seconds: 0 };
-  };
 
  
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const now = Date.now()
-      const difference = new Date(endDate) - now
+      const now = Date.now();
+      const difference = new Date(endDate) - now;
       return difference > 0
         ? {
             days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -38,12 +21,22 @@ export default function TimerComponent({ className = "", endDate }) {
             minutes: Math.floor((difference / (1000 * 60)) % 60),
             seconds: Math.floor((difference / 1000) % 60),
           }
-        : { days: 0, hours: 0, minutes: 0, seconds: 0 }
-    }
-
-    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000)
-    return () => clearInterval(timer)
-  }, [endDate])
+        : null; // null means time is up
+    };
+  
+    const timer = setInterval(() => {
+      const updatedTimeLeft = calculateTimeLeft();
+      if (!updatedTimeLeft) {
+        clearInterval(timer); // stop the timer
+        window.location.reload(); // reload the page
+      } else {
+        setTimeLeft(updatedTimeLeft);
+      }
+    }, 1000);
+  
+    return () => clearInterval(timer);
+  }, [endDate]);
+  
 
 
   return (
