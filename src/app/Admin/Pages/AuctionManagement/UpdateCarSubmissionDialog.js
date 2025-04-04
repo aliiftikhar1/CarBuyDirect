@@ -60,19 +60,18 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
   }
 
   const formatDate = (dateString) => {
-    if (!dateString) return ""
+    if (!dateString) return "";
+    const date = new Date(dateString);
   
-    const date = new Date(dateString)
+    // Format date and time properly in local timezone
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
   
-    // Get the timezone offset in minutes and convert to milliseconds
-    const tzOffset = date.getTimezoneOffset() * 60000
-  
-    // Create a date adjusted for timezone
-    const localDate = new Date(date.getTime() - tzOffset)
-  
-    // Return in format suitable for datetime-local input
-    return localDate.toISOString().slice(0, 16)
-  }
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
   
 
   // Helper function to determine if featured is true

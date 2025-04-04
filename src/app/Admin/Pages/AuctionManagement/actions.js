@@ -127,8 +127,8 @@ export async function updateAuction(data) {
     const updatedAuction = await prisma.auction.update({
       where: { id: data.id },
       data: {
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
+        startDate: data.startDate,
+        endDate: data.endDate,
         location: data.location,
         status: data.status,
         featured: data.featured === 'true' ? true : false,
