@@ -19,7 +19,7 @@ export async function getUserDetails(id,dispatch){
     return data.user
   }
   export async function getUserBids(id){
-    const response = await fetch(`api/user/mybid/${id}`)
+    const response = await fetch(`/api/user/mybid/${id}`)
     const data = await response.json()
     console.log("data fetched is : ",data.data)
     return data.data
