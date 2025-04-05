@@ -100,7 +100,7 @@ export async function POST(request) {
 
       // Send notification to all bidders outside the transaction
       const notificationPromises = bidders.map((bidder) =>
-        fetch("http://localhost:3000/api/user/notifications/timeExtended", {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/notifications/timeExtended`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
