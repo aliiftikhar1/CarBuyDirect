@@ -25,10 +25,11 @@ export async function GET(request,{params}) {
     }
 }
 
-export async function PUT(request) {
+export async function PUT(request,{params}) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const { id } = await params;
+    // const { searchParams } = new URL(request.url);
+    // const id = searchParams.get('id');
     const data = await request.json();
     console.log("Payload is", data);
     const {

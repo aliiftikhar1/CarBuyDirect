@@ -58,9 +58,9 @@ export async function GET(request) {
     // First, authenticate and get a token
     const token = await getAuthToken()
 
-    const searchParams = request.nextUrl.searchParams
-    const limit = searchParams.get("limit") || "1265"
-    const fetchAllPages = searchParams.get("fetchAll") !== "false" // Default to true
+    // const searchParams = request.nextUrl.searchParams
+    const limit =  "2265"
+    const fetchAllPages = true // Default to true
 
     // Initial URL
     const initialUrl = `https://carapi.app/api/models?limit=${limit}`

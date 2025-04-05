@@ -30,8 +30,8 @@ export async function GET(request) {
     // Get authentication token first
     const token = await getAuthToken()
 
-    const searchParams = request.nextUrl.searchParams
-    const limit = searchParams.get("limit") || "1000"
+    // const searchParams = request.nextUrl.searchParams
+    const limit = "2000"
 
     const url = `https://carapi.app/api/makes?limit=${limit}`
 

@@ -78,7 +78,7 @@ function PaymentDialog({ open, setOpen, stripeCustomerId, auction, amount, notif
   const fetchPaymentMethods = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/stripe/getPaymentMethod?customerId=${stripeCustomerId}`)
+      const response = await fetch(`/api/stripe/getPaymentMethod/${stripeCustomerId}`)
       const data = await response.json()
 
       if (data.paymentMethods && data.paymentMethods.length > 0) {
