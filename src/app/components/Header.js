@@ -6,9 +6,10 @@ import { Menu, Search, X } from "lucide-react"
 import { MainNav } from "./Main-nav"
 import Header2 from "./Header2"
 import { AuthDialogs } from "./LoginDialog"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import Link from "next/link"
 import { useDebounce } from "@coreui/react-pro"
+import { getReduxUserDetails } from "../Actions"
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,6 +20,21 @@ export default function Header() {
   const user = useSelector((data) => data.CarUser.userDetails)
   const searchRef = useRef(null)
   const inputRef = useRef(null)
+
+  const userid = useSelector((data) => data.CarUser.userDetails?.id)
+  const dispatch = useDispatch()
+ 
+  useEffect(() => {
+    if (userid) {
+      console.log("User id is:", userid)
+      getReduxUserDetails(userid, dispatch).then((data) => {
+        console.log("UserDetails is:", data)
+      })
+     
+    }
+  }, [userid, dispatch])
+
+
 
   // Debounce search term to avoid too many API calls
   const debouncedSearchTerm = useDebounce(searchTerm, 300)

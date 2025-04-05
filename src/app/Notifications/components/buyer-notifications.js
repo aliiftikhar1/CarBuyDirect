@@ -401,6 +401,11 @@ export default function BuyerNotifications({ id }) {
                             " " +
                             selectedNotification.auction?.CarSubmission?.vehicleModel || "Unknown Auction"}
                         </p>
+                        {selectedNotification.regarding === "timeExtension" && (
+                          <p className="text-muted-foreground text-sm">
+                            End Date: {new Date(selectedNotification.auction?.endDate).toLocaleString()}
+                          </p>
+                        )}
                         {selectedNotification.regarding === "buy-now" && (
                           <p className="text-muted-foreground text-sm">
                             Buy Price: {selectedNotification.auction?.CarSubmission?.buyPrice}
@@ -440,6 +445,12 @@ export default function BuyerNotifications({ id }) {
                           </div>
                         ) : (
                           <>
+                          {selectedNotification.regarding === "timeExtension" && (
+                            <div className="flex gap-2 text-lime-500">
+                            <Clock className="h-5 w-5" />
+                            <p>Time has extended for more 5 min for this auction</p>
+                          </div>
+                              )}
                             {(replyNotifications.length < 1 &&
                               (selectedNotification.regarding === "reserve-met" ||
                                 selectedNotification.regarding === "without-reserve")) && (
@@ -481,6 +492,7 @@ export default function BuyerNotifications({ id }) {
                               </div>
                             )}
                             {replyNotifications.length < 1 &&
+                            selectedNotification.regarding !== "timeExtension" &&
                               selectedNotification.regarding !== "reserve-not-met" &&
                               selectedNotification.regarding !== "without-reserve" &&
                               selectedNotification.regarding !== "reserve-met" &&

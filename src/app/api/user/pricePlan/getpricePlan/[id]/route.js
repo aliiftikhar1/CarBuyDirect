@@ -11,6 +11,7 @@ export async function GET(request, { params }) {
       select: {
         id: true,
         pricePlan: true,
+        pricePlanEndDate: true,
       },
     })
 

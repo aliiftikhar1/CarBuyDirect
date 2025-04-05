@@ -11,6 +11,7 @@ export async function GET(request, { params }) {
       select: {
         id: true,
         pricePlan: true,
+        pricePlanEndDate: true, // Fixed typo: pricePanEndDate -> pricePlanEndDate
       },
     })
 
@@ -44,7 +45,7 @@ export async function PUT(request, { params }) {
   try {
     // Parse the request body
     const body = await request.json()
-    const { pricePlan } = body
+    const { pricePlan, amount } = body
     console.log("pricePlan is", pricePlan)
 
     // Validate the price plan
@@ -56,6 +57,12 @@ export async function PUT(request, { params }) {
         },
         { status: 400 },
       )
+    }
+
+    let pricePlanEndDate = null
+    if (pricePlan === "premium") {
+      // Set the end date to 30 days from now for premium plan
+      pricePlanEndDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     }
 
     // Check if user exists
@@ -73,12 +80,32 @@ export async function PUT(request, { params }) {
       where: { id: Number.parseInt(id) },
       data: {
         pricePlan: pricePlan,
+        pricePlanEndDate: pricePlanEndDate,
       },
       select: {
         id: true,
         pricePlan: true,
+        pricePlanEndDate: true,
       },
     })
+    function generateTransactionId() {
+      const transactionId = Math.floor(10000000 + Math.random() * 90000000);  
+      return `txn_${transactionId}`;
+  }
+    // Create a transaction record if this is a premium plan and transaction details are provided
+    if (pricePlan === "premium"  && amount) {
+      await prisma.transaction.create({
+        data: {
+          userId: Number.parseInt(id),
+          amount: amount,
+          trancastion_id: generateTransactionId(),
+          order_id: "Price Plan Payment",
+          currency: "USD",
+          type: pricePlanEndDate ? "Price Plan Renewal" : "Price Plan Purchase",
+          status: "Paid",
+        },
+      })
+    }
 
     return NextResponse.json(
       {

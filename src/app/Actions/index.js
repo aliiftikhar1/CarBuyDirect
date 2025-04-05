@@ -1,6 +1,14 @@
 import { clearUserDetails, setUserDetails } from "@/store/UserSlice"
 import { useDispatch } from "react-redux"
 
+export async function getReduxUserDetails(id,dispatch){
+  // const dipatch = useDispatch()
+  const response = await fetch(`api/user/getUserDetails/Redux/${id}`)
+  const data = await response.json()
+  console.log("data fetched is : ",data.user)
+  dispatch(setUserDetails(data.user))
+  return data.user
+}
 
 export async function getUserDetails(id,dispatch){
     // const dipatch = useDispatch()

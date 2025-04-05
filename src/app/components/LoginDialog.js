@@ -424,7 +424,7 @@ export function AuthDialogs() {
 
         {/* Dropdown */}
         {dropdownOpen && user && (
-          <div className="absolute right-0 mt-2 space-y-4 text-sm w-48 bg-white shadow-lg  overflow-hidden z-10">
+          <div className="absolute right-0 mt-2 space-y-4 text-sm w-48 bg-white shadow-lg  overflow-hidden z-20">
             {user?.type === "seller" && (
               <a href="/Seller" className="block w-full px-4 py-2 text-left text-black hover:bg-gray-100">
                 Seller Panel
