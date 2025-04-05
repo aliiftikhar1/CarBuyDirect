@@ -7,8 +7,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const customerId = searchParams.get("customerId")
+    // const { searchParams } = new URL(request.url)
+    const customerId = "customerId"
+    // searchParams.get("customerId")
 
     if (!customerId) {
       return NextResponse.json({ error: "Customer ID is required" }, { status: 400 })
