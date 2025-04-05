@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
-const PORT = 3002;
+const PORT = 3001;
 
 // Store processed auction IDs with timestamps to allow cleanup
 const processedAuctions = new Map(); // Map<auctionId, timestamp>
@@ -38,7 +38,7 @@ const fetchLiveAuctions = async () => {
     }
     
     const data = await response.json();
-    console.log("Live AUctions are : ", data.data);
+    // console.log("Live AUctions are : ", data.data);
     return data.data || [];
   } catch (error) {
     console.error("Error fetching auctions:", error.message);
@@ -95,10 +95,12 @@ const processEndedAuctions = async () => {
     console.log("Checking for ended auctions...");
     const auctions = await fetchLiveAuctions();
     const currentDate = new Date();
+    console.log("Current Date: ", currentDate);
     const endedAuctions = [];
 
     for (const auction of auctions) {
       const endDate = new Date(auction.endDate);
+      console.log("End Date: ", endDate);
       
       if (
         currentDate >= endDate &&
