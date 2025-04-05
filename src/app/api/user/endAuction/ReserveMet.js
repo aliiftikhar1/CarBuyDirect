@@ -107,5 +107,5 @@ export default async function ReserveMet({ latestBid, auction }) {
     },
   });
 
-  return NextResponse.json({ success: true, message: "Reserve Near" }, { status: 200 });
+  return NextResponse.json({ success: true, message: "Reserve Met" }, { status: 200 });
 }

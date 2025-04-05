@@ -58,5 +58,5 @@ export default async function ReserveNotMet({latestBid, auction}) {
             status: "Ended",
         },
     });
-    return NextResponse.json({ success: false, message: "Reserve not met" }, { status: 400 });
+    return NextResponse.json({ success: true, message: "Reserve not met" }, { status: 200 });
 }

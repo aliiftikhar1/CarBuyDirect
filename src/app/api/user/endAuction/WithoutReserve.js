@@ -102,5 +102,5 @@ export default async function WithoutReserve({ latestBid, auction }) {
     },
   });
 
-  return NextResponse.json({ success: false, message: "Reserve Near" }, { status: 400 });
+  return NextResponse.json({ success: true, message: "Without Reserve" }, { status: 200 });
 }
