@@ -40,6 +40,66 @@ export async function POST(request, { params }) {
         if (!auction) {
             return NextResponse.json({ success: false, message: "Auction not found" }, { status: 404 });
         }
+        //if there is no bid on auction then it simply ends and send notification to seller
+        if(auction.Bids.length === 0){
+
+            await prisma.auction.update({
+                where: { id },
+                data: {
+                    status: "Ended",
+                },
+            });
+            let Finalpayload = {
+                price: 0,
+                message: "your Auction has ended without any bids. We will reschedule the auction for you soon.",
+                auctionId: auction.id,
+                receiverId: auction.CarSubmission.User.id,
+                senderId: 6,
+                userType: "buyer",
+                regarding: "noBids",
+                userName: auction.CarSubmission.User.name,
+                receiverEmail: auction.CarSubmission.User.email,
+                vehicleYear: auction.CarSubmission.vehicleYear,
+                vehicleModel: auction.CarSubmission.vehicleModel,
+            }
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/notify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Finalpayload),
+            })
+            const data = await response.json();
+            return NextResponse.json({ success: true, message: "No bids found" }, { status: 200 });
+        }
+        const holdPayment = auction.HoldPayments.filter(payment=> payment.status === "requires_capture" )
+        if(holdPayment.length === 0){
+            await prisma.auction.update({
+                where: { id },
+                data: {
+                    status: "Ended",
+                },
+            });
+            let Finalpayload = {
+                price: 0,
+                message: "Your Auction donot contain any hold payment. Contact to our team for more information.",
+                auctionId: auction.id,
+                receiverId: auction.CarSubmission.User.id,
+                senderId: 6,
+                userType: "buyer",
+                regarding: "noHoldPayments",
+                userName: auction.CarSubmission.User.name,
+                receiverEmail: auction.CarSubmission.User.email,
+                vehicleYear: auction.CarSubmission.vehicleYear,
+                vehicleModel: auction.CarSubmission.vehicleModel,
+            }
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications/notify`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Finalpayload),
+            })
+            const data = await response.json();
+            return NextResponse.json({ success: true, message: "Auction Ended" }, { status: 200 });
+        }
+
 
         if (auction.status === "Ended" || auction.status === "Sold") {
             return NextResponse.json({ success: false, message: "Auction already ended" }, { status: 400 });
