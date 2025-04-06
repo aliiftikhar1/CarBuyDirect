@@ -290,9 +290,9 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
   }, [userid])
 
   return (
-    <div className="w-full px-4 md:px-8 lg:px-36 flex flex-col gap-8 md:py-8">
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="space-y-4 md:min-w-3/5">
+    <div className="w-full px-4 md:px-8 lg:px-8 xl:px-36 flex flex-col gap-8 md:py-8">
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="space-y-4 md:w-full lg:w-3/5 ">
           <div className="relative md:h-[75vh] aspect-[4/3] w-full overflow-hidden rounded-lg bg-gray-100">
             {images.length > 0 ? (
               <Image
@@ -349,7 +349,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
           </div>
         </div>
         {/* Right side - Details */}
-        <div className="space-y-3 md:w-2/5">
+        <div className="space-y-3 md:w-full lg:w-2/5">
           <div className="space-y-3">
             <h1 className="text-2xl md:text-3xl font-bold">
               {data.CarSubmission.vehicleYear} {data.CarSubmission.vehicleMake} {data.CarSubmission.vehicleModel}
@@ -373,8 +373,8 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                     <p className="text-lg md:text-2xl text-left text-gray-600">Sold Out</p>
                   </div>
                 ) : (
-                  <div className="flex md:grid md:grid-cols-2 gap-4 mt-2 w-full ">
-                    <span className="flex items-center gap-1 w-full ">
+                  <div className=" mt-2 w-full ">
+                    <span className="flex items-center gap-1 w-full  ">
                       <TimerComponent className="gap-1" endDate={data.endDate} />
                       <button>
                         <HelpCircle className="h-4 w-4 text-gray-400" />

@@ -188,14 +188,14 @@ export default function Auction() {
   const displayedItems = filteredItems.length > 0 ? filteredItems : auctionItems
 
   return (
-    <div className="px-4 md:px-6 py-16 md:py-20 flex flex-col md:flex-row gap-6">
-      <div className="md:hidden ">
+    <div className="px-4 md:px-6 py-16 md:py-20 flex flex-col lg:flex-row gap-6">
+      <div className="lg:hidden ">
         <Button onClick={() => setMobileFiltersVisible(!mobileFiltersVisible)}>
           {mobileFiltersVisible ? "Hide Filters" : "Show Filters"}
         </Button>
       </div>
       {/* Filters Sidebar */}
-      <div className={`${mobileFiltersVisible ? "block" : "hidden"} md:flex md:flex-col w-full md:w-64 space-y-4`}>
+      <div className={`${mobileFiltersVisible ? "block" : "hidden"} lg:flex lg:flex-col w-full lg:w-64 space-y-4`}>
         <Accordion type="single" collapsible className="w-full" defaultValue="">
           <AccordionItem value="price">
             <AccordionTrigger>Price Range</AccordionTrigger>

@@ -124,7 +124,7 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
                   </p>
                  
                 </div>
-                <div className="text-right flex justify-between">
+                <div className="text-right flex flex-col sm:flex-row md:flex-col 2xl:flex-row justify-between">
                   {item.CarSubmission?.reserved === false ? (
                     <div className="flex gap-1 items-center text-sm">
                       <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" /> No Reserve
@@ -149,7 +149,7 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
                     </p>
                   )}
                   </>}
-                  <TimerComponent className="gap-1 text-sm w-auto" endDate={item.endDate} />
+                  <TimerComponent className="gap-1 text-sm w-auto " endDate={item.endDate} />
                 </div>
               </div>
             )}
@@ -157,11 +157,11 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
 
           {/* Price and Location */}
           <div className="flex justify-between items-center gap-1 w-full">
-            <p className="text-xs sm:text-sm flex gap-1 items-center text-gray-600 truncate overflow-hidden text-ellipsis whitespace-nowrap">
-              <PackageOpen className="size-4 md:size-4" /> {item?.CarSubmission.condition}
+            <p className="text-xs sm:text-sm md:text-xs lg:text-xs xl:text-xs 2xl:text-xs flex gap-1 items-center text-gray-600 truncate overflow-hidden text-ellipsis whitespace-nowrap">
+              <PackageOpen className="min-size-4 size-4 " /> {item?.CarSubmission.condition}
             </p>
-            <p className="text-xs sm:text-sm flex gap-1 items-center text-gray-600 truncate overflow-hidden text-ellipsis whitespace-nowrap max-w-20 md:max-w-full">
-              <MapPin className="size-4 md:size-4" />
+            <p className="text-xs sm:text-sm md:text-xs lg:text-xs xl:text-xs 2xl:text-xs flex gap-1 items-center text-gray-600 truncate overflow-hidden text-ellipsis whitespace-nowrap max-w-full sm:max-w-full md:max-w-full">
+              <MapPin className="min-size-4 size-4" />
               {item?.location}
             </p>
           </div>
