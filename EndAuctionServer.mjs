@@ -94,23 +94,20 @@ const processEndedAuctions = async () => {
   try {
     console.log("Checking for ended auctions...");
     const auctions = await fetchLiveAuctions();
-    const currentTime = Date.now(); // Use milliseconds
+    const currentDate = new Date();
+    console.log("Current Date: ", currentDate);
     const endedAuctions = [];
 
     for (const auction of auctions) {
-      const endTime = new Date(auction.endDate).getTime();
-
-      // Add a 5s grace buffer (can be tuned)
-      const graceBufferMs = 5000;
-
-      const shouldEnd = 
-        currentTime >= endTime - graceBufferMs && 
+      const endDate = new Date(auction.endDate);
+      console.log("End Date: ", endDate);
+      
+      if (
+        currentDate >= endDate &&
+        auction.status === "Live" &&
         !processedAuctions.has(auction.id) &&
-        !processingAuctions.has(auction.id);
-
-      console.log(`Auction ID: ${auction.id}, Now: ${currentTime}, End: ${endTime}, Diff: ${currentTime - endTime}, Should End: ${shouldEnd}`);
-
-      if (shouldEnd && auction.status === "Live") {
+        !processingAuctions.has(auction.id)
+      ) {
         endedAuctions.push(auction);
       }
     }
@@ -121,26 +118,32 @@ const processEndedAuctions = async () => {
     }
 
     console.log(`Found ${endedAuctions.length} ended auctions to process`);
-
+    
+    // Process auctions concurrently with a limit
     const auctionsToProcess = endedAuctions.slice(0, MAX_CONCURRENT_PROCESSES);
-
+    
+    // Mark auctions as processing
     auctionsToProcess.forEach(auction => {
       processingAuctions.add(auction.id);
     });
 
+    // Process auctions in parallel
     const results = await Promise.allSettled(
       auctionsToProcess.map(async (auction) => {
         try {
           const success = await endAuction(auction);
           return { auctionId: auction.id, success };
         } finally {
+          // Always remove from processing set when done
           processingAuctions.delete(auction.id);
         }
       })
     );
 
+    // Handle results
     results.forEach(result => {
       if (result.status === 'fulfilled' && result.value.success) {
+        // Store with timestamp for later cleanup
         processedAuctions.set(result.value.auctionId, Date.now());
       }
     });
@@ -150,7 +153,6 @@ const processEndedAuctions = async () => {
     console.error("Error in auction processing cycle:", error.message);
   }
 };
-
 
 /**
  * Clean up old processed auction records to prevent memory leaks
