@@ -124,6 +124,7 @@ export async function getCarSubmissions() {
 
 export async function updateAuction(data) {
   try {
+    console.log("Data", data)
     const updatedAuction = await prisma.auction.update({
       where: { id: data.id },
       data: {

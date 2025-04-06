@@ -42,7 +42,7 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
         ...formData,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
-        featured: formData.featured === "true" ? "true" : "false",
+        featured: (formData.featured==true||formData.featured === "true") ? "true" : "false",
       }
 
       console.log("Data to send:", dataToSend)
@@ -79,7 +79,7 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
 
   // Helper function to determine if featured is true
   const isFeatured = () => {
-    return formData.featured === true || formData.featured === "true" ? "true" : "false"
+    return (formData.featured == true || formData.featured === "true" )? "true" : "false"
   }
 
   return (
@@ -163,8 +163,8 @@ export default function UpdateCarSubmissionDialog({ auction, onUpdate }) {
               name="featured"
               value={isFeatured()}
               onChange={(e) => {
-                const value = e.target.value === "true"
-                setFormData((prev) => ({ ...prev, featured: value }))
+                // const value = e.target.value === "true"
+                setFormData((prev) => ({ ...prev, featured: e.target.value }))
               }}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             >
