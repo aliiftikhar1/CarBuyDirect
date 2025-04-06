@@ -31,6 +31,7 @@ import Comments from "./Comments"
 import BidModal from "@/app/components/BidModal"
 import { toast } from "sonner"
 import BiddingType from "./BiddingType"
+import EndAuctionTimerComponent from "@/app/components/EndAuctionCountDownTimer"
 
 export default function HeroSection({ data, triggerfetch, trigger }) {
   const images = data.CarSubmission.SubmissionImages || []
@@ -375,7 +376,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                 ) : (
                   <div className=" mt-2 w-full ">
                     <span className="flex items-center gap-1 w-full  ">
-                      <TimerComponent className="gap-1" endDate={data.endDate} />
+                      <EndAuctionTimerComponent className="gap-1" endDate={data.endDate} />
                       <button>
                         <HelpCircle className="h-4 w-4 text-gray-400" />
                       </button>

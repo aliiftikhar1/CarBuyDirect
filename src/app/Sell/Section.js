@@ -11,10 +11,10 @@ export default function HowItWorksSection() {
   const [open, setOpen] = useState(false)
 
   return (
-    <section className="md:h-screen flex justify-center items-center px-6 md:px-36 bg-white mt-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <section className=" flex justify-center items-center px-6 md:px-8 lg:px-36 bg-white mt-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-center">
         {/* Video Section */}
-        <div className="flex justify-center w-full h-[35vh] md:h-full">
+        <div className="flex justify-center w-full h-[35vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] xl:h-full">
           <div className="bg-gray-200 w-full h-full p-4 rounded-lg">
             <iframe
               src="https://www.youtube.com/embed/l11HrVDPi00"

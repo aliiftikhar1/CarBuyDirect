@@ -19,8 +19,8 @@ export default function CarInquiryForm() {
       />
       
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-16 md:py-12 md:min-h-screen flex items-center">
-        <div className="w-full md:flex gap-8">
+      <div className="relative z-10 container mx-auto px-4 py-16 md:py-20 lg:py-0 md:min-h-screen flex items-center">
+        <div className="w-full lg:flex gap-8">
           {/* Heading Section */}
           <div className="mb-8 space-y-4">
             <h1 className="text-4xl md:text-5xl font-[100] text-white">
@@ -38,7 +38,7 @@ export default function CarInquiryForm() {
           </div>
 
           {/* Form Section */}
-          <div className="space-y-6 md:w-1/3">
+          <div className="space-y-6 xl:w-1/2 2xl:w-1/3">
             <h2 className="text-2xl text-white mb-6 font-[100]">Inquire about selling your vehicle</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

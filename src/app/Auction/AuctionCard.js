@@ -3,6 +3,7 @@ import Image from "next/image"
 import TimerComponent from "../components/CountDownTimer"
 import { useSelector } from "react-redux"
 import { toast } from "sonner"
+import EndAuctionTimerComponent from "../components/EndAuctionCountDownTimer"
 
 export default function AuctionCard({ item, index, watchdata, OnWatch, setloadingAction }) {
   const userid = useSelector((state) => state.CarUser.userDetails?.id)
@@ -149,7 +150,7 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
                     </p>
                   )}
                   </>}
-                  <TimerComponent className="gap-1 text-sm w-auto " endDate={item.endDate} />
+                  <EndAuctionTimerComponent className="gap-1 text-sm w-auto " endDate={item.endDate} />
                 </div>
               </div>
             )}

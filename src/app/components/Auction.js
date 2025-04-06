@@ -2,6 +2,7 @@ import { Star } from "lucide-react";
 import { useSelector } from "react-redux";
 import TimerComponent from "./CountDownTimer";
 import { useState } from "react";
+import EndAuctionTimerComponent from "./EndAuctionCountDownTimer";
 
 export default function Auction({ items, watchdata ,OnWatch}) {
     const [loadingAction,setloadingAction]=useState('')
@@ -134,7 +135,7 @@ export default function Auction({ items, watchdata ,OnWatch}) {
                                     </div>
                                     <div className="text-right flex flex-col items-end w-full">
                                         <p className="text-xs sm:text-sm text-gray-600">Time left</p>
-                                        <TimerComponent
+                                        <EndAuctionTimerComponent
                                             className="gap-1 text-sm w-auto "
                                             endDate={item.endDate}
                                         />

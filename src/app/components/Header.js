@@ -123,7 +123,7 @@ export default function Header() {
 
           <div className="flex md:w-[12rem] gap-4 text-lg font-[400] tracking-wider justify-center items-center relative">
             {user?.type === "seller" && (
-              <Link href="/Seller" className="hidden absolute -left-[10rem] md:flex px-4 py-1 rounded-full border-2 border-gray-600">
+              <Link href="/Seller" className="hidden absolute -left-[10rem] xl:flex px-4 py-1 rounded-full border-2 border-gray-600">
                 Seller Panel
               </Link>
             )}

@@ -1,6 +1,6 @@
 export default function WhyCarBuyDirect() {
     return (
-      <section className="py-16 px-4 max-w-7xl mx-auto">
+      <section className="py-16 px-4 sm:px-8 md:px-16  max-w-7xl mx-auto">
         <div className="text-center mb-4 md:mb-12">
           <h2 className="text-4xl font-semibold mb-4">
             Why <span className="text-[#B8860B]">Car</span>BuyDirect
@@ -10,7 +10,7 @@ export default function WhyCarBuyDirect() {
           </p>
         </div>
   
-        <div className="grid md:grid-cols-3 gap-4 md:gap-12 mt-4 md:mt-8">
+        <div className="grid lg:grid-cols-3 gap-4 md:gap-12 mt-4 md:mt-8">
           <div className="space-y-4">
             <h3 className="text-xl font-bold">Worldwide Exposure</h3>
             <p className="text-gray-600 leading-relaxed">

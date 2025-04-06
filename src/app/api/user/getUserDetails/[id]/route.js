@@ -13,7 +13,22 @@ export async function GET(request,{params}){
                         SubmissionImages:true
                     }
                 },
-                Bids:true,
+                Bids:{
+                    include:{
+                        Auction:{
+                            include:{
+                                CarSubmission:{
+                                    select:{
+                                        vehicleMake:true,
+                                        vehicleModel:true,
+                                        vehicleYear:true,
+                                        webSlug:true,
+                                    }
+                                },
+                            }
+                        }
+                    }
+                },
                 Auctions:true,
                 HoldPayments:true,
             }    
