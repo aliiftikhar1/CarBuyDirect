@@ -329,6 +329,8 @@ export default function SellerNotifications({ id }) {
                               "reserve-near",
                               "reserve-not-met",
                               "without-reserve",
+                              "noBids",
+                              "noHoldPayments",
                               "payment-done",
                               "payment-pending",
                             ].includes(notification.regarding)
@@ -391,6 +393,8 @@ export default function SellerNotifications({ id }) {
                         <h3 className="text-xl font-bold">
                           Message from{" "}
                           {(selectedNotification.regarding === "reserve-not-met" ||
+                            selectedNotification.regarding === "noBids"||
+                            selectedNotification.regarding === "noHoldPayments"||
                             selectedNotification.regarding === "reserve-met") &&
                           selectedNotification.type === "buyer"
                             ? "CarBuyDirect"
@@ -442,7 +446,7 @@ export default function SellerNotifications({ id }) {
                         {/* Seller-specific actions */}
                         {replyNotifications.length < 1 && selectedNotification.type === "seller"  ? (
                           <>
-                          {(selectedNotification.regarding!=="reserve-met"|| selectedNotification.regarding!=="reserve-not-met") ? <> </> : <>
+                          {(selectedNotification.regarding!=="reserve-met"|| selectedNotification.regarding!=="reserve-not-met" ||selectedNotification.regarding !== "noBids"|| selectedNotification.regarding !== "noHoldPayments") ? <> </> : <>
                             <div className="flex gap-2 text-amber-500">
                             <Clock className="h-5 w-5" />
                             <p>Waiting for Buyer's reply</p>
@@ -453,6 +457,8 @@ export default function SellerNotifications({ id }) {
                           <>
                             {replyNotifications.length < 1 &&
                               selectedNotification.regarding !== "reserve-not-met" &&
+                              selectedNotification.regarding !== "noBids" &&
+                            selectedNotification.regarding !== "noHoldPayments"&&
                               selectedNotification.regarding !== "without-reserve" &&
                               selectedNotification.regarding !== "reserve-met" && (
                                 <div className="flex flex-col sm:flex-row gap-3 mt-8">
