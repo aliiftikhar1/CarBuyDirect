@@ -94,8 +94,7 @@ const processEndedAuctions = async () => {
   try {
     console.log("Checking for ended auctions...");
     const auctions = await fetchLiveAuctions();
-    const currentDate = new Date();
-    console.log("Current Date: ", currentDate);
+    const currentTime = Date.now(); // Use milliseconds
     const endedAuctions = [];
 
     for (const auction of auctions) {
@@ -128,32 +127,26 @@ const processEndedAuctions = async () => {
     }
 
     console.log(`Found ${endedAuctions.length} ended auctions to process`);
-    
-    // Process auctions concurrently with a limit
+
     const auctionsToProcess = endedAuctions.slice(0, MAX_CONCURRENT_PROCESSES);
-    
-    // Mark auctions as processing
+
     auctionsToProcess.forEach(auction => {
       processingAuctions.add(auction.id);
     });
 
-    // Process auctions in parallel
     const results = await Promise.allSettled(
       auctionsToProcess.map(async (auction) => {
         try {
           const success = await endAuction(auction);
           return { auctionId: auction.id, success };
         } finally {
-          // Always remove from processing set when done
           processingAuctions.delete(auction.id);
         }
       })
     );
 
-    // Handle results
     results.forEach(result => {
       if (result.status === 'fulfilled' && result.value.success) {
-        // Store with timestamp for later cleanup
         processedAuctions.set(result.value.auctionId, Date.now());
       }
     });
@@ -163,6 +156,7 @@ const processEndedAuctions = async () => {
     console.error("Error in auction processing cycle:", error.message);
   }
 };
+
 
 /**
  * Clean up old processed auction records to prevent memory leaks
