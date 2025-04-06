@@ -198,9 +198,9 @@ export default function Auction() {
       <div className={`${mobileFiltersVisible ? "block" : "hidden"} lg:flex lg:flex-col w-full lg:w-64 space-y-4`}>
         <Accordion type="single" collapsible className="w-full" defaultValue="">
           <AccordionItem value="price">
-            <AccordionTrigger>Price Range</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Price Range</AccordionTrigger>
             <AccordionContent>
-              <div className="grid gap-4">
+              <div className="grid gap-4 mt-2 px-4">
                 <div className="grid gap-2">
                   <Label htmlFor="min-price">Min Price</Label>
                   <Input
@@ -223,9 +223,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="brands">
-            <AccordionTrigger>Brands</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Brands</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2  mt-2 px-4">
                 {brands.map((brand) => (
                   <div key={brand} className="flex items-center space-x-2">
                     <input
@@ -247,9 +247,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="categories">
-            <AccordionTrigger>Categories</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Categories</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2  mt-2 px-4">
                 {categories.map((category) => (
                   <div key={category} className="flex items-center space-x-2">
                     <input
@@ -271,9 +271,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="bodyTypes">
-            <AccordionTrigger>Body Types</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Body Types</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2 px-4">
                 {bodyTypes.map((bodyType) => (
                   <div key={bodyType} className="flex items-center space-x-2">
                     <input
@@ -295,9 +295,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="transmissions">
-            <AccordionTrigger>Transmissions</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Transmissions</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2 px-4">
                 {transmissions.map((transmission) => (
                   <div key={transmission} className="flex items-center space-x-2">
                     <input
@@ -319,9 +319,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="engineCapacities">
-            <AccordionTrigger>Engine Capacities</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Engine Capacities</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2 px-4">
                 {engineCapacities.map((engineCapacity) => (
                   <div key={engineCapacity} className="flex items-center space-x-2">
                     <input
@@ -343,9 +343,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="fuelTypes">
-            <AccordionTrigger>Fuel Types</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Fuel Types</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2 px-4">
                 {fuelTypes.map((fuelType) => (
                   <div key={fuelType} className="flex items-center space-x-2">
                     <input
@@ -367,9 +367,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="exteriorColors">
-            <AccordionTrigger>Exterior Colors</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Exterior Colors</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2 px-4">
                 {exteriorColors.map((exteriorColor) => (
                   <div key={exteriorColor} className="flex items-center space-x-2">
                     <input
@@ -391,9 +391,9 @@ export default function Auction() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="conditions">
-            <AccordionTrigger>Conditions</AccordionTrigger>
+            <AccordionTrigger className="bg-gray-300 px-2 font-bold flex flex-row-reverse justify-end gap-2 text-blue-800 py-3">Conditions</AccordionTrigger>
             <AccordionContent>
-              <div className="space-y-2">
+              <div className="space-y-2 mt-2 px-4">
                 {conditions.map((condition) => (
                   <div key={condition} className="flex items-center space-x-2">
                     <input
