@@ -104,15 +104,21 @@ const processEndedAuctions = async () => {
       const graceBufferMs = 5000;
 
       const shouldEnd = 
-        currentTime >= endTime - graceBufferMs && 
+        currentTime >= endTime && 
         !processedAuctions.has(auction.id) &&
         !processingAuctions.has(auction.id);
 
-      console.log(`Auction ID: ${auction.id}, Now: ${currentTime}, End: ${endTime}, Diff: ${currentTime - endTime}, Should End: ${shouldEnd}`);
+        const difference = currentTime - endTime;
+      console.log(`Auction ID: ${auction.id}, Now: ${currentTime}, End: ${endTime}, Diff: ${difference}, Should End: ${shouldEnd}`);
 
-      if (shouldEnd && auction.status === "Live") {
+      if (difference >= 0){
+
         endedAuctions.push(auction);
       }
+      
+      // if (shouldEnd && auction.status === "Live") {
+      //   endedAuctions.push(auction);
+      // }
     }
 
     if (endedAuctions.length === 0) {
