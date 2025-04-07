@@ -46,34 +46,34 @@ export async function POST(request) {
           },
         })
 
-        // If time is less than 5 minutes, extend auction
-        if (timeLeftInMinutes <= 5 && timeLeftInMinutes > 0) {
-          const extendedEndDate = new Date(endDate.getTime() + 5 * 60 * 1000) // Add 5 min
+        // // If time is less than 5 minutes, extend auction
+        // if (timeLeftInMinutes <= 5 && timeLeftInMinutes > 0) {
+        //   const extendedEndDate = new Date(endDate.getTime() + 5 * 60 * 1000) // Add 5 min
 
-          await tx.auction.update({
-            where: { id: auctionId },
-            data: { endDate: extendedEndDate },
-          })
+        //   await tx.auction.update({
+        //     where: { id: auctionId },
+        //     data: { endDate: extendedEndDate },
+        //   })
 
-          auctionExtended = true
+        //   auctionExtended = true
 
-          // Get all unique bidders from the auction
-          const uniqueBidders = new Set()
-          auction.Bids.forEach((bid) => uniqueBidders.add(bid.userId))
+        //   // Get all unique bidders from the auction
+        //   const uniqueBidders = new Set()
+        //   auction.Bids.forEach((bid) => uniqueBidders.add(bid.userId))
 
-          // Add current bidder if not already in the list
-          uniqueBidders.add(userId)
+        //   // Add current bidder if not already in the list
+        //   uniqueBidders.add(userId)
 
-          // Prepare notification data to use outside transaction
-          notificationData = {
-            uniqueBidderIds: Array.from(uniqueBidders),
-            auctionId,
-            sellerId: auction.sellerId,
-            bidAmount,
-            vehicleYear: auction.CarSubmission.vehicleYear,
-            vehicleModel: auction.CarSubmission.vehicleModel,
-          }
-        }
+        //   // Prepare notification data to use outside transaction
+        //   notificationData = {
+        //     uniqueBidderIds: Array.from(uniqueBidders),
+        //     auctionId,
+        //     sellerId: auction.sellerId,
+        //     bidAmount,
+        //     vehicleYear: auction.CarSubmission.vehicleYear,
+        //     vehicleModel: auction.CarSubmission.vehicleModel,
+        //   }
+        // }
 
         return bid
       },
