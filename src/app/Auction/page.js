@@ -25,6 +25,7 @@ export default function Auction() {
   const [conditions, setConditions] = useState(["Used", "New"])
   const [brands, setBrands] = useState(["Make"])
   const [loadingAction, setloadingAction] = useState("default")
+  const[handler, setHandler] = useState(false)
   const [filters, setFilters] = useState({
     minPrice: "",
     maxPrice: "",
@@ -114,7 +115,7 @@ export default function Auction() {
       await fetchBrands()
     }
     fetchData()
-  }, [])
+  }, [handler])
 
   useEffect(() => {
     applyFilters()
@@ -440,7 +441,7 @@ export default function Auction() {
 
       {/* Main Content */}
       <div className="flex-1 md:ml-4 ">
-        <div className="flex items-center justify-between mb-6 bg-white z-30 py-4">
+        <div className="flex items-center justify-between mb-6 bg-white z-30 py-1">
           <p className="text-sm text-muted-foreground">{displayedItems.filter((item)=>item.status==='Live').length} results found</p>
           <Select value={filters.sortBy} onValueChange={(value) => setFilters((prev) => ({ ...prev, sortBy: value }))}>
             <SelectTrigger className="w-[180px]">
@@ -455,7 +456,7 @@ export default function Auction() {
           </Select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 relative">
+        <div className="grid grid-cols-1 gap-4 relative">
           {loading && loadingAction === "default" && <AuctionSkeletonList/>}
           {displayedItems.filter((item)=>item.status==='Live').map((item) => (
             <AuctionCard
@@ -464,6 +465,8 @@ export default function Auction() {
               watchdata={watch}
               OnWatch={GetAuctions}
               setloadingAction={changeLoadingAction}
+              setHandler={setHandler}
+              handler={handler}
             />
           ))}
         </div>

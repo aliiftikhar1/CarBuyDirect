@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import BidRegistrationForm from "../Auction/[id]/components/BidRegisterationDialog"
 
-function BuynowButton({ data, setHandler }) {
+function BuynowButton({ data, setHandler, handler }) {
   const [open, setOpen] = useState(false)
   const [dealOpen, setDealOpen] = useState(false)
   const [price, setPrice] = useState("")
@@ -121,27 +121,27 @@ function BuynowButton({ data, setHandler }) {
 
   return (
     <div className="flex flex-col sm:flex-row w-full justify-between gap-3 max-w-xs mx-auto">
-      <Button
+      {/* <Button
         className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
         onClick={handleMakeDealBtn}
         size="lg"
       >
         <DollarSign className="w-4 h-4 mr-2 group-hover:animate-pulse" />
         Make Deal
-      </Button>
+      </Button> */}
       <Button
-        className="w-full bg-gradient-to-r from-black to-gray-800 hover:from-gray-900 hover:to-black text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
+        className="w-full bg-gradient-to-r from-black to-gray-800 hover:from-gray-900 hover:to-black text-white rounded-full shadow-sm hover:shadow-xl transition-all duration-300 group"
         onClick={handleBuyBtn}
         size="lg"
       >
         Buy Now
-        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
       </Button>
 
       {/* Registration Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <BidRegistrationForm setHandler={setHandler} setIsDialogOpen={setIsDialogOpen} />
+          <BidRegistrationForm setHandler={setHandler} handler={handler} setIsDialogOpen={setIsDialogOpen} />
         </DialogContent>
       </Dialog>
 
