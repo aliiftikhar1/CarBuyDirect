@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { Heart, ChevronLeft, ChevronRight, Check, CircleMinus, CirclePlus, Info, ExternalLink } from "lucide-react"
+import { Heart, ChevronLeft, ChevronRight, Check, CircleMinus, CirclePlus, Info, ExternalLink, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -47,21 +47,21 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
   const [viewingMode, setViewingMode] = useState("ALL")
 
   const [isDownloading, setIsDownloading] = useState(false)
-  
+
   // Limit how many thumbnails to show at once
   const THUMBNAILS_TO_SHOW = 6
-  
+
   // Replace this URL with your actual PDF report URL
   const reportPdfUrl = "/vehicle-report.pdf"
   const handleDownloadReport = async () => {
     try {
       setIsDownloading(true)
-      
+
       // Create an anchor element and set properties for download
       const link = document.createElement('a')
       link.href = reportPdfUrl
       link.setAttribute('download', 'vehicle-history-report.pdf')
-      
+
       // Append to the document, click it, and remove it
       document.body.appendChild(link)
       link.click()
@@ -77,7 +77,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
   useEffect(() => {
     updateVisibleThumbnails()
   }, [thumbnailStartIndex, images.length])
-  
+
   // Function to update which thumbnails are visible based on current start index
   const updateVisibleThumbnails = () => {
     if (images.length <= THUMBNAILS_TO_SHOW) {
@@ -90,21 +90,21 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       )
     }
   }
-  
+
   // Handler for thumbnail navigation left button
   const handleThumbnailLeft = () => {
     if (images.length <= THUMBNAILS_TO_SHOW) return // No need to scroll if all fit
-    
+
     setThumbnailStartIndex((prevIndex) => {
       const newIndex = prevIndex === 0 ? images.length - THUMBNAILS_TO_SHOW : prevIndex - 1;
       return Math.max(0, newIndex);
     });
   }
-  
+
   // Handler for thumbnail navigation right button
   const handleThumbnailRight = () => {
     if (images.length <= THUMBNAILS_TO_SHOW) return // No need to scroll if all fit
-    
+
     setThumbnailStartIndex((prevIndex) => {
       const newIndex = prevIndex + 1;
       return newIndex > images.length - THUMBNAILS_TO_SHOW ? 0 : newIndex;
@@ -344,7 +344,7 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
           <Info className="h-4 w-4 text-blue-500" />
         </div>
         <div className="ml-auto text-sm">
-          {data.views || 66} Views • {data.searches || 37478} Searches 
+          {data.views || 66} Views • {data.searches || 37478} Searches
         </div>
       </div>
 
@@ -434,13 +434,12 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
               <>
                 {reserveStatus && (
                   <p
-                    className={`text-xs flex gap-1 items-center md:text-sm mt-2 ${
-                      reserveStatus === "Reserve met"
-                        ? "text-green-500"
-                        : reserveStatus === "Reserve near"
-                          ? "text-yellow-500"
-                          : "text-red-500"
-                    }`}
+                    className={`text-xs flex gap-1 items-center md:text-sm mt-2 ${reserveStatus === "Reserve met"
+                      ? "text-green-500"
+                      : reserveStatus === "Reserve near"
+                        ? "text-yellow-500"
+                        : "text-red-500"
+                      }`}
                   >
                     {reserveStatus === "Reserve met" ? (
                       <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" />
@@ -528,66 +527,76 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
       <div className="w-full mx-auto">
         <h2 className="text-teal-700 font-semibold text-lg mb-2 border-b pb-2">Vehicle History</h2>
 
-        <div className="bg-white p-4 rounded-md shadow-sm mt-4">
+        <div className="bg-white py-4 rounded-md shadow-sm mt-4">
           <div className="flex flex-col space-y-3">
             {/* Top section with AutoCheck logo and vehicle data */}
-            <div className="flex flex-wrap items-center justify-between md:gap-y-4">
-              <div className="flex">
-              <div className="w-16 md:w-28">
-                <Image
-                  src="/logo/autocheck_logo1.jpg"
-                  alt="AutoCheck"
-                  width={80}
-                  height={35}
-                  className="object-contain"
-                />
-              </div>
-              
-              {/* Vehicle data in a responsive grid */}
-              <div className="grid grid-cols-4 gap-2 sm:gap-8 flex-grow text-center">
-                <div>
-                  <div className="text-gray-500 text-xs">Owners</div>
-                  <div className="font-medium">4</div>
+            <div className="flex flex-nowrap md:flex-wrap items-center justify-between md:gap-y-4">
+              <div className="flex border border-red-500 w-full">
+                <div className="w-16 md:w-28">
+                  <Image
+                    src="/logo/autocheck_logo1.jpg"
+                    alt="AutoCheck"
+                    width={80}
+                    height={35}
+                    className="object-contain"
+                  />
                 </div>
-                
-                <div>
-                  <div className="text-gray-500 text-xs">ACDNT</div>
-                  <div className="font-medium">0</div>
-                </div>
-                
-                <div>
-                  <div className="text-gray-500 text-xs">Titles/Probs</div>
-                  <div className="text-green-600">
-                    <Check className="h-4 w-4 mx-auto" />
+
+                {/* Vehicle data in a responsive grid */}
+                <div className="grid grid-cols-4 w-full gap-2 sm:gap-8 flex-grow text-center">
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="text-gray-500 text-xs">Owners</div>
+                    <div className="font-medium">{data?.CarSubmission.owners}</div>
+                  </div>
+
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="text-gray-500 text-xs">ACDNT</div>
+                    <div className="font-medium">{data?.CarSubmission.acdnt}</div>
+                  </div>
+
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="text-gray-500 text-xs">Titles</div>
+                    {data?.CarSubmission.titles ?
+                      <div className="text-green-600">
+                        <Check className="h-4 w-4" />
+                      </div> :
+                      <div className="text-red-600">
+                        <X className="h-4 w-4" />
+                      </div>
+                    }
+                  </div>
+
+                  <div className="flex flex-col justify-center items-center">
+                    <div className="text-gray-500 text-xs">ODO</div>
+                    {data?.CarSubmission.odo ?
+                      <div className="text-green-600">
+                        <Check className="h-4 w-4" />
+                      </div> :
+                      <div className="text-red-600">
+                        <X className="h-4 w-4" />
+                      </div>
+                    }
                   </div>
                 </div>
-                
-                <div>
-                  <div className="text-gray-500 text-xs">ODO</div>
-                  <div className="text-green-600">
-                    <Check className="h-4 w-4 mx-auto" />
-                  </div>
-                </div>
-              </div>
               </div>
               {/* Action buttons - more consistent with site styling */}
-              <div className="flex flex-wrap items-center gap-2 ml-auto">
-                <button 
+              <div className="flex border border-green-500 flex-nowrap md:flex-wrap items-center gap-2 ml-auto">
+                <button
                   className="text-xs h-8 px-3 bg-white border border-blue-400 text-blue-700 rounded hover:bg-blue-50 transition-colors"
-                  onClick={handleDownloadReport}
+                  onClick={() => window.open(data?.CarSubmission.pdfUrl || file, "_blank")}
                 >
                   VIEW REPORT
                 </button>
-                
-                <button 
+
+                <button
                   className="h-8 w-28 bg-white  rounded hover:bg-gray-50 transition-colors"
                   onClick={() => window.open("https://www.carfax.com", "_blank")}
                 >
-                  <Image 
-                    src="/logo/carfax.svg" 
-                    alt="Carfax Logo" 
-                    width={75} 
-                    height={20} 
+                  <Image
+                    src="/logo/carfax.svg"
+                    alt="Carfax Logo"
+                    width={75}
+                    height={20}
                     className="object-contain w-full h-full"
                   />
                 </button>
@@ -624,27 +633,27 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
           <span>{data.CarSubmission.fuelType}</span>
 
           <div className="ml-auto flex flex-wrap items-center gap-3 sm:gap-4 text-sm sm:text-base">
-  <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">
-    SD
-  </Badge>
+            <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">
+              SD
+            </Badge>
 
-  <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
-    <div className="flex items-center gap-1">
-      <span className="font-medium whitespace-nowrap">STRUCTURAL DAMAGE:</span>
-      <span className="font-bold">{data.CarSubmission.structuralDamage ? "Yes" : "No"}</span>
-    </div>
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-1">
+                <span className="font-medium whitespace-nowrap">STRUCTURAL DAMAGE:</span>
+                <span className="font-bold">{data.CarSubmission.structuralDamage ? "Yes" : "No"}</span>
+              </div>
 
-    <div className="flex items-center gap-1">
-      <span className="font-medium whitespace-nowrap">PRIOR PAINT:</span>
-      <span className="font-bold">{data.CarSubmission.priorPaint ? "Yes" : "No"}</span>
-    </div>
+              <div className="flex items-center gap-1">
+                <span className="font-medium whitespace-nowrap">PRIOR PAINT:</span>
+                <span className="font-bold">{data.CarSubmission.priorPaint ? "Yes" : "No"}</span>
+              </div>
 
-    <div className="flex items-center gap-1">
-      <span className="font-medium whitespace-nowrap">DRIVABLE:</span>
-      <span className="font-bold">{data.CarSubmission.drivable ? "Yes" : "Not Specified"}</span>
-    </div>
-  </div>
-</div>
+              <div className="flex items-center gap-1">
+                <span className="font-medium whitespace-nowrap">DRIVABLE:</span>
+                <span className="font-bold">{data.CarSubmission.drivable ? "Yes" : "Not Specified"}</span>
+              </div>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -711,53 +720,52 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
           </div>
 
           {/* Thumbnails */}
-        {/* Thumbnails */}
-<div className="mt-2 border-t border-b py-4">
-  <div className="flex items-center mb-2">
-    <button
-      className={`px-4 py-1 font-bold ${viewingMode === "ALL" ? "bg-yellow-500 text-black" : "bg-gray-700 text-white"}`}
-      onClick={() => setViewingMode("ALL")}
-    >
-      ALL <span className="ml-1 text-xs bg-gray-600 text-white px-1 rounded">{images.length}</span>
-    </button>
-    <div className="ml-auto">
-      <button 
-        id="thumbnail_left"
-        onClick={handleThumbnailLeft}
-        className="bg-gray-200 p-1 rounded-full"
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </button>
-      <span className="mx-1">VIEWING</span>
-      <button 
-        id="thumbnail_right"
-        onClick={handleThumbnailRight}
-        className="bg-gray-200 p-1 rounded-full"
-      >
-        <ChevronRight className="h-5 w-5" />
-      </button>
-    </div>
-  </div>
+          {/* Thumbnails */}
+          <div className="mt-2 border-t border-b py-4">
+            <div className="flex items-center mb-2">
+              <button
+                className={`px-4 py-1 font-bold ${viewingMode === "ALL" ? "bg-yellow-500 text-black" : "bg-gray-700 text-white"}`}
+                onClick={() => setViewingMode("ALL")}
+              >
+                ALL <span className="ml-1 text-xs bg-gray-600 text-white px-1 rounded">{images.length}</span>
+              </button>
+              <div className="ml-auto">
+                <button
+                  id="thumbnail_left"
+                  onClick={handleThumbnailLeft}
+                  className="bg-gray-200 p-1 rounded-full"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <span className="mx-1">VIEWING</span>
+                <button
+                  id="thumbnail_right"
+                  onClick={handleThumbnailRight}
+                  className="bg-gray-200 p-1 rounded-full"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
 
-  <div className="grid grid-cols-6 gap-2">
-    {visibleThumbnails.map((index) => (
-      <button
-        key={images[index]?.id || index}
-        onClick={() => setCurrentImage(index)}
-        className={`relative aspect-[4/3] overflow-hidden ${
-          currentImage === index ? "ring-2 ring-blue-500" : "border border-gray-300"
-        }`}
-      >
-        <Image
-          src={images[index]?.data || "/placeholder.svg"}
-          alt={`Thumbnail ${index + 1}`}
-          fill
-          className="object-cover"
-        />
-      </button>
-    ))}
-  </div>
-</div>
+            <div className="grid grid-cols-6 gap-2">
+              {visibleThumbnails.map((index) => (
+                <button
+                  key={images[index]?.id || index}
+                  onClick={() => setCurrentImage(index)}
+                  className={`relative aspect-[4/3] overflow-hidden ${currentImage === index ? "ring-2 ring-blue-500" : "border border-gray-300"
+                    }`}
+                >
+                  <Image
+                    src={images[index]?.data || "/placeholder.svg"}
+                    alt={`Thumbnail ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
           {/* Right sidebar appears here on mobile/tablet screens - IMPORTANT CHANGE */}
           <div className="block lg:hidden">
             <RightSidebar />
@@ -901,13 +909,12 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
                   <>
                     {reserveStatus && (
                       <p
-                        className={`text-xs flex gap-1 items-center md:text-sm mt-2 ${
-                          reserveStatus === "Reserve met"
-                            ? "text-green-500"
-                            : reserveStatus === "Reserve near"
-                              ? "text-yellow-500"
-                              : "text-red-500"
-                        }`}
+                        className={`text-xs flex gap-1 items-center md:text-sm mt-2 ${reserveStatus === "Reserve met"
+                          ? "text-green-500"
+                          : reserveStatus === "Reserve near"
+                            ? "text-yellow-500"
+                            : "text-red-500"
+                          }`}
                       >
                         {reserveStatus === "Reserve met" ? (
                           <Check className="size-4 bg-green-500 rounded-full text-white p-[1px]" />
@@ -991,82 +998,82 @@ export default function HeroSection({ data, triggerfetch, trigger }) {
               </div>
             </div>
           )}
-          
+
           <div className="w-full max-w-3xl mx-auto">
-      <h2 className="text-teal-700 font-semibold text-lg mb-2 border-b pb-2">Vehicle History</h2>
+            <h2 className="text-teal-700 font-semibold text-lg mb-2 border-b pb-2">Vehicle History</h2>
 
-      <div className="bg-white p-4 rounded-md shadow-sm mt-4">
-  {/* Remove duplicate title since it already exists above this component */}
-  
-  <div className="flex flex-col space-y-3">
-    {/* Top section with AutoCheck logo and vehicle data */}
-    <div className="flex flex-wrap items-center justify-between gap-y-4">
-      <div className="w-28">
-        <Image
-          src="/logo/autocheck_logo1.jpg"
-          alt="AutoCheck"
-          width={80}
-          height={35}
-          className="object-contain"
-        />
-      </div>
-      
-      {/* Vehicle data in a responsive grid */}
-      <div className="grid grid-cols-4 gap-2 sm:gap-8 flex-grow text-center">
-        <div>
-          <div className="text-gray-500 text-xs">Owners</div>
-          <div className="font-medium">4</div>
-        </div>
-        
-        <div>
-          <div className="text-gray-500 text-xs">ACDNT</div>
-          <div className="font-medium">0</div>
-        </div>
-        
-        <div>
-          <div className="text-gray-500 text-xs">Titles/Probs</div>
-          <div className="text-green-600">
-            <Check className="h-4 w-4 mx-auto" />
+            <div className="bg-white p-4 rounded-md shadow-sm mt-4">
+              {/* Remove duplicate title since it already exists above this component */}
+
+              <div className="flex flex-col space-y-3">
+                {/* Top section with AutoCheck logo and vehicle data */}
+                <div className="flex flex-wrap items-center justify-between gap-y-4">
+                  <div className="w-28">
+                    <Image
+                      src="/logo/autocheck_logo1.jpg"
+                      alt="AutoCheck"
+                      width={80}
+                      height={35}
+                      className="object-contain"
+                    />
+                  </div>
+
+                  {/* Vehicle data in a responsive grid */}
+                  <div className="grid grid-cols-4 gap-2 sm:gap-8 flex-grow text-center">
+                    <div>
+                      <div className="text-gray-500 text-xs">Owners</div>
+                      <div className="font-medium">4</div>
+                    </div>
+
+                    <div>
+                      <div className="text-gray-500 text-xs">ACDNT</div>
+                      <div className="font-medium">0</div>
+                    </div>
+
+                    <div>
+                      <div className="text-gray-500 text-xs">Titles/Probs</div>
+                      <div className="text-green-600">
+                        <Check className="h-4 w-4 mx-auto" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="text-gray-500 text-xs">ODO</div>
+                      <div className="text-green-600">
+                        <Check className="h-4 w-4 mx-auto" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action buttons - more consistent with site styling */}
+                  <div className="flex flex-wrap items-center gap-2 ml-auto">
+                    <button
+                      className="text-xs h-8 px-3 bg-white border border-blue-400 text-blue-700 rounded hover:bg-blue-50 transition-colors"
+                      onClick={() => setBidAmount(100)}
+                    >
+                      VIEW REPORT
+                    </button>
+
+                    <button
+                      className="h-8 w-28  bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+                      onClick={() => window.open("https://www.carfax.com", "_blank")}
+                    >
+                      <Image
+                        src="/logo/carfax.svg"
+                        alt="Carfax Logo"
+                        width={75}
+                        height={20}
+                        className="object-contain w-full h-full"
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div>
-          <div className="text-gray-500 text-xs">ODO</div>
-          <div className="text-green-600">
-            <Check className="h-4 w-4 mx-auto" />
-          </div>
-        </div>
-      </div>
-      
-      {/* Action buttons - more consistent with site styling */}
-      <div className="flex flex-wrap items-center gap-2 ml-auto">
-        <button 
-          className="text-xs h-8 px-3 bg-white border border-blue-400 text-blue-700 rounded hover:bg-blue-50 transition-colors"
-          onClick={()=>setBidAmount(100)}
-        >
-          VIEW REPORT
-        </button>
-        
-        <button 
-          className="h-8 w-28  bg-white border border-gray-200 rounded hover:bg-gray-50 transition-colors"
-          onClick={() => window.open("https://www.carfax.com", "_blank")}
-        >
-          <Image 
-            src="/logo/carfax.svg" 
-            alt="Carfax Logo" 
-            width={75} 
-            height={20} 
-            className="object-contain w-full h-full"
-          />
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-    </div>
 
         </div>
-        
+
       </div>
 
       {/* Dialogs */}

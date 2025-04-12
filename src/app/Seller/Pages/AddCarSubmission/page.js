@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useRef, useState } from "react"
-import { Upload, Loader2 } from "lucide-react"
+import { Upload, Loader2, Loader } from "lucide-react"
 import { toast } from "sonner"
 import dynamic from "next/dynamic"
 const JoditEditor = dynamic(() => import("jodit-react"), {
@@ -26,6 +26,15 @@ export default function ContactForm() {
 
   console.log("First Name:", firstName)
   console.log("Last Name:", lastName)
+  const [isTitleChecked, setIsTitleChecked] = useState(false);
+  const [isOdoChecked, setIsOdoChecked] = useState(false);
+
+  const handleTitleCheckboxChange = (e) => {
+    setIsTitleChecked(e.target.checked);
+  };
+  const handleOdoCheckboxChange = (e) => {
+    setIsOdoChecked(e.target.checked);
+  };
   const [loading, setloading] = useState(true)
   const [reserved, setReserved] = useState("False")
   const [buy, setBuy] = useState("False")
@@ -48,7 +57,31 @@ export default function ContactForm() {
     highlights: "",
     notes: "",
   })
+  const [isUploading, setIsUploading] = useState(false)
+  const [file, setfile] = useState("")
 
+  async function handlePdfUpload(e) {
+    if (e.target.files?.[0]) {
+      setIsUploading(true)
+      try {
+        const response = await uploadfiletoserver(e.target.files[0])
+        console.log("Response",response)
+        const data = await response
+        console.log("json data ",data)
+        if (data) {
+          setfile(data)
+          toast.success("PDF uploaded successfully")
+        } else {
+          toast.error("Failed to upload PDF")
+        }
+      } catch (error) {
+        console.error("Error uploading PDF:", error)
+        toast.error("Failed to upload PDF")
+      } finally {
+        setIsUploading(false)
+      }
+    }
+  }
   useEffect(() => {
     console.log("Selected Make is ", selectBrand)
     const brandmodels = models.filter((data) => data.make_id == selectBrand)
@@ -134,6 +167,46 @@ export default function ContactForm() {
       const formData = new FormData(e.currentTarget)
       const jsonData = Object.fromEntries(formData.entries())
 
+      // Make sure all checkbox values are properly captured (they don't get included in formData.entries() if unchecked)
+      jsonData.titles = document.getElementById("titles").checked
+      jsonData.odo = document.getElementById("odo").checked
+
+      // Make sure all select values are properly captured
+      jsonData.reserved = reserved
+      jsonData.buy = buy
+
+      // Add the selected brand and make IDs
+      jsonData.brandId = selectBrand
+      jsonData.makeId = selectMake
+
+      // Ensure editor content is included
+      jsonData.description = editorContent.description || ""
+      jsonData.highlights = editorContent.highlights || ""
+      jsonData.notes = editorContent.notes || ""
+
+      // Add validation to check for required fields
+      const requiredFields = [
+        "vehicleMake",
+        "vehicleModel",
+        "vehicleYear",
+        "category",
+        "bodyType",
+        "transmission",
+        "engineCapacity",
+        "fuelType",
+        "exteriorColor",
+        "condition",
+        "mileage",
+      ]
+
+      const missingFields = requiredFields.filter((field) => !jsonData[field])
+
+      if (missingFields.length > 0) {
+        toast.error(`Please fill in all required fields: ${missingFields.join(", ")}`)
+        setIsSubmitting(false)
+        return
+      }
+
       // Make sure firstName and lastName are properly set from the form values
       // or from the user object if the form fields are disabled
       jsonData.firstName = formData.get("firstName") || firstName || ""
@@ -146,6 +219,7 @@ export default function ContactForm() {
       jsonData.mileageUnit = formData.get("mileageUnit")
       jsonData.currency = formData.get("currency")
       jsonData.country = formData.get("country")
+      jsonData.report_pdf= file
 
       // Add new fields
       jsonData.category = formData.get("category")
@@ -157,9 +231,9 @@ export default function ContactForm() {
       jsonData.condition = formData.get("condition")
 
       // Add editor content
-      jsonData.description = editorContent.description
-      jsonData.highlights = editorContent.highlights
-      jsonData.notes = editorContent.notes
+      // jsonData.description = editorContent.description
+      // jsonData.highlights = editorContent.highlights
+      // jsonData.notes = editorContent.notes
 
       const filePromises = files.map(async (file) => {
         const imageUrl = await uploadfiletoserver(file)
@@ -173,6 +247,8 @@ export default function ContactForm() {
 
       jsonData.files = await Promise.all(filePromises)
       console.log("json Data", jsonData)
+      // Add this before the fetch call
+      console.log("Submitting form data:", jsonData)
       // // Submit the form
       const response = await fetch(`/api/user/submitform`, {
         method: "POST",
@@ -389,6 +465,108 @@ export default function ContactForm() {
           </div>
         </div>
 
+        <div className="grid md:grid-cols-4 gap-6">
+          <div className="space-y-2">
+            <label htmlFor="score" className="text-sm font-medium">
+              Score
+            </label>
+            <Input id="score" name="score" type="number" defaultValue={user.score} required />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="owners" className="text-sm font-medium">
+              Owners
+            </label>
+            <Input id="owners" name="owners" type="number" defaultValue={user.owners} required />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="acdnt" className="text-sm font-medium">
+              Acdnt
+            </label>
+            <Input id="acdnt" name="acdnt" type="number" defaultValue={user.acdnt} required />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="titles" className="text-sm font-medium">
+              Titles
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                id="titles"
+                name="titles"
+                type="checkbox"
+                className="w-5 h-5"
+                checked={isTitleChecked}
+                onChange={handleTitleCheckboxChange}
+              />
+              <span>{isTitleChecked ? "Yes" : "No"}</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="odo" className="text-sm font-medium">
+              Odo
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                id="odo"
+                name="odo"
+                type="checkbox"
+                className="w-5 h-5"
+                checked={isOdoChecked}
+                onChange={handleOdoCheckboxChange}
+              />
+              <span>{isOdoChecked ? "Yes" : "No"}</span>
+            </div>
+          </div>
+
+          <div className="space-y-2 col-span-2">
+                        <Label htmlFor="report_pdf">Vehicle Report PDF</Label>
+                        <div className="flex flex-row-reverse gap-3">
+                          {(file) && (
+                            <Button
+                              variant="outline"
+                              className="flex items-center gap-2 w-fit"
+                              onClick={() => window.open(file, "_blank")}
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="lucide lucide-file-text"
+                              >
+                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" x2="8" y1="13" y2="13" />
+                                <line x1="16" x2="8" y1="17" y2="17" />
+                                <line x1="10" x2="8" y1="9" y2="9" />
+                              </svg>
+                              Download Current PDF
+                            </Button>
+                          )}
+        
+                          <div className="flex items-center gap-2 ">
+                            <Input
+                              id="report_pdf"
+                              name="report_pdf"
+                              type="file"
+                              accept=".pdf"
+                              disabled={isUploading}
+                              onChange={(e) => handlePdfUpload(e)}
+                            />
+                            {isUploading && <Loader className="animate-spin h-5 w-5" />}
+                          </div>
+                        </div>
+                      </div>
+        </div>
+
         {["description", "highlights", "notes"].map((field) => (
           <div key={field} className="col-span-4">
             <Label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Label>
@@ -398,10 +576,12 @@ export default function ContactForm() {
               value={editorContent[field]}
               tabIndex={1}
               onBlur={(newContent) => setEditorContent((prev) => ({ ...prev, [field]: newContent }))}
-              onChange={() => {}}
+              onChange={() => { }}
             />
           </div>
         ))}
+          
+        
 
         <div className="space-y-2">
           <Label className="text-sm font-medium">Please submit a few clear photos of your car</Label>
@@ -449,4 +629,3 @@ export default function ContactForm() {
     </div>
   )
 }
-

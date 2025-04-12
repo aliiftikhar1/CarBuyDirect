@@ -57,7 +57,13 @@ export async function PUT(request, { params }) {
         buyPrice,
         buy,
         imageLabels,
-        webSlug
+        webSlug,
+        score,
+        owners,
+        acdnt,
+        titles,
+        odo,
+        pdfUrl,
     } = data;
 
     try {
@@ -106,7 +112,13 @@ export async function PUT(request, { params }) {
                     reservedPrice: parseInt(reservedPrice),
                     buy: buy === 'True' ? true : false,
                     buyPrice: parseInt(buyPrice),
-                    webSlug
+                    webSlug,
+                    score: parseInt(score),
+                    owners: parseInt(owners),
+                    acdnt: parseInt(acdnt),
+                    titles,
+                    odo,
+                    pdfUrl:pdfUrl?pdfUrl:undefined
                 },
             });
 
@@ -159,7 +171,13 @@ export async function PUT(request, { params }) {
                     status,
                     reserved: reserved === 'True' ? true : false,
                     reservedPrice: parseInt(reservedPrice),
-                    webSlug
+                    webSlug,
+                    score: parseInt(score),
+                    owners: parseInt(owners),
+                    acdnt: parseInt(acdnt),
+                    titles,
+                    odo,
+                    pdfUrl:pdfUrl?pdfUrl:undefined
                 },
             });
 

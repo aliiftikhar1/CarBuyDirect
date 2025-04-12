@@ -1,6 +1,6 @@
 "use client"
 
-import { Check, CircleMinus, CirclePlus, MapPin, PackageOpen, Star } from "lucide-react"
+import { Check, CircleMinus, CirclePlus, MapPin, PackageOpen, Star, X } from "lucide-react"
 import Image from "next/image"
 import TimerComponent from "../components/CountDownTimer"
 import { useSelector } from "react-redux"
@@ -289,12 +289,12 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
             alt="AutoCheck"
             width={100}
             height={50}
-            className="object-cover h-full w-full"
+            className="object-contain h-full w-full"
           />
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="text-gray-500 text-xs">Score</div>
-          <div className="font-medium text-sm">70</div>
+          <div className="font-medium text-sm">{item?.CarSubmission.score}</div>
         </div>
       </div>
 
@@ -316,29 +316,41 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
       <div className="grid grid-cols-5 gap-1 md:gap-4 w-full ">
         <div className="flex flex-col justify-center items-center">
           <div className="text-gray-500 text-xs">Owners</div>
-          <div className="font-medium text-sm">4</div>
+          <div className="font-medium text-sm">{item?.CarSubmission.owners}</div>
         </div>
         
         <div className="flex flex-col justify-center items-center">
           <div className="text-gray-500 text-xs">ACDNT</div>
-          <div className="font-medium text-sm">0</div>
+          <div className="font-medium text-sm">{item?.CarSubmission.acdnt}</div>
         </div>
         
         <div className="flex flex-col justify-center items-center">
           <div className="text-gray-500 text-xs">Titles</div>
-          <div className="text-green-600">
-            <Check className="h-4 w-4" />
-          </div>
+          {item?.CarSubmission.titles?
+        <div className="text-green-600">
+        <Check className="h-4 w-4" />
+      </div>:
+      <div className="text-red-600">
+      <X className="h-4 w-4" />
+    </div>  
+        }
+          
         </div>
         
         <div className="flex flex-col justify-center items-center">
           <div className="text-gray-500 text-xs">ODO</div>
-          <div className="text-green-600">
-            <Check className="h-4 w-4" />
-          </div>
+          {item?.CarSubmission.odo?
+        <div className="text-green-600">
+        <Check className="h-4 w-4" />
+      </div>:
+      <div className="text-red-600">
+      <X className="h-4 w-4" />
+    </div>  
+        }
         </div>
         <div className="flex flex-col justify-center items-center">
         <button 
+        onClick={() => window.open(item?.CarSubmission.pdfUrl || file, "_blank")}
           className="text-[8px] md:text-xs flex justify-center items-center text-center h-8 px-4 w-full bg-white border border-blue-500 text-blue-700 rounded hover:bg-blue-50 font-medium transition-colors"
         >
           VIEW REPORT

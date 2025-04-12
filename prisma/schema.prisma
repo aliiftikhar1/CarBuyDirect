@@ -95,6 +95,12 @@ model CarSubmission {
   reservedPrice     Int?       @default(0)
   buy          Boolean   @default(false)
   buyPrice     Int?       @default(0)
+  score     Int?       @default(0)
+  owners     Int?       @default(0)
+  acdnt     Int?       @default(0)
+  titles          Boolean   @default(false)
+  odo          Boolean   @default(false)
+  pdfUrl          String?
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
 

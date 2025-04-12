@@ -38,8 +38,14 @@ export async function POST(request) {
             reservedPrice,
             buyPrice,
             buy,
+            score,
+            owners,
+            acdnt,
+            titles,
+            odo,
             sellerId,
             files,
+            report_pdf,
         } = data;
 
         // Create Car Submission
@@ -76,7 +82,13 @@ export async function POST(request) {
                 reservedPrice: parseInt(reservedPrice),
                 buy: buy === 'True' ? true : false,
                 buyPrice: parseInt(buyPrice),
-                webSlug:uuidv4()
+                webSlug: uuidv4(),
+                score: parseInt(score),
+                owners: parseInt(owners),
+                acdnt: parseInt(acdnt),
+                titles,
+                odo,
+                pdfUrl:report_pdf
             },
         });
 

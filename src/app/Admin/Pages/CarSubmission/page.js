@@ -18,6 +18,7 @@ import dynamic from "next/dynamic"
 import { AutocompleteInput } from "./AutoCompleteInput"
 import { YearAutocompleteInput } from "./AutocompleteYear"
 import { CarApiAutocompleteInput } from "./AutocompleteBrands"
+import { uploadfiletoserver } from "@/app/Actions"
 
 export default function AdminCarSubmissions() {
   const [buy, setBuy] = useState("False")
@@ -39,6 +40,41 @@ export default function AdminCarSubmissions() {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [review, setReview] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isTitleChecked, setIsTitleChecked] = useState(false)
+  const [isOdoChecked, setIsOdoChecked] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [file, setfile] = useState("")
+
+  async function handlePdfUpload(e) {
+    if (e.target.files?.[0]) {
+      setIsUploading(true)
+      try {
+        const response = await uploadfiletoserver(e.target.files[0])
+        console.log("Response",response)
+        const data = await response
+        console.log("json data ",data)
+        if (data) {
+          setfile(data)
+          toast.success("PDF uploaded successfully")
+        } else {
+          toast.error("Failed to upload PDF")
+        }
+      } catch (error) {
+        console.error("Error uploading PDF:", error)
+        toast.error("Failed to upload PDF")
+      } finally {
+        setIsUploading(false)
+      }
+    }
+  }
+  const handleTitleCheckboxChange = (e) => {
+    setIsTitleChecked(e.target.checked)
+    setFormData((prev) => ({ ...prev, titles: e.target.checked }))
+  }
+  const handleOdoCheckboxChange = (e) => {
+    setIsOdoChecked(e.target.checked)
+    setFormData((prev) => ({ ...prev, odo: e.target.checked }))
+  }
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -70,6 +106,11 @@ export default function AdminCarSubmissions() {
     webSlug: "",
     buy: "False",
     buyPrice: "",
+    score: "",
+    owners: "",
+    acdnt: "",
+    titles: false,
+    odo: false,
   })
   const [imageLabels, setImageLabels] = useState({})
   const [loading, setloading] = useState(true)
@@ -169,6 +210,9 @@ export default function AdminCarSubmissions() {
   const handleOpenUpdateDialog = (submission) => {
     setSelectedSubmission(submission)
     setReview(submission.review || "")
+    setIsTitleChecked(submission.titles === true)
+    setIsOdoChecked(submission.odo === true)
+    setfile(submission.pdfUrl || "")
     setFormData({
       firstname: submission.firstname || "",
       lastname: submission.lastname || "",
@@ -200,6 +244,12 @@ export default function AdminCarSubmissions() {
       webSlug: submission.webSlug || "",
       buy: submission.buy === true ? "True" : "False" || "False",
       buyPrice: submission.buyPrice || "",
+      score: submission.score || "",
+      owners: submission.owners || "",
+      acdnt: submission.acdnt || "",
+      titles: submission.titles || false,
+      odo: submission.odo || false,
+      pdfUrl: submission.pdfUrl || "",
     })
     setIsUpdateDialogOpen(true)
   }
@@ -244,7 +294,7 @@ export default function AdminCarSubmissions() {
   }
 
   const handleUpdateSubmission = async (action) => {
-    if (!selectedSubmission) return
+    if (!selectedSubmission || isUploading) return
 
     try {
       const response = await fetch(`/api/admin/carsubmissions/${selectedSubmission.id}`, {
@@ -256,6 +306,7 @@ export default function AdminCarSubmissions() {
           status: action === "approve" ? "Approved" : "Rejected",
           review,
           ...formData,
+          pdfUrl: file,
           imageLabels,
         }),
       })
@@ -508,13 +559,21 @@ export default function AdminCarSubmissions() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-              <CarApiAutocompleteInput options={brands} value={formData.vehicleMake}  onChange={(e) => handleFormChange("vehicleMake", e.target.value)} name="vehicleMake" />
-                
+                <CarApiAutocompleteInput
+                  options={brands}
+                  value={formData.vehicleMake}
+                  onChange={(e) => handleFormChange("vehicleMake", e.target.value)}
+                  name="vehicleMake"
+                />
 
                 <div className="space-y-2">
                   {/* <Label htmlFor="vehicleModel">Vehicle model</Label> */}
-                  <CarApiAutocompleteInput options={models} value={formData.vehicleModel}  onChange={(e) => handleFormChange("vehicleModel", e.target.value)} name="vehicleModel" />
-                
+                  <CarApiAutocompleteInput
+                    options={models}
+                    value={formData.vehicleModel}
+                    onChange={(e) => handleFormChange("vehicleModel", e.target.value)}
+                    name="vehicleModel"
+                  />
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-6">
@@ -562,7 +621,12 @@ export default function AdminCarSubmissions() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   {/* <Label htmlFor="vehicleYear">Vehicle year</Label> */}
-                  <YearAutocompleteInput options={years} name="vehicleYear" value={formData.vehicleYear}  onChange={(e) => handleFormChange("vehicleYear", e.target.value)} />
+                  <YearAutocompleteInput
+                    options={years}
+                    name="vehicleYear"
+                    value={formData.vehicleYear}
+                    onChange={(e) => handleFormChange("vehicleYear", e.target.value)}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="vin">VIN or Chassis No.</Label>
@@ -749,6 +813,127 @@ export default function AdminCarSubmissions() {
                   />
                 </div>
               ))}
+              <div className="grid md:grid-cols-4 gap-6">
+                <div className="space-y-2">
+                  <label htmlFor="score" className="text-sm font-medium">
+                    Score
+                  </label>
+                  <Input
+                    id="score"
+                    name="score"
+                    type="number"
+                    value={formData.score}
+                    onChange={(e) => handleFormChange("score", e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="owners" className="text-sm font-medium">
+                    Owners
+                  </label>
+                  <Input
+                    id="owners"
+                    name="owners"
+                    type="number"
+                    value={formData.owners}
+                    onChange={(e) => handleFormChange("owners", e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="acdnt" className="text-sm font-medium">
+                    Acdnt
+                  </label>
+                  <Input
+                    id="acdnt"
+                    name="acdnt"
+                    type="number"
+                    value={formData.acdnt}
+                    onChange={(e) => handleFormChange("acdnt", e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="titles" className="text-sm font-medium">
+                    Titles
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="titles"
+                      name="titles"
+                      type="checkbox"
+                      className="w-5 h-5"
+                      checked={isTitleChecked}
+                      onChange={handleTitleCheckboxChange}
+                    />
+                    <span>{isTitleChecked ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="odo" className="text-sm font-medium">
+                    Odo
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="odo"
+                      name="odo"
+                      type="checkbox"
+                      className="w-5 h-5"
+                      checked={isOdoChecked}
+                      onChange={handleOdoCheckboxChange}
+                    />
+                    <span>{isOdoChecked ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="report_pdf">Vehicle Report PDF</Label>
+                <div className="flex flex-col gap-3">
+                  {(selectedSubmission.pdfUrl || file) && (
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2 w-fit"
+                      onClick={() => window.open(selectedSubmission.pdfUrl || file, "_blank")}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="lucide lucide-file-text"
+                      >
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" x2="8" y1="13" y2="13" />
+                        <line x1="16" x2="8" y1="17" y2="17" />
+                        <line x1="10" x2="8" y1="9" y2="9" />
+                      </svg>
+                      Download Current PDF
+                    </Button>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="report_pdf"
+                      name="report_pdf"
+                      type="file"
+                      accept=".pdf"
+                      disabled={isUploading}
+                      onChange={(e) => handlePdfUpload(e)}
+                    />
+                    {isUploading && <Loader className="animate-spin h-5 w-5" />}
+                  </div>
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="review">Admin Review</Label>
@@ -786,17 +971,17 @@ export default function AdminCarSubmissions() {
               </div>
 
               <div className="flex justify-end space-x-2">
-                <Button onClick={() => handleUpdateSubmission("reject")} variant="destructive">
+                <Button onClick={() => handleUpdateSubmission("reject")} variant="destructive" disabled={isUploading}>
                   Reject
                 </Button>
-                <Button onClick={() => handleUpdateSubmission("approve")} variant="default">
+                <Button onClick={() => handleUpdateSubmission("approve")} variant="default" disabled={isUploading}>
                   Approve
                 </Button>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button onClick={handleCloseUpdateDialog} variant="outline">
+            <Button onClick={handleCloseUpdateDialog} variant="outline" disabled={isUploading}>
               Cancel
             </Button>
           </DialogFooter>
@@ -805,4 +990,3 @@ export default function AdminCarSubmissions() {
     </div>
   )
 }
-
