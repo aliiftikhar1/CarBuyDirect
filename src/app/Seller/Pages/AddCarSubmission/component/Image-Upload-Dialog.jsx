@@ -30,6 +30,7 @@ export function ImageUploadDialog({ files, setFiles, maxFiles = 10 }) {
         file,
         preview: URL.createObjectURL(file),
         uploaded: false,
+        url: null // Will store the server URL after upload
       }))
 
       setUploadedImages((prev) => [...prev, ...newUploadedImages])
@@ -50,6 +51,7 @@ export function ImageUploadDialog({ files, setFiles, maxFiles = 10 }) {
       file,
       preview: URL.createObjectURL(file),
       uploaded: false,
+      url: null
     }))
 
     setUploadedImages((prev) => [...prev, ...newUploadedImages])
@@ -72,7 +74,7 @@ export function ImageUploadDialog({ files, setFiles, maxFiles = 10 }) {
     }
 
     setUploading(true)
-    const totalImages = uploadedImages.filter((img) => !img.uploaded).length
+    const totalImages = uploadedImages.filter(img => !img.uploaded).length
     let uploadedCount = 0
 
     try {
@@ -84,23 +86,32 @@ export function ImageUploadDialog({ files, setFiles, maxFiles = 10 }) {
         // Update progress
         setCurrentProgress(Math.round((uploadedCount / totalImages) * 100))
 
-        // Upload the file
-        await uploadfiletoserver(uploadedImages[i].file)
+        // Upload the file and get the URL
+        const url = await uploadfiletoserver(uploadedImages[i].file)
 
-        // Mark as uploaded
+        // Mark as uploaded and store the URL
         setUploadedImages((prev) => {
           const updated = [...prev]
-          updated[i] = { ...updated[i], uploaded: true }
+          updated[i] = { 
+            ...updated[i], 
+            uploaded: true,
+            url: url
+          }
           return updated
         })
 
-        // Add to files array
-        newFiles.push(uploadedImages[i].file)
+        // Add URL to files array (not the file object)
+        newFiles.push({
+          name: uploadedImages[i].file.name,
+          url: url,
+          type: uploadedImages[i].file.type,
+          size: uploadedImages[i].file.size
+        })
 
         uploadedCount++
       }
 
-      // Update the parent component's files state
+      // Update the parent component's files state with URLs
       setFiles(newFiles)
 
       setCurrentProgress(100)

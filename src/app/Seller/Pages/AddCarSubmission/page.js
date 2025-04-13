@@ -164,28 +164,28 @@ export default function ContactForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-
+  
     try {
       const formData = new FormData(e.currentTarget)
       const jsonData = Object.fromEntries(formData.entries())
-
-      // Make sure all checkbox values are properly captured (they don't get included in formData.entries() if unchecked)
+  
+      // Make sure all checkbox values are properly captured
       jsonData.titles = document.getElementById("titles").checked
       jsonData.odo = document.getElementById("odo").checked
-
+  
       // Make sure all select values are properly captured
       jsonData.reserved = reserved
       jsonData.buy = buy
-
+  
       // Add the selected brand and make IDs
       jsonData.brandId = selectBrand
       jsonData.makeId = selectMake
-
+  
       // Ensure editor content is included
       jsonData.description = editorContent.description || ""
       jsonData.highlights = editorContent.highlights || ""
       jsonData.notes = editorContent.notes || ""
-
+  
       // Add validation to check for required fields
       const requiredFields = [
         "vehicleMake",
@@ -200,29 +200,29 @@ export default function ContactForm() {
         "condition",
         "mileage",
       ]
-
+  
       const missingFields = requiredFields.filter((field) => !jsonData[field])
-
+  
       if (missingFields.length > 0) {
         toast.error(`Please fill in all required fields: ${missingFields.join(", ")}`)
         setIsSubmitting(false)
         return
       }
-
-      // Make sure firstName and lastName are properly set from the form values
-      // or from the user object if the form fields are disabled
+  
+      // Make sure firstName and lastName are properly set
       jsonData.firstName = formData.get("firstName") || firstName || ""
       jsonData.lastName = formData.get("lastName") || lastName || ""
       jsonData.sellerId = user.id
       jsonData.email = user.email
       jsonData.phone = user.phoneNo
+      
       // Handle select fields
       jsonData.phoneCode = formData.get("phoneCode")
       jsonData.mileageUnit = formData.get("mileageUnit")
       jsonData.currency = formData.get("currency")
       jsonData.country = formData.get("country")
       jsonData.report_pdf = file
-
+  
       // Add new fields
       jsonData.category = formData.get("category")
       jsonData.bodyType = formData.get("bodyType")
@@ -231,27 +231,12 @@ export default function ContactForm() {
       jsonData.fuelType = formData.get("fuelType")
       jsonData.exteriorColor = formData.get("exteriorColor")
       jsonData.condition = formData.get("condition")
-
-      // Add editor content
-      // jsonData.description = editorContent.description
-      // jsonData.highlights = editorContent.highlights
-      // jsonData.notes = editorContent.notes
-
-      const filePromises = files.map(async (file) => {
-        const imageUrl = await uploadfiletoserver(file)
-        return {
-          name: file.name,
-          type: file.type,
-          size: file.size,
-          data: imageUrl,
-        }
-      })
-
-      jsonData.files = await Promise.all(filePromises)
-      console.log("json Data", jsonData)
-      // Add this before the fetch call
+  
+      // Add the already uploaded images (no need to upload again)
+      jsonData.files = files
+  
       console.log("Submitting form data:", jsonData)
-      // // Submit the form
+      
       const response = await fetch(`/api/user/submitform`, {
         method: "POST",
         headers: {
@@ -259,12 +244,12 @@ export default function ContactForm() {
         },
         body: JSON.stringify(jsonData),
       })
-
+  
       const data = await response.json()
-
+  
       if (data.success) {
         toast.success("Your inquiry has been submitted successfully.")
-        setFiles([]) // Reset file input
+        setFiles([]) // Reset file list
       } else {
         throw new Error(data.message)
       }
