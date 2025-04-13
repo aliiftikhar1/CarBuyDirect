@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useEffect, useRef, useState } from "react"
-import { Upload, Loader2, Loader } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import dynamic from "next/dynamic"
 const JoditEditor = dynamic(() => import("jodit-react"), {
@@ -16,6 +16,8 @@ import { AutocompleteInput } from "./Autocomplete"
 import { useSelector } from "react-redux"
 import { CarApiAutocompleteInput } from "./AutocompleteBrands"
 import { YearAutocompleteInput } from "./AutocompleteYear"
+import { ImageUploadDialog } from "./component/Image-Upload-Dialog"
+import { ImageGallery } from "./component/Image-Gallery"
 
 export default function ContactForm() {
   const editor = useRef(null)
@@ -26,15 +28,15 @@ export default function ContactForm() {
 
   console.log("First Name:", firstName)
   console.log("Last Name:", lastName)
-  const [isTitleChecked, setIsTitleChecked] = useState(false);
-  const [isOdoChecked, setIsOdoChecked] = useState(false);
+  const [isTitleChecked, setIsTitleChecked] = useState(false)
+  const [isOdoChecked, setIsOdoChecked] = useState(false)
 
   const handleTitleCheckboxChange = (e) => {
-    setIsTitleChecked(e.target.checked);
-  };
+    setIsTitleChecked(e.target.checked)
+  }
   const handleOdoCheckboxChange = (e) => {
-    setIsOdoChecked(e.target.checked);
-  };
+    setIsOdoChecked(e.target.checked)
+  }
   const [loading, setloading] = useState(true)
   const [reserved, setReserved] = useState("False")
   const [buy, setBuy] = useState("False")
@@ -65,9 +67,9 @@ export default function ContactForm() {
       setIsUploading(true)
       try {
         const response = await uploadfiletoserver(e.target.files[0])
-        console.log("Response",response)
+        console.log("Response", response)
         const data = await response
-        console.log("json data ",data)
+        console.log("json data ", data)
         if (data) {
           setfile(data)
           toast.success("PDF uploaded successfully")
@@ -219,7 +221,7 @@ export default function ContactForm() {
       jsonData.mileageUnit = formData.get("mileageUnit")
       jsonData.currency = formData.get("currency")
       jsonData.country = formData.get("country")
-      jsonData.report_pdf= file
+      jsonData.report_pdf = file
 
       // Add new fields
       jsonData.category = formData.get("category")
@@ -275,7 +277,7 @@ export default function ContactForm() {
   }
 
   return (
-    <div className=" p-6">
+    <div className="p-6">
       <h2 className="text-3xl font-semibold mb-8">
         <span className="text-[#B08968]">Contact</span>
       </h2>
@@ -522,49 +524,49 @@ export default function ContactForm() {
           </div>
 
           <div className="space-y-2 col-span-2">
-                        <Label htmlFor="report_pdf">Vehicle Report PDF</Label>
-                        <div className="flex flex-row-reverse gap-3">
-                          {(file) && (
-                            <Button
-                              variant="outline"
-                              className="flex items-center gap-2 w-fit"
-                              onClick={() => window.open(file, "_blank")}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="lucide lucide-file-text"
-                              >
-                                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                                <polyline points="14 2 14 8 20 8" />
-                                <line x1="16" x2="8" y1="13" y2="13" />
-                                <line x1="16" x2="8" y1="17" y2="17" />
-                                <line x1="10" x2="8" y1="9" y2="9" />
-                              </svg>
-                              Download Current PDF
-                            </Button>
-                          )}
-        
-                          <div className="flex items-center gap-2 ">
-                            <Input
-                              id="report_pdf"
-                              name="report_pdf"
-                              type="file"
-                              accept=".pdf"
-                              disabled={isUploading}
-                              onChange={(e) => handlePdfUpload(e)}
-                            />
-                            {isUploading && <Loader className="animate-spin h-5 w-5" />}
-                          </div>
-                        </div>
-                      </div>
+            <Label htmlFor="report_pdf">Vehicle Report PDF</Label>
+            <div className="flex flex-row-reverse justify-end gap-3">
+              {file && (
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2 w-fit"
+                  onClick={() => window.open(file, "_blank")}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-file-text"
+                  >
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" x2="8" y1="13" y2="13" />
+                    <line x1="16" x2="8" y1="17" y2="17" />
+                    <line x1="10" x2="8" y1="9" y2="9" />
+                  </svg>
+                  Download Current PDF
+                </Button>
+              )}
+
+              <div className="flex items-center gap-2 ">
+                <Input
+                  id="report_pdf"
+                  name="report_pdf"
+                  type="file"
+                  accept=".pdf"
+                  disabled={isUploading}
+                  onChange={(e) => handlePdfUpload(e)}
+                />
+                {isUploading && <Loader2 className="animate-spin h-5 w-5" />}
+              </div>
+            </div>
+          </div>
         </div>
 
         {["description", "highlights", "notes"].map((field) => (
@@ -576,43 +578,19 @@ export default function ContactForm() {
               value={editorContent[field]}
               tabIndex={1}
               onBlur={(newContent) => setEditorContent((prev) => ({ ...prev, [field]: newContent }))}
-              onChange={() => { }}
+              onChange={() => {}}
             />
           </div>
         ))}
-          
-        
 
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Please submit a few clear photos of your car</Label>
-          <div
-            className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:bg-muted/50 transition-colors"
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-            onClick={() => document.getElementById("fileInput")?.click()}
-          >
-            <input
-              id="fileInput"
-              type="file"
-              multiple
-              accept="image/jpeg,image/gif,image/webp"
-              className="hidden"
-              onChange={handleFileSelect}
-            />
-            <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-2" />
-            <p className="text-sm text-muted-foreground mb-1">Drag & drop files or click to browse</p>
-            <p className="text-xs text-muted-foreground">Supported formats: JPEG, JPG, GIF, WEBP</p>
-            {files.length > 0 && (
-              <div className="mt-4 text-sm text-left">
-                <p className="font-medium">Selected files:</p>
-                <ul className="list-disc pl-5">
-                  {files.map((file, index) => (
-                    <li key={index}>{file.name}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+        {/* Replace the existing image upload section with our new components */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <Label className="text-sm font-medium">Vehicle Images</Label>
+            <ImageUploadDialog files={files} setFiles={setFiles} maxFiles={100} />
           </div>
+
+          <ImageGallery files={files} setFiles={setFiles} />
         </div>
 
         <Button type="submit" className="bg-[#B08968] hover:bg-[#97775A] text-white" disabled={isSubmitting}>
