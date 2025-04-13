@@ -25,7 +25,7 @@ export async function GET(request,{params}) {
                 },
             },
             where:{
-                senderId:parseInt(id)
+                receiverId:parseInt(id)
             }
         });
 
