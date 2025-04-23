@@ -47,9 +47,6 @@ export async function POST(req) {
       )
     }
 
-    // Check if the payment intent can be canceled
-    // Payment intents can be canceled when they are in one of these statuses:
-    // requires_payment_method, requires_capture, requires_confirmation, requires_action, processing
     const cancelableStatuses = [
       "requires_payment_method",
       "requires_capture",

@@ -29,6 +29,7 @@ export async function POST(request) {
         password: hashedPassword || undefined,
         username: data.username || undefined,
         cardName: data.cardName || undefined,
+        stripeVerification: data.stripeVerification || undefined,
         cardNumber: data.cardNumber || undefined,
         cardExpiry: data.cardExpiry || undefined,
         cardCvc: data.cardCvc || undefined,

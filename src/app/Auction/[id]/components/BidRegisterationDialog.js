@@ -68,6 +68,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen , handler}) {
     country: userdetails?.country || "Pakistan",
     province: userdetails?.province || "",
     zipcode: userdetails?.zipcode || "",
+    stripeVerification: userdetails?.stripeVerification || false,
     paymentMethod: "",
   })
 
@@ -286,7 +287,6 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen , handler}) {
         }
 
         // If we have a payment method, we need to attach it to the customer
-        // This would typically be done via a server action
         const response = await fetch("/api/stripe/setup-payment-method", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -323,6 +323,7 @@ function BidRegistrationFormContent({ setHandler, setIsDialogOpen , handler}) {
   const handleSubmit = async () => {
     setLoader(true)
     try {
+      formData.stripeVerification = true
       const response = await updateUserDetails({ ...formData, paymentMethod }, dispatch)
       if (response.status) {
         setLoader(false)

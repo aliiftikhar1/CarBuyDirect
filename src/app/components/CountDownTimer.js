@@ -39,7 +39,7 @@ export default function TimerComponent({ className = "", endDate }) {
           <span className="text-lg font-bold">{new Date(endDate).toLocaleDateString()}</span>
         </>
       ) : (
-        <div className="flex md:w-full w-[20rem] gap-2 text-lg font-semibold items-center">
+        <div className="flex md:w-full w-auto sm:w-[20rem] gap-2 text-lg font-semibold items-center">
           <Clock className="w-5 h-5 text-gray-600" />
           {timeLeft.days > 0 && (
             <span>

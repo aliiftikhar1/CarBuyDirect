@@ -29,6 +29,7 @@ model User {
   pricePlan   String? @default("free")
   pricePlanEndDate  DateTime?
   businessType  String?
+  stripeVerification Boolean @default(false)
   stripeAccountId String?  // Seller ka unique Stripe Account ID
   stripeStatus    String?    @default("unverified")  // "unverified" | "pending" | "verified"
   availableBalance Float?    @default(0)  // Seller ki available earnings
