@@ -3,12 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(request){
     try {
-        const response = await prisma.Auction.findMany({
+        const auctions = await prisma.Auction.findMany({
             include:{
                 CarSubmission:{
                     include:{
                         SubmissionImages:true,
-                        
                     }
                 },
                 Seller:{
@@ -20,13 +19,30 @@ export async function GET(request){
                     orderBy: {
                       createdAt: "desc", 
                     },
-                  },
-                  Watching:true
+                },
+                Watching:true
             }
-        })
-        return NextResponse.json({success:true, message:"Auctions Fetched Successfully!!",data:response},{status:200})
+        });
+
+        // Add latestBid field to each auction
+        const auctionsWithLatestBid = auctions.map(auction => {
+            return {
+                ...auction,
+                latestBid: auction.Bids.length > 0 ? auction.Bids[0].price : null
+            };
+        });
+
+        return NextResponse.json({
+            success: true, 
+            message: "Auctions Fetched Successfully!!", 
+            data: auctionsWithLatestBid
+        }, {status: 200});
         
     } catch (error) {
-        return NextResponse.json({success:false, message:"Error occur while fetching auctions"},{status:500})
+        console.error("Error fetching auctions:", error);
+        return NextResponse.json({
+            success: false, 
+            message: "Error occurred while fetching auctions"
+        }, {status: 500});
     }
 }
