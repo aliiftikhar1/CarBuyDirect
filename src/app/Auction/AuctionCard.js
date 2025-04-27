@@ -127,7 +127,7 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
       
       <a
         href={`/Auction/${item.CarSubmission?.webSlug}`}
-        className="flex w-full group flex-row h-36 md:h-[15rem] bg-white rounded-lg overflow-hidden"
+        className="flex w-full group flex-row h-[15rem] bg-white rounded-tl-lg overflow-hidden"
       >
         {/* Image Container with gradient overlay */}
         <div className="relative w-2/5 md:max-w-1/5  aspect-square overflow-hidden">
@@ -154,7 +154,7 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
               {item?.CarSubmission?.vehicleYear} {item?.CarSubmission?.vehicleMake} {item?.CarSubmission?.vehicleModel}
             </h2>
             <p className="text-xs md:text-sm font-medium text-gray-600 mt-0.5">VIN: {item?.CarSubmission?.vin}</p>
-            <div className="mt-1.5 flex flex-wrap items-center gap-1">
+            <div className="mt-1.5 hidden md:flex flex-wrap items-center gap-1">
               <span className="text-xs md:text-sm font-medium text-gray-700">
                 {item?.CarSubmission?.mileage}{" "}
                 {item?.CarSubmission?.milageUnit ? item?.CarSubmission?.milageUnit : "mi"}
@@ -277,7 +277,7 @@ export default function AuctionCard({ item, index, watchdata, OnWatch, setloadin
         </div>
       </a>
 {/* Vehicle History Report Section */}
-<div className="px-4 py-3 mt-2 border-t border-gray-200">
+<div className="px-4 py-3 md:mt-2 border-t border-gray-200">
   <div className="flex flex-col sm:flex-row w-full gap-1 md:gap-4">
     {/* Left side with logos */}
     <div className="flex flex-row sm:w-2/5 justify-between items-center space-x-3">
