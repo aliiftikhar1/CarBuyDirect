@@ -50,9 +50,7 @@ export default function AdminCarSubmissions() {
       setIsUploading(true)
       try {
         const response = await uploadfiletoserver(e.target.files[0])
-        console.log("Response",response)
         const data = await response
-        console.log("json data ",data)
         if (data) {
           setfile(data)
           toast.success("PDF uploaded successfully")
@@ -67,14 +65,17 @@ export default function AdminCarSubmissions() {
       }
     }
   }
+
   const handleTitleCheckboxChange = (e) => {
     setIsTitleChecked(e.target.checked)
     setFormData((prev) => ({ ...prev, titles: e.target.checked }))
   }
+
   const handleOdoCheckboxChange = (e) => {
     setIsOdoChecked(e.target.checked)
     setFormData((prev) => ({ ...prev, odo: e.target.checked }))
   }
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -112,40 +113,36 @@ export default function AdminCarSubmissions() {
     titles: false,
     odo: false,
   })
+
   const [imageLabels, setImageLabels] = useState({})
   const [loading, setloading] = useState(true)
 
   useEffect(() => {
-    console.log("Form Data is ", formData)
     if (formData.buy === "True") {
       // Handle buy price logic if needed
     }
   }, [formData])
+
   async function fetchSubmissions() {
     fetch(`/api/admin/carsubmissions/all/1`)
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
+          console.log("Fetched car submissions:", data.data)
           setCarSubmissions(data.data)
-          // setFilteredSubmissions(data.data)
           setloading(false)
         }
       })
       .catch((error) => console.error("Error fetching car submissions:", error))
   }
+
   const fetchBrands = async () => {
     try {
       setloading(true)
       const endpoints2 = [`/api/CarApi/getMakes`, `/api/CarApi/getModels`, `/api/CarApi/getYears`]
-
-      // Fetch all data concurrently
       const responses2 = await Promise.all(endpoints2.map((endpoint) => fetch(endpoint)))
-
-      // Parse all responses as JSON
       const data2 = await Promise.all(responses2.map((response) => response.json()))
-      console.log("Data from car api is : ", data2)
 
-      // Update the state with the fetched data
       setBrands(data2[0].data)
       setModels(data2[1].data)
       setYears(data2[2])
@@ -160,10 +157,7 @@ export default function AdminCarSubmissions() {
         `/api/user/FetchLists/Transmissions`,
       ]
 
-      // Fetch all data concurrently
       const responses = await Promise.all(endpoints.map((endpoint) => fetch(endpoint)))
-
-      // Parse all responses as JSON
       const data = await Promise.all(responses.map((response) => response.json()))
       setBodyTypes(data[0].bodyType)
       setCategories(data[1].vehiclecategory)
@@ -179,6 +173,7 @@ export default function AdminCarSubmissions() {
       toast.error("Failed to fetch brands")
     }
   }
+
   useEffect(() => {
     fetchSubmissions()
     fetchBrands()
@@ -213,6 +208,12 @@ export default function AdminCarSubmissions() {
     setIsTitleChecked(submission.titles === true)
     setIsOdoChecked(submission.odo === true)
     setfile(submission.pdfUrl || "")
+    // Initialize image labels
+    const initialLabels = {}
+    submission.SubmissionImages.forEach((image) => {
+      initialLabels[image.id] = image.label || "other"
+    })
+    setImageLabels(initialLabels)
     setFormData({
       firstname: submission.firstname || "",
       lastname: submission.lastname || "",
@@ -257,6 +258,7 @@ export default function AdminCarSubmissions() {
   const handleCloseUpdateDialog = () => {
     setSelectedSubmission(null)
     setReview("")
+    setImageLabels({})
     setIsUpdateDialogOpen(false)
   }
 
@@ -265,6 +267,20 @@ export default function AdminCarSubmissions() {
   }
 
   const handleImageLabelChange = (imageId, label) => {
+    // Check existing labels to enforce one portrait and one horizontal
+    const currentLabels = { ...imageLabels }
+    const portraitCount = Object.values(currentLabels).filter((l) => l === "portrait").length
+    const horizontalCount = Object.values(currentLabels).filter((l) => l === "horizontal").length
+
+    if (label === "portrait" && portraitCount >= 1 && currentLabels[imageId] !== "portrait") {
+      toast.error("Only one image can be labeled as Portrait")
+      return
+    }
+    if (label === "horizontal" && horizontalCount >= 1 && currentLabels[imageId] !== "horizontal") {
+      toast.error("Only one image can be labeled as Horizontal")
+      return
+    }
+
     setImageLabels((prev) => ({
       ...prev,
       [imageId]: label,
@@ -288,7 +304,6 @@ export default function AdminCarSubmissions() {
         throw new Error(data.message)
       }
     } catch (error) {
-      // console.error('Error updating submission:', error)
       toast.error("Failed to delete")
     }
   }
@@ -333,10 +348,10 @@ export default function AdminCarSubmissions() {
       </div>
     )
   }
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Car Submissions </h1>
-      {/* <Input placeholder="Filter Submissions" value={filter} onChange={handleFilterChange} className="mb-4" /> */}
       <Table>
         <TableHeader>
           <TableRow>
@@ -358,7 +373,6 @@ export default function AdminCarSubmissions() {
               <TableCell>{submission.vehicleYear}</TableCell>
               <TableCell>{submission.vin}</TableCell>
               <TableCell>{submission.status}</TableCell>
-
               <TableCell>
                 <Button variant="ghost" size="icon" onClick={() => handleViewDetails(submission)}>
                   <Eye className="h-4 w-4" />
@@ -457,14 +471,21 @@ export default function AdminCarSubmissions() {
                 <h2 className="text-xl font-semibold mb-2">Images</h2>
                 <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-auto">
                   {selectedSubmission.SubmissionImages.map((image) => (
-                    <Image
-                      key={image.id}
-                      src={image.data || "/placeholder.svg"}
-                      alt={image.name}
-                      width={1200}
-                      height={1200}
-                      className="w-full h-auto rounded-lg shadow-md"
-                    />
+                    <div key={image.id} className="relative">
+                      <Image
+                        src={image.data || "/placeholder.svg"}
+                        alt={image.name || "Car Image"}
+                        width={300}
+                        height={200}
+                        className="w-full h-auto rounded-lg shadow-md object-cover"
+                        onError={(e) => {
+                          e.target.src = "/placeholder.svg"
+                        }}
+                      />
+                      <span className="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+                        {imageLabels[image.id] || image.label || "Other"}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -511,6 +532,7 @@ export default function AdminCarSubmissions() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
       <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -565,17 +587,14 @@ export default function AdminCarSubmissions() {
                   onChange={(e) => handleFormChange("vehicleMake", e.target.value)}
                   name="vehicleMake"
                 />
-
-                <div className="space-y-2">
-                  {/* <Label htmlFor="vehicleModel">Vehicle model</Label> */}
-                  <CarApiAutocompleteInput
-                    options={models}
-                    value={formData.vehicleModel}
-                    onChange={(e) => handleFormChange("vehicleModel", e.target.value)}
-                    name="vehicleModel"
-                  />
-                </div>
+                <CarApiAutocompleteInput
+                  options={models}
+                  value={formData.vehicleModel}
+                  onChange={(e) => handleFormChange("vehicleModel", e.target.value)}
+                  name="vehicleModel"
+                />
               </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="reserved" className="text-sm font-medium">
@@ -618,21 +637,20 @@ export default function AdminCarSubmissions() {
                   />
                 </div>
               </div>
+
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  {/* <Label htmlFor="vehicleYear">Vehicle year</Label> */}
-                  <YearAutocompleteInput
-                    options={years}
-                    name="vehicleYear"
-                    value={formData.vehicleYear}
-                    onChange={(e) => handleFormChange("vehicleYear", e.target.value)}
-                  />
-                </div>
+                <YearAutocompleteInput
+                  options={years}
+                  name="vehicleYear"
+                  value={formData.vehicleYear}
+                  onChange={(e) => handleFormChange("vehicleYear", e.target.value)}
+                />
                 <div className="space-y-2">
                   <Label htmlFor="vin">VIN or Chassis No.</Label>
                   <Input id="vin" value={formData.vin} onChange={(e) => handleFormChange("vin", e.target.value)} />
                 </div>
               </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 <AutocompleteInput
                   options={categories}
@@ -732,6 +750,7 @@ export default function AdminCarSubmissions() {
                   </div>
                 </div>
               </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="mileage">Estimated Mileage</Label>
@@ -813,6 +832,7 @@ export default function AdminCarSubmissions() {
                   />
                 </div>
               ))}
+
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="space-y-2">
                   <label htmlFor="score" className="text-sm font-medium">
@@ -827,7 +847,6 @@ export default function AdminCarSubmissions() {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
                   <label htmlFor="owners" className="text-sm font-medium">
                     Owners
@@ -841,7 +860,6 @@ export default function AdminCarSubmissions() {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
                   <label htmlFor="acdnt" className="text-sm font-medium">
                     Acdnt
@@ -855,7 +873,6 @@ export default function AdminCarSubmissions() {
                     required
                   />
                 </div>
-
                 <div className="space-y-2">
                   <label htmlFor="titles" className="text-sm font-medium">
                     Titles
@@ -872,7 +889,6 @@ export default function AdminCarSubmissions() {
                     <span>{isTitleChecked ? "Yes" : "No"}</span>
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <label htmlFor="odo" className="text-sm font-medium">
                     Odo
@@ -890,6 +906,7 @@ export default function AdminCarSubmissions() {
                   </div>
                 </div>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="report_pdf">Vehicle Report PDF</Label>
                 <div className="flex flex-col gap-3">
@@ -920,7 +937,6 @@ export default function AdminCarSubmissions() {
                       Download Current PDF
                     </Button>
                   )}
-
                   <div className="flex items-center gap-2">
                     <Input
                       id="report_pdf"
@@ -941,16 +957,19 @@ export default function AdminCarSubmissions() {
               </div>
 
               <div>
-                <h2 className="text-xl font-semibold mb-2">Images</h2>
+                <h2 className="text-xl font-semibold mb-2">Images</h2>{selectedSubmission.SubmissionImages.length}
                 <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-auto">
                   {selectedSubmission.SubmissionImages.map((image) => (
-                    <div key={image.id} className="space-y-2">
+                    <div key={image.id} className="space-y-2 relative">
                       <Image
                         src={image.data || "/placeholder.svg"}
-                        alt={image.name}
-                        width={1200}
-                        height={1200}
-                        className="w-full h-auto rounded-lg shadow-md"
+                        alt={image.name || "Car Image"}
+                        width={300}
+                        height={200}
+                        className="w-full h-auto rounded-lg shadow-md object-cover"
+                        onError={(e) => {
+                          e.target.src = "/placeholder.svg"
+                        }}
                       />
                       <Select
                         value={imageLabels[image.id] || "other"}
